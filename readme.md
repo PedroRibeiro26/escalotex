@@ -414,6 +414,8 @@ Logo após importar, use **Desfazer** no aviso. Se já saiu da tela, importe o a
 Use o botão **Folga** para ajustar. Para recomeçar do zero, use **Resetar todas as folgas** em Sugestões.
 
 **Preciso apagar tudo e começar do zero.**
+Você pode apenas importar o `reset_config.json`, ele reseta TODAS as configurações do Escalotex
+ou
 Remova os dados do site nas configurações do navegador e abra o `index.html` novamente (sem importar nenhum arquivo). Guarde antes uma cópia do `.json`.
 
 ---
