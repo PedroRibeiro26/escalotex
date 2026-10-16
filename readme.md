@@ -1,19 +1,19 @@
 # ESCALOTEX
 
-Página única (`index.html`) para montar, controlar e imprimir a **escala de serviço** de uma unidade: **cabo de dia**, **plantões**, contagem de **folga**, **dispensas**, **trocas de serviço** e **histórico** de tudo o que foi lançado.
+Página para montar, controlar e imprimir diversos tipos de **escala de serviço** de uma unidade: **cabo de dia**, **plantões**, **técnico de dia**, **guia de TFM** e por ai vai, contagem de **folga**, **dispensas**, **trocas de serviço** e **histórico** de tudo o que foi lançado.
 
-Este documento descreve a versão que usa os termos militares (militares, cabo de dia, plantões, escala preta e vermelha, dispensados, P/G, nome de guerra).
+## ⚠️ O ESCALOTEX FOI FEITO PURAMENTE COM IA PARA FINS DE ESTUDO ⚠️
 
 ---
 
 ## ⚠️ LEIA PRIMEIRO: não existe banco de dados
-## O ESCALOTEX FOI FEITO PURAMENTE COM IA PARA FINS DE ESTUDO
 
 **O ESCALOTEX não tem servidor, não tem banco de dados e não tem conta de usuário.**
 Tudo o que o sistema "sabe" (militares, grupos, escalas montadas, folgas, dispensas, histórico, assinatura, estilo de impressão) fica reunido em **um único arquivo**:
 
 ```
-escala-servico-banco.json
+Arquivo padrão: escala-servico-banco.json
+Reseta tudo: reset_config.json
 ```
 
 Esse arquivo é o **banco de dados de verdade**. A página `index.html` é só o programa; ela não guarda nada para sempre por conta própria.
