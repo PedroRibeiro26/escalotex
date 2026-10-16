@@ -1,0 +1,128 @@
+{
+  "v": 2,
+  "G": [
+    {
+      "id": "c",
+      "name": "Cabo de dia"
+    },
+    {
+      "id": "p",
+      "name": "Plantões"
+    }
+  ],
+  "cfg": {
+    "c": "c",
+    "p": "p"
+  },
+  "S": [
+    {
+      "d": "09/10/26",
+      "w": "Sexta-feira",
+      "f": false,
+      "c": null,
+      "p": []
+    },
+    {
+      "d": "10/10/26",
+      "w": "Sábado",
+      "f": false,
+      "c": null,
+      "p": []
+    },
+    {
+      "d": "11/10/26",
+      "w": "Domingo",
+      "f": false,
+      "c": null,
+      "p": []
+    },
+    {
+      "d": "12/10/26",
+      "w": "Segunda-feira",
+      "f": true,
+      "c": null,
+      "p": []
+    },
+    {
+      "d": "13/10/26",
+      "w": "Terça-feira",
+      "f": false,
+      "c": null,
+      "p": []
+    },
+    {
+      "d": "14/10/26",
+      "w": "Quarta-feira",
+      "f": false,
+      "c": null,
+      "p": []
+    },
+    {
+      "d": "15/10/26",
+      "w": "Quinta-feira",
+      "f": false,
+      "c": null,
+      "p": []
+    },
+    {
+      "d": "16/10/26",
+      "w": "Sexta-feira",
+      "f": false,
+      "c": null,
+      "p": []
+    }
+  ],
+  "SA": [],
+  "AP": {
+    "n": 5,
+    "k": 3
+  },
+  "autoSig": "",
+  "autoStale": false,
+  "mb": null,
+  "rs": -1,
+  "lq": 0,
+  "M": [],
+  "L": [],
+  "Lp": null,
+  "UL": [],
+  "lanc": "",
+  "lancA": "",
+  "pg": {
+    "s": [
+      "SD EV",
+      "SD EP",
+      "AL",
+      "CB EP",
+      "3º SGT",
+      "2º SGT",
+      "1º SGT",
+      "ST",
+      "ASP OF",
+      "2º TEN",
+      "1º TEN",
+      "CAP",
+      "MAJ",
+      "TC",
+      "CEL"
+    ],
+    "m": [
+      "SD EV",
+      "SD EP",
+      "CB",
+      "AL"
+    ]
+  },
+  "ps": "1",
+  "tt": {
+    "a": "",
+    "b": ""
+  },
+  "sig": {
+    "n": "",
+    "p": "",
+    "f": ""
+  },
+  "pr": null,
+  "prA": null
+}
