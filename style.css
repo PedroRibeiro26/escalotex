@@ -3245,3 +3245,203 @@ REDESIGN v2 — layout em tela cheia, informações secundárias junto do item
         }
     }
 }
+
+
+/* ============ AJUDA ============ */
+#sec-j .hp-top {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-bottom: 14px
+}
+
+#sec-j .hp-top input[type="text"] {
+    flex: 1 1 260px;
+    min-width: 0
+}
+
+#sec-j .hp-intro {
+    padding: 14px 16px;
+    font-size: .88rem;
+    line-height: 1.55;
+    color: var(--ink)
+}
+
+#sec-j .hp-intro b {
+    font-weight: 700
+}
+
+#sec-j .hp-key {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 10px;
+    padding: 0 16px 16px
+}
+
+#sec-j .hp-key div {
+    background: var(--soft, #eceeeb);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: .82rem;
+    line-height: 1.45
+}
+
+#sec-j .hp-key div b {
+    display: block;
+    font-size: .74rem;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    margin-bottom: 3px
+}
+
+#sec-j .hp-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 14px
+}
+
+#sec-j details.hp-item {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--r, 12px);
+    box-shadow: var(--sh, none);
+    overflow: hidden
+}
+
+#sec-j details.hp-item[hidden] {
+    display: none
+}
+
+#sec-j details.hp-item>summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    font-weight: 700;
+    font-size: .95rem;
+    display: flex;
+    gap: 12px;
+    align-items: center
+}
+
+#sec-j details.hp-item>summary::-webkit-details-marker {
+    display: none
+}
+
+#sec-j details.hp-item>summary .hp-n {
+    flex: none;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: var(--ink);
+    color: var(--bg);
+    display: grid;
+    place-items: center;
+    font-size: .76rem
+}
+
+#sec-j details.hp-item>summary .hp-t {
+    flex: 1;
+    min-width: 0
+}
+
+#sec-j details.hp-item>summary::after {
+    content: "▾";
+    color: var(--muted);
+    transition: transform .15s
+}
+
+#sec-j details.hp-item[open]>summary::after {
+    transform: rotate(180deg)
+}
+
+#sec-j details.hp-item[open]>summary {
+    border-bottom: 1px solid var(--line)
+}
+
+#sec-j .hp-body {
+    padding: 14px 16px 16px;
+    font-size: .88rem;
+    line-height: 1.6
+}
+
+#sec-j .hp-body h4 {
+    margin: 14px 0 6px;
+    font-size: .78rem;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: var(--muted)
+}
+
+#sec-j .hp-body h4:first-child {
+    margin-top: 0
+}
+
+#sec-j .hp-body ol {
+    margin: 0 0 6px;
+    padding-left: 22px
+}
+
+#sec-j .hp-body ul {
+    margin: 0 0 6px;
+    padding-left: 20px
+}
+
+#sec-j .hp-body li {
+    margin: 4px 0
+}
+
+#sec-j .hp-body p {
+    margin: 6px 0
+}
+
+#sec-j .hp-tip,
+#sec-j .hp-warn {
+    margin: 10px 0 4px;
+    padding: 9px 12px;
+    border-radius: 8px;
+    font-size: .84rem;
+    line-height: 1.5;
+    border: 1px solid var(--line)
+}
+
+#sec-j .hp-tip {
+    background: var(--soft, #eceeeb)
+}
+
+#sec-j .hp-warn {
+    background: var(--warn-bg);
+    color: var(--warn-ink);
+    border-color: var(--warn)
+}
+
+#sec-j .hp-go {
+    margin-top: 10px;
+    margin-right: 6px
+}
+
+#sec-j kbd,
+#sec-j .hp-k {
+    font: inherit;
+    font-weight: 700;
+    padding: 1px 6px;
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    background: var(--soft, #eceeeb);
+    white-space: nowrap
+}
+
+#sec-j .hp-none {
+    padding: 20px;
+    text-align: center;
+    color: var(--muted);
+    font-size: .88rem
+}
+
+@media print {
+    #sec-j {
+        display: none
+    }
+}
