@@ -7,6 +7,7 @@ Este documento descreve a versão que usa os termos militares (militares, cabo d
 ---
 
 ## ⚠️ LEIA PRIMEIRO: não existe banco de dados
+## O ESCALOTEX FOI FEITO PURAMENTE COM IA PARA FINS DE ESTUDO
 
 **O ESCALOTEX não tem servidor, não tem banco de dados e não tem conta de usuário.**
 Tudo o que o sistema "sabe" (militares, grupos, escalas montadas, folgas, dispensas, histórico, assinatura, estilo de impressão) fica reunido em **um único arquivo**:
