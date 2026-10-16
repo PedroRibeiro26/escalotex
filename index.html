@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <link rel="stylesheet" href="style.css">
+  <title>ESCALOTEX</title>
+  
+</head>
+<body>
+  <div class="wrap">
+    <header class="top">
+      <div class="brand"><span class="logo" aria-hidden="true">E</span><h1>Escalotex</h1></div>
+      <nav class="tabs" role="tablist"><button type="button" class="tab on" data-t="e">Escala</button><button
+          type="button" class="tab" data-t="s">Sugestões</button><button type="button" class="tab"
+          data-t="m">Militares</button><button type="button" class="tab" data-t="d" id="tab-d">Dispensados</button><button type="button" class="tab"
+          data-t="h" id="tab-h">Histórico</button></nav>
+      <div class="dbx"><span id="st" class="st">Carregando…</span><button type="button" class="b2 ghost"
+          id="ex">Exportar arquivo</button><button type="button" class="b2 ghost" id="im">Importar
+          arquivo</button><input type="file" id="fi" accept=".json,application/json" hidden></div>
+    </header>
+
+    <main class="page">
+
+      <!-- ============ ESCALA ============ -->
+      <section id="sec-e">
+        <div class="esc-grid">
+          <div class="esc-col">
+            <div class="subtabs" role="tablist"><button type="button" class="stab on" data-sub="m">Escala
+                manual</button><button type="button" class="stab" data-sub="a">Escala automática</button></div>
+
+            <div id="au-empty" class="note" hidden>A escala automática aparece aqui depois que a
+              primeira escala for lançada. Monte a escala manual, clique em LANÇAR e o sistema sugere a próxima.</div>
+            <div id="au-box" class="aubox" hidden>
+              <div class="au-h"><b>Escala automática</b><span class="au-tag">Sugerida pelo sistema</span></div>
+              <p id="au-t"></p>
+              <div class="au-b"><label class="au-l">Dias <input type="number" id="au-n" min="1" max="31"
+                    value="5"></label><button type="button" class="b2 ghost" id="au-new">Gerar de novo</button><button
+                  type="button" class="b2 ghost" id="au-re">Recalcular mantendo as datas</button><button type="button"
+                  class="b2 ghost" id="au-bak" hidden>Restaurar minha versão anterior</button></div>
+              <p id="au-s" class="ls"></p>
+            </div>
+
+            <div id="esc-main">
+              <div class="card tcard">
+                <div class="tc-h">
+                  <div class="legend">
+                    <span><i class="sw" style="background:var(--cabo)"></i>Preta: dia de semana</span>
+                    <span><i class="sw" style="background:var(--red)"></i>Vermelha: fim de semana e feriados</span>
+                    <span><i class="warn" style="width:16px;height:16px">!</i>Aviso: passe o mouse ou clique no ícone para ler o motivo</span>
+                  </div>
+                  <button type="button" class="b2 ghost" id="ad">+ Adicionar dia</button>
+                </div>
+                <div class="scroll">
+                  <table>
+                    <thead><tr id="thr"></tr></thead>
+                    <tbody id="rows"></tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div class="fin-grid">
+                <div class="card fin">
+                  <div class="gh"><span>Período e lançamento</span></div>
+                  <div class="fin-b">
+                    <div class="prt">
+                      <div class="pc"><b>Escala</b><select id="e1" aria-label="Escala: data inicial"></select> até <select id="e2"
+                          aria-label="Escala: data final"></select></div>
+                      <div class="pc"><b>Previsão</b><select id="p1" aria-label="Previsão: data inicial"></select> até <select
+                          id="p2" aria-label="Previsão: data final"></select></div>
+                    </div>
+                    <div class="ttl">
+                      <label>Título da impressão<input type="text" id="tt1" placeholder="Escala de Serviço de" maxlength="60" autocomplete="off"></label>
+                      <label>Título da previsão<input type="text" id="tt2" placeholder="Previsão da Escala de Serviço de" maxlength="60" autocomplete="off"></label>
+                      <p class="ttl-n">Em branco, vale o título padrão. A data do período entra sempre na linha abaixo do título. <button type="button" class="sm" id="tt-r">Restaurar padrão</button></p>
+                    </div>
+                    <p class="note nt">LANÇAR conta os dias de folga somente da ESCALA; a PREVISÃO não conta.</p>
+                    <div class="lx"><button type="button" class="btn" id="lc">LANÇAR</button><span id="ls" class="ls"></span><button
+                        type="button" class="btn ghost" id="pv">Visualizar</button><button type="button" class="btn" id="pb"
+                        onclick="doPrint()" disabled>Imprimir</button></div>
+                  </div>
+                </div>
+
+                <div class="sig card" id="sig">
+                  <div class="gh"><span>Assinatura</span></div>
+                  <div class="sg">
+                    <label class="sg-n">Nome completo<input type="text" id="sn" placeholder="Nome completo do militar"
+                        autocomplete="off"></label>
+                    <label>P/G <button type="button" class="sm" data-pg="s"
+                        style="align-self:flex-start;text-transform:none">Gerenciar cargos</button><select id="sp" class="sel2">
+                        <option value="">Selecione…</option>
+                        <option>SD EV</option>
+                        <option>SD EP</option>
+                        <option>AL</option>
+                        <option>CB EP</option>
+                        <option>3º SGT</option>
+                        <option>2º SGT</option>
+                        <option>1º SGT</option>
+                        <option>ST</option>
+                        <option>ASP OF</option>
+                        <option>2º TEN</option>
+                        <option>1º TEN</option>
+                        <option>CAP</option>
+                        <option>MAJ</option>
+                        <option>TC</option>
+                        <option>CEL</option>
+                      </select></label>
+                    <label>Função<input type="text" id="sf" placeholder="Digite a função (ex.: Cabo de Dia)"
+                        autocomplete="off"></label>
+                  </div>
+                  <div class="sp">
+                    <div class="sline"></div>
+                    <div id="s1">Nome completo</div>
+                    <div id="s2">Função</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <aside class="esc-side">
+            <div id="lastbox" class="aubox lastbox" hidden>
+              <div class="au-h"><b>Último dia lançado</b></div>
+              <span class="au-tag" id="lb-d"></span>
+              <div id="lb-b"></div>
+            </div>
+
+            <div id="mini" class="mini" data-t="b">
+              <div class="mn-h"><b>Sugestões</b><span class="mn-t"><button type="button" data-mt="b" class="on"
+                    title="Escala preta (dia de semana)">P</button><button type="button" data-mt="r"
+                    title="Escala vermelha (fim de semana e feriados)">V</button></span><button type="button" id="mn-x"
+                  aria-label="Recolher ou abrir">▾</button></div>
+              <div class="mn-b">
+                <div id="mn-g"></div>
+                <small class="mn-n">Mais folgados (os mesmos na escala manual e na automática). ✓ = já escalado na escala em
+                  exibição. P = preta (dia de semana) · V = vermelha (fim de semana e feriados).</small>
+              </div>
+            </div>
+
+            <div class="aubox" id="cfgbox">
+              <div class="au-h"><b>Tipo de escala</b><span class="au-tag">Grupos da escala</span></div>
+              <div class="au-b" id="cfgb"></div>
+              <p class="cfg-n">Dupla: duas colunas (dois grupos). Única: só um grupo, sem segunda coluna, inclusive na impressão. Crie novos grupos na aba Militares.</p>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <!-- ============ SUGESTÕES ============ -->
+      <section id="sec-s" hidden data-t="b">
+        <div class="toolbar">
+          <div class="tb-l">
+            <div class="seg" role="tablist"><button type="button" class="on" data-st="b"><i></i>Escala preta · dia de
+                semana</button><button type="button" data-st="r"><i></i>Escala vermelha · fim de semana e feriados</button>
+            </div>
+            <p class="hint">A folga de cada escala é contada <b>separadamente</b>: a preta conta só os dias de semana lançados
+              e a vermelha só os fins de semana e feriados, sempre a partir do dia seguinte ao serviço. A previsão não conta.
+            </p>
+          </div>
+          <div class="sgt">
+            <button type="button" class="b2 ghost" id="sg-r">Resetar todas as folgas</button><button type="button"
+              class="b2 ghost" id="sg-u">Desfazer último lançamento</button>
+          </div>
+        </div>
+        <p id="sg-e" class="note">Nenhuma escala lançada ainda. A contagem começa depois que você
+          clicar em LANÇAR, no final da aba Escala.</p>
+        <div class="cols" id="sgcols"></div>
+      </section>
+
+      <!-- ============ MILITARES ============ -->
+      <section id="sec-m" hidden>
+        <div class="card newm">
+          <div class="lb"><span>Novo militar · entra direto em "Sem grupo"</span><button type="button" class="b2 ghost" id="gm-open">Gerenciar grupos</button></div>
+          <div class="mf2"><select id="np" aria-label="Posto ou graduação">
+              <option>SD EV</option>
+              <option>SD EP</option>
+              <option>CB</option>
+              <option>AL</option>
+            </select><button type="button" class="b2 ghost" data-pg="m"
+              title="Criar, editar e excluir cargos">Cargos</button><input type="text" id="nn" placeholder="Nome de guerra (ex.: SOUZA)" autocomplete="off"><button
+              type="button" class="b2" id="nc">Criar militar</button></div>
+        </div>
+        <div class="cols" id="gcols"></div>
+      </section>
+
+      <!-- ============ DISPENSADOS ============ -->
+      <section id="sec-d" hidden>
+        <div class="dp card" id="dp">
+          <div class="gh"><span>Dispensados</span><button type="button" class="b2 ghost" id="da">+ Adicionar à dispensa</button></div>
+          <ul class="ml" id="l-d"></ul>
+        </div>
+      </section>
+
+      <!-- ============ HISTÓRICO ============ -->
+      <section id="sec-h" hidden>
+        <div class="mf2 filters"><input type="text" id="hs-q" placeholder="Buscar militar ou data…" autocomplete="off"><select
+            id="hs-t" aria-label="Filtrar por escala">
+            <option value="">Todas as escalas</option>
+            <option value="b">Preta · dia de semana</option>
+            <option value="r">Vermelha · fim de semana e feriados</option>
+          </select></div>
+        <div class="hist-grid">
+          <div class="card">
+            <div class="gh"><span>Dias lançados</span><span id="hs-c"></span></div>
+            <p class="hint inl">Cada dia lançado fica registrado aqui, com o cabo de dia, os plantões e as trocas de serviço.
+              Para corrigir um dia, exclua-o daqui ou monte-o de novo na aba Escala e lance outra vez (o novo lançamento
+              substitui o anterior).</p>
+            <ul class="ml" id="hs-l"></ul>
+          </div>
+          <div class="card">
+            <div class="gh"><span>Passos que podem ser desfeitos</span><span id="hs-uc"></span></div>
+            <p class="hint inl">Todo lançamento e exclusão entra nesta lista, do mais recente para o mais antigo.</p>
+            <div class="hs-act"><button type="button" class="b2 ghost" id="hs-u">Desfazer último passo</button></div>
+            <ul class="ml" id="hs-ul"></ul>
+          </div>
+        </div>
+      </section>
+
+      <footer class="foot">Desenvolvido por Pedro Ribeiro da Rosa</footer>
+    </main>
+  </div>
+
+  <div id="ov" class="ov" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="mt">
+      <div class="mh">
+        <h2 id="mt"></h2><button class="x" onclick="closeM()" aria-label="Fechar">×</button>
+      </div>
+      <div class="mb">
+        <div class="lb"><span id="lp">Militar</span></div>
+        <input type="text" id="q" placeholder="Buscar militar…" autocomplete="off">
+        <div id="people" class="people"></div>
+        <div id="p2w" hidden>
+          <div class="lb"><span>Já de serviço nesta escala · folga até o dia escolhido</span></div>
+          <div id="people2" class="plist2" style="margin-top:8px"></div>
+        </div>
+        <div class="lb"><span>Dia(s)</span>
+          <span class="quick"><button onclick="qd('all')">Todos</button><button onclick="qd('wd')">Dias
+              úteis</button><button onclick="qd('we')">Fim de semana</button><button
+              onclick="qd('none')">Limpar</button></span>
+        </div>
+        <div id="days" class="days"></div>
+        <label class="chk"><input type="checkbox" id="wc"> Incluir aviso <i class="warn"
+            style="width:16px;height:16px">!</i> <span
+            style="color:var(--muted);font-weight:500">(opcional)</span></label>
+        <input type="text" id="wt" placeholder="Texto do aviso (ex.: dispensa, aguardando troca)" hidden>
+        <div id="wtg" hidden>
+          <div class="lb"><span>Aplicar o aviso a: (marcados recebem)</span><span class="quick"><button type="button"
+                onclick="wq(0)">Todos</button><button type="button" onclick="wq(1)">Nenhum</button></span></div>
+          <div id="wtl" class="people" style="max-height:140px;margin-top:8px"></div>
+        </div>
+      </div>
+      <div class="mf"><span id="cnt"></span><button class="b2 ghost" onclick="closeM()">Cancelar</button><button
+          class="b2" id="ok" onclick="confirmM()">Adicionar à escala</button></div>
+    </div>
+  </div>
+  <div id="ov2" class="ov" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="mt2">
+      <div class="mh">
+        <h2 id="mt2">Adicionar à dispensa</h2><button type="button" class="x" onclick="closeD()"
+          aria-label="Fechar">×</button>
+      </div>
+      <div class="mb">
+        <div class="lb"><span>Militar</span></div><select id="dm" class="sel2"></select>
+        <div class="lb"><span>Abrangência da dispensa *</span></div>
+        <select id="dt" class="sel2" aria-label="Abrangência da dispensa">
+          <option value="a">Total · todas as escalas (preta e vermelha)</option>
+          <option value="b">Somente dias de semana (escala preta) · continua na escala vermelha</option>
+          <option value="r">Somente fim de semana e feriados (escala vermelha) · continua na escala preta</option>
+        </select>
+        <div class="lb"><span>Destino (motivo da dispensa) *</span></div>
+        <input type="text" id="dd" placeholder="Ex.: curso em Brasília, baixa médica, licença…" autocomplete="off">
+        <div class="dts"><label>Início da dispensa *<input type="date" id="di"></label><label>Fim da dispensa *<input
+              type="date" id="df"></label></div>
+      </div>
+      <div class="mf"><span style="flex:1;font-size:.78rem;color:var(--muted)">O militar sai das listas da(s) escala(s)
+          dispensada(s).</span><button type="button" class="b2 ghost" onclick="closeD()">Cancelar</button><button
+          type="button" class="b2" id="dok" disabled>Confirmar dispensa</button></div>
+    </div>
+  </div>
+  <div id="ovf" class="ov" hidden>
+    <div class="modal" style="max-width:460px" role="dialog" aria-modal="true" aria-labelledby="fT">
+      <div class="mh">
+        <h2 id="fT">Ajustar folga</h2><button type="button" class="x" onclick="closeF()" aria-label="Fechar">×</button>
+      </div>
+      <div class="mb">
+        <div class="lb"><span id="fN"></span></div>
+        <div class="dts"><label>Preta · dias de semana<input type="number" id="fb" min="0"
+              max="999"></label><label>Vermelha · fim de semana e feriados<input type="number" id="fr" min="0"
+              max="999"></label></div>
+        <p class="hint" style="margin:0">O valor digitado vira a folga atual do militar e continua contando normalmente.
+          O ajuste de uma escala é desfeito quando ele for lançado em serviço nela. Valores marcados com * nas listas
+          são ajustes manuais.</p>
+      </div>
+      <div class="mf"><button type="button" class="b2 ghost" id="fcl">Remover ajustes</button><span
+          style="flex:1"></span><button type="button" class="b2 ghost" onclick="closeF()">Cancelar</button><button
+          type="button" class="b2" id="fok">Salvar</button></div>
+    </div>
+  </div>
+  <div id="ov3" class="ov" hidden>
+    <div class="modal" style="max-width:860px" role="dialog" aria-modal="true">
+      <div class="mh">
+        <h2>Visualização</h2><button type="button" class="x" onclick="document.getElementById('ov3').hidden=true"
+          aria-label="Fechar">×</button>
+      </div>
+      <div class="mb" style="padding:0;background:#8a8f94">
+        <div id="pvb" class="pv"></div>
+      </div>
+      <div class="mf"><span id="pvn" style="flex:1;font-size:.78rem;color:var(--muted)"></span><button type="button"
+          class="b2 ghost" onclick="document.getElementById('ov3').hidden=true">Fechar</button></div>
+    </div>
+  </div>
+  <div id="ovp" class="ov" hidden>
+    <div class="modal" style="max-width:900px" role="dialog" aria-modal="true" aria-labelledby="pp-t">
+      <div class="mh">
+        <h2 id="pp-t">Escolha o estilo do PDF</h2><button type="button" class="x" onclick="closePs()"
+          aria-label="Fechar">×</button>
+      </div>
+      <div class="mb">
+        <div class="ps-g" id="pp-g"></div>
+      </div>
+      <div class="mf"><span style="flex:1;font-size:.78rem;color:var(--muted)">O estilo muda só a aparência; os dados da
+          escala são os mesmos.</span><button type="button" class="b2 ghost" onclick="closePs()">Cancelar</button><button
+          type="button" class="b2" id="pp-ok">Continuar</button></div>
+    </div>
+  </div>
+  <div id="ovg" class="ov" hidden>
+    <div class="modal" style="max-width:460px" role="dialog" aria-modal="true" aria-labelledby="pg-t">
+      <div class="mh">
+        <h2 id="pg-t"></h2><button type="button" class="x" onclick="closePg()" aria-label="Fechar">×</button>
+      </div>
+      <div class="mb">
+        <ul class="ml" id="pg-l" style="max-height:280px;overflow-y:auto;border-bottom:1px solid var(--line)"></ul>
+        <div class="lb"><span>Novo cargo</span></div>
+        <div class="mf2" style="margin:0"><input type="text" id="pg-n" placeholder="Ex.: 3º SGT" maxlength="20"
+            autocomplete="off"><button type="button" class="b2" id="pg-a">Adicionar</button></div>
+        <p class="hint" style="margin:0">Renomear ou excluir um cargo muda só esta lista. Militares já cadastrados
+          mantêm o nome como está.</p>
+      </div>
+      <div class="mf"><span style="flex:1"></span><button type="button" class="b2 ghost"
+          onclick="closePg()">Fechar</button></div>
+    </div>
+  </div>
+  <div id="ovgr" class="ov" hidden>
+    <div class="modal" style="max-width:460px" role="dialog" aria-modal="true">
+      <div class="mh"><h2>Grupos</h2><button type="button" class="x" onclick="closeGr()" aria-label="Fechar">×</button></div>
+      <div class="mb">
+        <ul class="ml" id="gr-l" style="max-height:280px;overflow-y:auto;border-bottom:1px solid var(--line)"></ul>
+        <div class="lb"><span>Novo grupo</span></div>
+        <div class="mf2" style="margin:0"><input type="text" id="gr-n" placeholder="Ex.: Técnico de dia" maxlength="30" autocomplete="off"><button type="button" class="b2" id="gr-a">Criar</button></div>
+        <p class="hint" style="margin:0">Ao excluir um grupo, os militares dele vão para "Sem grupo". Escolha quais grupos entram na escala na aba Escala.</p>
+      </div>
+      <div class="mf"><span style="flex:1"></span><button type="button" class="b2 ghost" onclick="closeGr()">Fechar</button></div>
+    </div>
+  </div>
+  <div id="ovc" class="ov" hidden>
+    <div class="modal" role="alertdialog" aria-modal="true">
+      <div class="mh">
+        <h2 id="cT"></h2><button type="button" class="x" onclick="cClose()" aria-label="Fechar">×</button>
+      </div>
+      <div class="mb">
+        <p id="cM" style="margin:0;line-height:1.5"></p>
+      </div>
+      <div class="mf"><span style="flex:1"></span><button type="button" class="b2 ghost"
+          onclick="cClose()">Cancelar</button><button type="button" class="b2" id="cOk"></button></div>
+    </div>
+  </div>
+  <div id="ovs" class="ov" hidden>
+    <div class="modal" style="max-width:480px" role="dialog" aria-modal="true" aria-labelledby="swT">
+      <div class="mh">
+        <h2 id="swT">Troca de serviço</h2><button type="button" class="x" onclick="closeSw()"
+          aria-label="Fechar">×</button>
+      </div>
+      <div class="mb">
+        <p id="sw-i" style="margin:0;line-height:1.5"></p>
+        <div class="lb"><span>Quem assume o serviço (não zera a própria folga)</span></div>
+        <select id="sw-s" class="sel2" aria-label="Militar que assume o serviço"></select>
+        <p class="hint" style="margin:0">O militar escolhido aparece no lugar na escala e na impressão (com *). Ao
+          LANÇAR, quem zera a folga do dia é o militar substituído; a folga de quem assumiu continua contando normalmente,
+          como se ele não tivesse tirado o serviço. Se o dia já foi lançado, lance de novo para atualizar.</p>
+      </div>
+      <div class="mf"><span style="flex:1"></span><button type="button" class="b2 ghost"
+          onclick="closeSw()">Cancelar</button><button type="button" class="b2" id="sw-ok">Confirmar troca</button></div>
+    </div>
+  </div>
+  <div id="pr"></div>
+  <div id="toast" hidden></div>
+   <script src="app.js"></script>
+</body>
+
+</html>
