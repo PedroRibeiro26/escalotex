@@ -14,7 +14,7 @@ function render() {
     if (typeof $ === 'function') fillPrint();
     save();
     document.getElementById("rows").innerHTML = S.map(function (x, di) {
-    return '<tr class="' + (isWk(x) ? 'wk' : 'wd') + '">' + dateCell(x, di) + (cfg.c ? '<td data-l="' + esc(gnm(cfg.c)) + '">' + item(x.c, "cabo", di, "c") + cadd("c", di) + '</td>' : '') + (cfg.p ? '<td data-l="' + esc(gnm(cfg.p)) + '"><div class="pl">' + (x.p.map(function (o, k) { return item(o, "p", di, k) }).join("") || '<span class="vago">Sem plantões</span>') + cadd("p", di) + '</div></td>' : '') + '</tr>';
+        return '<tr class="' + (isWk(x) ? 'wk' : 'wd') + '">' + dateCell(x, di) + (cfg.c ? '<td data-l="' + esc(gnm(cfg.c)) + '">' + item(x.c, "cabo", di, "c") + cadd("c", di) + '</td>' : '') + (cfg.p ? '<td data-l="' + esc(gnm(cfg.p)) + '"><div class="pl">' + (x.p.map(function (o, k) { return item(o, "p", di, k) }).join("") || '<span class="vago">Sem plantões</span>') + cadd("p", di) + '</div></td>' : '') + '</tr>';
     }).join("");
 }
 render();
@@ -22,7 +22,7 @@ render();
 var WD = ["Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado", "Domingo"], editing = -1;
 function dateCell(x, di) {
     if (di === editing) {
-    return '<td class="date"><div class="ed"><input type="text" id="ed-d" value="' + esc(x.d) + '" maxlength="10" placeholder="dd/mm/aa" aria-label="Data"><select id="ed-w" aria-label="Dia da semana">' + WD.map(function (w) { return '<option' + (w === x.w ? ' selected' : '') + '>' + w + '</option>' }).join("") + '</select><label><input type="checkbox" id="ed-f"' + (x.f ? ' checked' : '') + '> Feriado</label><div class="row"><button type="button" class="b2" data-act="ok">Salvar</button><button type="button" class="b2 ghost" data-act="no">Cancelar</button><button type="button" class="b2 ghost" data-act="del">Excluir dia</button></div></div></td>';
+        return '<td class="date"><div class="ed"><input type="text" id="ed-d" value="' + esc(x.d) + '" maxlength="10" placeholder="dd/mm/aa" aria-label="Data"><select id="ed-w" aria-label="Dia da semana">' + WD.map(function (w) { return '<option' + (w === x.w ? ' selected' : '') + '>' + w + '</option>' }).join("") + '</select><label><input type="checkbox" id="ed-f"' + (x.f ? ' checked' : '') + '> Feriado</label><div class="row"><button type="button" class="b2" data-act="ok">Salvar</button><button type="button" class="b2 ghost" data-act="no">Cancelar</button><button type="button" class="b2 ghost" data-act="del">Excluir dia</button></div></div></td>';
     }
     return '<td class="date">' + x.d + '<button type="button" class="ed-btn" data-ed="' + di + '" title="Editar data e dia da semana" aria-label="Editar data e dia da semana">✎</button><button type="button" class="ed-btn" data-rd="' + di + '" title="Remover dia" aria-label="Remover dia">✕</button><span class="dow">' + x.w + '</span></td>';
 }
@@ -74,11 +74,11 @@ var dOpen = false, OP = { c: true, p: true, n: true, dg: true };
 function renderM() {
     save();
     buildCols(); gids().concat(['n', 'dg']).forEach(function (g) {
-    var l = M.filter(function (m) { return g === 'dg' ? isD(m) : m.g === g });
-    $('n-' + g).textContent = l.length + (g === 'dg' && l.some(function (m) { return retMsg(m) }) ? ' ⚠' : '');
-    $('l-' + g).hidden = !OP[g]; var hb = $('n-' + g).parentNode; hb.setAttribute('aria-expanded', OP[g]); hb.querySelector('.ar').textContent = OP[g] ? '▾' : '▸';
-    $('l-' + g).innerHTML = l.length ? l.map(function (m) { var i = M.indexOf(m); if (g === 'dg') return dRow(m, i); return '<li class="mi"><b>' + esc(m.n) + rbadge(m) + dpb(m) + '</b><span class="acts"><select class="sm gsel" data-a="gp" data-i="' + i + '" aria-label="Grupo de ' + esc(m.n) + '">' + gopts(g) + '</select><button type="button" class="sm" data-a="fg" data-i="' + i + '">Folga</button><button type="button" class="sm" data-a="ds" data-i="' + i + '">Dispensar</button><button type="button" class="sm del" data-a="rm" data-i="' + i + '">Excluir</button></span></li>' }).join('') : '<li class="emp">Nenhum militar neste grupo.</li>';
-    if (g === 'dg') $('l-dg').insertAdjacentHTML('beforeend', '<li class="mi"><button type="button" class="sm" data-a="dnew">+ Adicionar à dispensa</button></li>');
+        var l = M.filter(function (m) { return g === 'dg' ? isD(m) : m.g === g });
+        $('n-' + g).textContent = l.length + (g === 'dg' && l.some(function (m) { return retMsg(m) }) ? ' ⚠' : '');
+        $('l-' + g).hidden = !OP[g]; var hb = $('n-' + g).parentNode; hb.setAttribute('aria-expanded', OP[g]); hb.querySelector('.ar').textContent = OP[g] ? '▾' : '▸';
+        $('l-' + g).innerHTML = l.length ? l.map(function (m) { var i = M.indexOf(m); if (g === 'dg') return dRow(m, i); return '<li class="mi"><b>' + esc(m.n) + rbadge(m) + dpb(m) + '</b><span class="acts"><select class="sm gsel" data-a="gp" data-i="' + i + '" aria-label="Grupo de ' + esc(m.n) + '">' + gopts(g) + '</select><button type="button" class="sm" data-a="fg" data-i="' + i + '">Folga</button><button type="button" class="sm" data-a="ds" data-i="' + i + '">Dispensar</button><button type="button" class="sm del" data-a="rm" data-i="' + i + '">Excluir</button></span></li>' }).join('') : '<li class="emp">Nenhum militar neste grupo.</li>';
+        if (g === 'dg') $('l-dg').insertAdjacentHTML('beforeend', '<li class="mi"><button type="button" class="sm" data-a="dnew">+ Adicionar à dispensa</button></li>');
     });
     var d = M.filter(isD);
     $('tab-d').textContent = 'Dispensados (' + d.length + ')' + (d.some(function (m) { return retMsg(m) }) ? ' ⚠' : '');
@@ -103,9 +103,9 @@ function closeF() { $('ovf').hidden = true; fIdx = -1 }
 function confirmF(clear) {
     var m = M[fIdx]; if (!m) return; var o = m.o || (m.o = {});
     [['b', 'fb'], ['r', 'fr']].forEach(function (p) {
-    var v = parseInt($(p[1]).value, 10); if (isNaN(v) || v < 0) v = 0;
-    var d = clear ? 0 : v - restT(m, p[0], 1);
-    if (d === 0) delete o[p[0]]; else o[p[0]] = { v: d, q: LSEQ };
+        var v = parseInt($(p[1]).value, 10); if (isNaN(v) || v < 0) v = 0;
+        var d = clear ? 0 : v - restT(m, p[0], 1);
+        if (d === 0) delete o[p[0]]; else o[p[0]] = { v: d, q: LSEQ };
     });
     var n = m.n; closeF(); renderM(); renderSug(); renderMini(); save();
     toast(clear ? 'Ajustes de folga removidos de ' + n : 'Folga de ' + n + ' ajustada');
@@ -171,9 +171,9 @@ function ptab(rows, third) {
     var cg = '<col style="width:11%"><col style="width:17%">' + (two ? '<col style="width:17%">' : '') + '<col>';
     var hd = '<th colspan="2">DATA</th>' + (cfg.c ? '<th>' + esc(gnm(cfg.c).toUpperCase()) + '</th>' : '') + (cfg.p ? '<th>' + esc(gnm(cfg.p).toUpperCase()) + '</th>' : '');
     return '<table><colgroup>' + cg + '</colgroup><thead><tr>' + hd + '</tr></thead><tbody>' + rows.map(function (x) {
-    return '<tr' + (isWk(x) ? ' class="g"' : '') + '><td>' + esc(x.d) + '</td><td>' + esc(x.w.toUpperCase()) + '</td>' +
-        (cfg.c ? '<td>' + pn(x.c) + '</td>' : '') +
-        (cfg.p ? '<td>' + (x.p.map(pn).join(' – ') || '—') + '</td>' : '') + '</tr>';
+        return '<tr' + (isWk(x) ? ' class="g"' : '') + '><td>' + esc(x.d) + '</td><td>' + esc(x.w.toUpperCase()) + '</td>' +
+            (cfg.c ? '<td>' + pn(x.c) + '</td>' : '') +
+            (cfg.p ? '<td>' + (x.p.map(pn).join(' – ') || '—') + '</td>' : '') + '</tr>';
     }).join('') + '</tbody></table>';
 }
 
@@ -228,13 +228,13 @@ function cadd(k, di) { var t = 'Adicionar em ' + gnm(cfg[k]); return '<button ty
 function dRow(m, i) {
     return '<li class="mi"><b>' + esc(m.n) + ' ' + retWarn(m) + '</b><span class="acts"><button type="button" class="sm" data-a="fg" data-i="' + i + '">Folga</button><button type="button" class="sm" data-a="ret" data-i="' + i + '">Retornar</button></span><span class="dest"><strong>' + (m.g === 'd' || !m.dp ? 'Total' : (m.dp === 'b' ? 'Só dias de semana' : 'Só fim de semana/feriados')) + '</strong> · ' + esc(m.dest) + (m.ini && m.fim ? ' · ' + fmtI(m.ini) + ' a ' + fmtI(m.fim) : '') + '</span></li>';
 }
-var PD = { e1: 0, e2: 5, p1: 6, p2: 7 };
+var PD = { e1: 0, e2: 5, p1: -1, p2: 7 };
 function fillPrint() {
     ['e1', 'e2', 'p1', 'p2'].forEach(function (id) {
-    var el = $(id), v = el.value === '' ? PD[id] : +el.value; if (v > S.length - 1) v = S.length - 1;
-    var o = S.map(function (x, i) { return '<option value="' + i + '">' + esc(x.d) + ' · ' + esc(x.w.slice(0, 3)) + '</option>' }).join('');
-    el.innerHTML = (id === 'p1' ? '<option value="-1">Sem previsão</option>' : '') + o;
-    el.value = String(v);
+        var el = $(id), v = el.value === '' ? PD[id] : +el.value; if (v > S.length - 1) v = S.length - 1;
+        var o = S.map(function (x, i) { return '<option value="' + i + '">' + esc(x.d) + ' · ' + esc(x.w.slice(0, 3)) + '</option>' }).join('');
+        el.innerHTML = (id === 'p1' ? '<option value="-1">Sem previsão</option>' : '') + o;
+        el.value = String(v);
     });
 }
 fillPrint();
@@ -255,8 +255,8 @@ function confirmD() {
     var m = M.filter(function (x) { return x.n === $('dm').value })[0]; if (!m) return;
     var tp = $('dt').value;
     var inS = S.some(function (x) {
-    var t = isWk(x) ? 'r' : 'b'; if (tp !== 'a' && tp !== t) return false;
-    return (x.c && x.c.n === m.n) || x.p.some(function (o) { return o.n === m.n });
+        var t = isWk(x) ? 'r' : 'b'; if (tp !== 'a' && tp !== t) return false;
+        return (x.c && x.c.n === m.n) || x.p.some(function (o) { return o.n === m.n });
     });
     if (tp === 'a') { m.prev = m.g; m.g = 'd'; m.dp = '' } else { m.dp = tp }
     m.dest = dest; m.ini = $('di').value; m.fim = $('df').value; closeD(); OP.dg = true; renderM();
@@ -270,9 +270,9 @@ $('ov2').addEventListener('click', function (e) { if (e.target === $('ov2')) clo
 document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeD() });
 Array.prototype.forEach.call(document.querySelectorAll('.tab'), function (b) {
     b.onclick = function () {
-    var t = b.getAttribute('data-t');
-    Array.prototype.forEach.call(document.querySelectorAll('.tab'), function (x) { x.classList.toggle('on', x === b) });
-    $('sec-e').hidden = t !== 'e'; $('sec-s').hidden = t !== 's'; $('sec-m').hidden = t !== 'm'; $('sec-d').hidden = t !== 'd'; $('sec-h').hidden = t !== 'h'; if (t === 'h') renderHist(); $('mini').hidden = t !== 'e'; if (t !== 'e' && cur === 'a' && autoStale) regenAuto(); if (t === 's') renderSug();
+        var t = b.getAttribute('data-t');
+        Array.prototype.forEach.call(document.querySelectorAll('.tab'), function (x) { x.classList.toggle('on', x === b) });
+        $('sec-e').hidden = t !== 'e'; $('sec-s').hidden = t !== 's'; $('sec-m').hidden = t !== 'm'; $('sec-d').hidden = t !== 'd'; $('sec-h').hidden = t !== 'h'; $('sec-j').hidden = t !== 'j'; if (t === 'h') renderHist(); $('mini').hidden = t !== 'e'; if (t !== 'e' && cur === 'a' && autoStale) regenAuto(); if (t === 's') renderSug();
     }
 });
 renderM();
@@ -326,9 +326,9 @@ function firstUnlaunched() { for (var i = 0; i < S.length; i++)if (!dayLaunched(
 function pendingOutside() {
     var e = erng(), p = prng(), o = [];
     S.forEach(function (x, i) {
-    if (i >= e[0] && i <= e[1]) return;
-    if (p && i >= p[0] && i <= p[1]) return;
-    if ((x.c || x.p.length) && !dayLaunched(x)) o.push(i);
+        if (i >= e[0] && i <= e[1]) return;
+        if (p && i >= p[0] && i <= p[1]) return;
+        if ((x.c || x.p.length) && !dayLaunched(x)) o.push(i);
     });
     return o;
 }
@@ -354,13 +354,13 @@ function renderSug() {
     Array.prototype.forEach.call(document.querySelectorAll('[data-st]'), function (b) { b.classList.toggle('on', b.getAttribute('data-st') === sgT) });
     var oth = sgT === 'b' ? 'r' : 'b', nome = sgT === 'r' ? 'vermelha' : 'preta';
     $('sgcols').innerHTML = G.map(function (gr) {
-    var g = gr.id, mx = 0;
-    var l = M.filter(function (m) { return m.g === g && !blk(m, sgT) }).sort(function (a, b) { return cmpS(a, b, sgT) });
-    l.forEach(function (m) { mx = Math.max(mx, restT(m, sgT)) });
-    return '<div class="card"><div class="gh"><span>' + esc(gr.name) + '</span><span>' + l.length + '</span></div><ul class="ml">' + (l.length ? l.map(function (m, i) {
-        var r = restT(m, sgT), li = lastT(m.n, sgT), pc = mx ? Math.round(r / mx * 100) : 0, top = i < 3 && LG.length > 0;
-        return '<li class="sr' + (top ? ' top' : '') + '"><span class="rk">' + (i + 1) + '</span><span class="rn"><b>' + esc(m.n) + '</b>' + (top ? '<em class="tg">Sugestão</em>' : '') + '<button type="button" class="sm" style="margin-left:8px" data-a="fg" data-i="' + M.indexOf(m) + '" title="Ajustar folga manualmente">Folga</button><small>' + (li >= 0 ? 'Último serviço: ' + esc(LG[li].d) : (LG.length ? 'Ainda não serviu na escala ' + nome : 'Sem lançamentos')) + ' · ' + (oth === 'r' ? 'Vermelha' : 'Preta') + ': ' + restT(m, oth) + ' d</small></span><span class="rv"><b>' + r + '</b><span>dia' + (r === 1 ? '' : 's') + ' de folga</span></span><i class="bar"><u style="width:' + pc + '%"></u></i></li>';
-    }).join('') : '<li class="emp">Nenhum militar neste grupo.</li>') + '</ul></div>';
+        var g = gr.id, mx = 0;
+        var l = M.filter(function (m) { return m.g === g && !blk(m, sgT) }).sort(function (a, b) { return cmpS(a, b, sgT) });
+        l.forEach(function (m) { mx = Math.max(mx, restT(m, sgT)) });
+        return '<div class="card"><div class="gh"><span>' + esc(gr.name) + '</span><span>' + l.length + '</span></div><ul class="ml">' + (l.length ? l.map(function (m, i) {
+            var r = restT(m, sgT), li = lastT(m.n, sgT), pc = mx ? Math.round(r / mx * 100) : 0, top = i < 3 && LG.length > 0;
+            return '<li class="sr' + (top ? ' top' : '') + '"><span class="rk">' + (i + 1) + '</span><span class="rn"><b>' + esc(m.n) + '</b>' + (top ? '<em class="tg">Sugestão</em>' : '') + '<button type="button" class="sm" style="margin-left:8px" data-a="fg" data-i="' + M.indexOf(m) + '" title="Ajustar folga manualmente">Folga</button><small>' + (li >= 0 ? 'Último serviço: ' + esc(LG[li].d) : (LG.length ? 'Ainda não serviu na escala ' + nome : 'Sem lançamentos')) + ' · ' + (oth === 'r' ? 'Vermelha' : 'Preta') + ': ' + restT(m, oth) + ' d</small></span><span class="rv"><b>' + r + '</b><span>dia' + (r === 1 ? '' : 's') + ' de folga</span></span><i class="bar"><u style="width:' + pc + '%"></u></i></li>';
+        }).join('') : '<li class="emp">Nenhum militar neste grupo.</li>') + '</ul></div>';
     }).join('');
 }
 function renderMini() {
@@ -368,8 +368,8 @@ function renderMini() {
     $('mini').setAttribute('data-t', mT);
     Array.prototype.forEach.call(document.querySelectorAll('[data-mt]'), function (b) { b.classList.toggle('on', b.getAttribute('data-mt') === mT) });
     $('mn-g').innerHTML = [cfg.c, cfg.p].filter(Boolean).map(function (g) {
-    var l = M.filter(function (m) { return m.g === g && !blk(m, mT) }).sort(function (a, b) { return cmpS(a, b, mT) }).slice(0, 3);
-    return '<div class="mn-s"><span>' + esc(gnm(g)) + '</span><ol>' + (l.length ? l.map(function (m, i) { var u = svcDays(m.n).length > 0; return '<li' + (u ? ' class="mn-u" title="Já escalado na escala em exibição"' : '') + '><i>' + (i + 1) + '</i><span>' + esc(m.n) + (u ? ' ✓' : '') + '</span><b>' + (LG.length || anyAdj() ? restT(m, mT) + ' d' : '—') + '</b></li>' }).join('') : '<li class="mn-e">Ninguém disponível</li>') + '</ol></div>';
+        var l = M.filter(function (m) { return m.g === g && !blk(m, mT) }).sort(function (a, b) { return cmpS(a, b, mT) }).slice(0, 3);
+        return '<div class="mn-s"><span>' + esc(gnm(g)) + '</span><ol>' + (l.length ? l.map(function (m, i) { var u = svcDays(m.n).length > 0; return '<li' + (u ? ' class="mn-u" title="Já escalado na escala em exibição"' : '') + '><i>' + (i + 1) + '</i><span>' + esc(m.n) + (u ? ' ✓' : '') + '</span><b>' + (LG.length || anyAdj() ? restT(m, mT) + ' d' : '—') + '</b></li>' }).join('') : '<li class="mn-e">Ninguém disponível</li>') + '</ol></div>';
     }).join('');
 }
 $('sec-s').addEventListener('click', function (e) { var b = e.target.closest('[data-st]'); if (!b) return; sgT = b.getAttribute('data-st'); renderSug() });
@@ -392,16 +392,16 @@ function genAuto(keep) {
     var save = LG, out = [], i, x, t, cb, pl;
     LG = JSON.parse(JSON.stringify(LG));
     try {
-    for (i = 0; i < n; i++) {
-        if (kp) x = { d: kp[i].d, w: kp[i].w, f: !!kp[i].f, c: null, p: [] };
-        else { x = { d: fmtD(dt, yl), w: WD[(wi + 1 + i) % 7], f: false, c: null, p: [] }; dt.setDate(dt.getDate() + 1) }
-        t = isWk(x) ? 'r' : 'b';
-        cb = cfg.c ? pickA(cfg.c, 1, t) : []; pl = cfg.p ? pickA(cfg.p, k, t) : [];
-        x.c = cb.length ? { n: cb[0], a: '' } : null;
-        x.p = pl.map(function (nm) { return { n: nm, a: '' } });
-        LG.push({ d: x.d, w: x.w, r: t === 'r' ? 1 : 0, q: 1e9 + i, c: cb[0] || '', p: pl });
-        out.push(x);
-    }
+        for (i = 0; i < n; i++) {
+            if (kp) x = { d: kp[i].d, w: kp[i].w, f: !!kp[i].f, c: null, p: [] };
+            else { x = { d: fmtD(dt, yl), w: WD[(wi + 1 + i) % 7], f: false, c: null, p: [] }; dt.setDate(dt.getDate() + 1) }
+            t = isWk(x) ? 'r' : 'b';
+            cb = cfg.c ? pickA(cfg.c, 1, t) : []; pl = cfg.p ? pickA(cfg.p, k, t) : [];
+            x.c = cb.length ? { n: cb[0], a: '' } : null;
+            x.p = pl.map(function (nm) { return { n: nm, a: '' } });
+            LG.push({ d: x.d, w: x.w, r: t === 'r' ? 1 : 0, q: 1e9 + i, c: cb[0] || '', p: pl });
+            out.push(x);
+        }
     } finally { LG = save }
     return out;
 }
@@ -409,7 +409,7 @@ function rebuildSel() {
     ['e1', 'e2', 'p1', 'p2'].forEach(function (id) { $(id).innerHTML = '' });
     var q = prs[cur];
     if (q && q.e1 !== '' && q.e1 !== undefined && !isNaN(+q.e1)) PD = { e1: +q.e1, e2: +q.e2, p1: +q.p1, p2: +q.p2 };
-    else PD = cur === 'a' ? { e1: 0, e2: S.length - 1, p1: -1, p2: S.length - 1 } : { e1: 0, e2: 5, p1: 6, p2: 7 };
+    else PD = cur === 'a' ? { e1: 0, e2: S.length - 1, p1: -1, p2: S.length - 1 } : { e1: 0, e2: 5, p1: -1, p2: 7 };
     fillPrint();
 }
 function renderAuBox() {
@@ -450,21 +450,21 @@ function mergeToManual(rows) {
     mergeBak = { S: JSON.stringify(SM), p: q ? JSON.stringify(q) : '', l: lancs.m };
     if (q) ['e1', 'e2', 'p1', 'p2'].forEach(function (k) { var v = +q[k]; dt[k] = (q[k] !== '' && q[k] !== undefined && v >= 0 && SM[v]) ? SM[v].d : null });
     rows.forEach(function (x) {
-    var cp = JSON.parse(JSON.stringify(x)), k = tkey(x.d), f = -1, i, ins = SM.length;
-    for (i = 0; i < SM.length; i++)if (tkey(SM[i].d) === k) { f = i; break }
-    if (f >= 0) { SM[f] = cp; return }
-    for (i = 0; i < SM.length; i++)if (tkey(SM[i].d) > k) { ins = i; break }
-    SM.splice(ins, 0, cp);
+        var cp = JSON.parse(JSON.stringify(x)), k = tkey(x.d), f = -1, i, ins = SM.length;
+        for (i = 0; i < SM.length; i++)if (tkey(SM[i].d) === k) { f = i; break }
+        if (f >= 0) { SM[f] = cp; return }
+        for (i = 0; i < SM.length; i++)if (tkey(SM[i].d) > k) { ins = i; break }
+        SM.splice(ins, 0, cp);
     });
     if (q) {
-    var nq = {};
-    ['e1', 'e2', 'p1', 'p2'].forEach(function (k) {
-        if (dt[k] === null) { nq[k] = q[k]; return }
-        var ix = -1; for (var i = 0; i < SM.length; i++)if (SM[i].d === dt[k]) { ix = i; break }
-        nq[k] = String(ix < 0 ? q[k] : ix);
-    });
-    prs.m = nq;
-    if (was) lancs.m = sigFrom(SM, nq);
+        var nq = {};
+        ['e1', 'e2', 'p1', 'p2'].forEach(function (k) {
+            if (dt[k] === null) { nq[k] = q[k]; return }
+            var ix = -1; for (var i = 0; i < SM.length; i++)if (SM[i].d === dt[k]) { ix = i; break }
+            nq[k] = String(ix < 0 ? q[k] : ix);
+        });
+        prs.m = nq;
+        if (was) lancs.m = sigFrom(SM, nq);
     }
     return rows.length;
 }
@@ -512,9 +512,9 @@ function doLancar() {
     prevLG = JSON.parse(JSON.stringify(LG)); mergeBak = null;
     var ent = { L: prevLG, mb: null, b: baseMap(), t: 'Lançamento de ' + S[e[0]].d + (e[1] > e[0] ? ' a ' + S[e[1]].d : '') };
     S.slice(e[0], e[1] + 1).forEach(function (x) {
-    var rec = { d: x.d, w: x.w, r: isWk(x) ? 1 : 0, q: ++LSEQ, c: cfg.c && x.c ? cr(x.c) : '', p: cfg.p ? x.p.map(cr) : [], gc: cfg.c ? gnm(cfg.c) : '', gp: cfg.p ? gnm(cfg.p) : '', tr: trRec(x) }, k = tkey(x.d), f = -1;
-    LG.forEach(function (r, i) { if (tkey(r.d) === k) f = i });
-    if (f >= 0) LG[f] = rec; else LG.push(rec);
+        var rec = { d: x.d, w: x.w, r: isWk(x) ? 1 : 0, q: ++LSEQ, c: cfg.c && x.c ? cr(x.c) : '', p: cfg.p ? x.p.map(cr) : [], gc: cfg.c ? gnm(cfg.c) : '', gp: cfg.p ? gnm(cfg.p) : '', tr: trRec(x) }, k = tkey(x.d), f = -1;
+        LG.forEach(function (r, i) { if (tkey(r.d) === k) f = i });
+        if (f >= 0) LG[f] = rec; else LG.push(rec);
     });
     LG.sort(function (a, b) { return tkey(a.d) - tkey(b.d) });
     var ks = {}; S.slice(e[0], e[1] + 1).forEach(function (x) { if (x.p.length) ks[x.p.length] = (ks[x.p.length] || 0) + 1 });
@@ -573,41 +573,41 @@ function selType() {
 function drawP() {
     var q = $("q").value.trim().toUpperCase(), t = selType(), sel = Object.keys(selD).map(Number), av = [], bz = [];
     names(cfg[mode]).filter(function (n) { return n.indexOf(q) > -1 }).forEach(function (n) {
-    var m = M.filter(function (x) { return x.n === n })[0], sv = svcDays(n);
-    if (t !== 'm' && blk(m, t)) return;
-    (sv.length ? bz : av).push({ n: n, m: m, sv: sv });
+        var m = M.filter(function (x) { return x.n === n })[0], sv = svcDays(n);
+        if (t !== 'm' && blk(m, t)) return;
+        (sv.length ? bz : av).push({ n: n, m: m, sv: sv });
     });
     av.sort(function (a, b) { return cmpS(a.m, b.m, t) });
     $("people").innerHTML = av.map(function (o) {
-    return '<button type="button" class="pp' + (selP[o.n] ? ' sel' : '') + '" data-n="' + esc(o.n) + '">' + esc(o.n) + bdg(o.m, t) + dpb(o.m) + '</button>';
+        return '<button type="button" class="pp' + (selP[o.n] ? ' sel' : '') + '" data-n="' + esc(o.n) + '">' + esc(o.n) + bdg(o.m, t) + dpb(o.m) + '</button>';
     }).join("") || '<span style="color:var(--muted);font-size:.85rem">' + (q ? 'Nenhum militar encontrado.' : 'Todos já têm serviço nesta escala.') + '</span>';
     bz.forEach(function (o) {
-    var best = null;
-    sel.forEach(function (i) {
-        o.sv.forEach(function (j) {
-        if (j === i) { o.same = true; return }
-        var g = gap(i, j); if (best === null || g < best.g) best = { g: g, j: j, i: i };
-        })
-    });
-    o.best = best;
+        var best = null;
+        sel.forEach(function (i) {
+            o.sv.forEach(function (j) {
+                if (j === i) { o.same = true; return }
+                var g = gap(i, j); if (best === null || g < best.g) best = { g: g, j: j, i: i };
+            })
+        });
+        o.best = best;
     });
     bz.sort(function (a, b) { var ga = a.best ? a.best.g : -1, gb = b.best ? b.best.g : -1; if (ga !== gb) return gb - ga; return cmpS(a.m, b.m, t) });
     $('p2w').hidden = !bz.length;
     $('people2').innerHTML = bz.map(function (o) {
-    var dias = o.sv.map(function (j) { return S[j].d.slice(0, 5) + ' (' + S[j].w.slice(0, 3) + ')' }).join(' · ');
-    var fo = o.same ? '<span class="pq3 bad">Já está em um dos dias selecionados</span>' : (o.best ? '<span class="pq3">Folga de <b>' + o.best.g + ' d</b> ' + (dnum(S[o.best.j].d) < dnum(S[o.best.i].d) ? 'após' : 'antes de') + ' ' + esc(S[o.best.j].d.slice(0, 5)) + (o.best.g === 0 ? ' (dias seguidos)' : '') + '</span>' : '<span class="pq3">Selecione o(s) dia(s) para ver a folga</span>');
-    return '<button type="button" class="pq' + (selP[o.n] ? ' sel' : '') + '" data-n="' + esc(o.n) + '"><span class="pq1"><b>' + esc(o.n) + '</b>' + bdg(o.m, t) + dpb(o.m) + '</span><span class="pq2">De serviço: ' + esc(dias) + '</span>' + fo + '</button>';
+        var dias = o.sv.map(function (j) { return S[j].d.slice(0, 5) + ' (' + S[j].w.slice(0, 3) + ')' }).join(' · ');
+        var fo = o.same ? '<span class="pq3 bad">Já está em um dos dias selecionados</span>' : (o.best ? '<span class="pq3">Folga de <b>' + o.best.g + ' d</b> ' + (dnum(S[o.best.j].d) < dnum(S[o.best.i].d) ? 'após' : 'antes de') + ' ' + esc(S[o.best.j].d.slice(0, 5)) + (o.best.g === 0 ? ' (dias seguidos)' : '') + '</span>' : '<span class="pq3">Selecione o(s) dia(s) para ver a folga</span>');
+        return '<button type="button" class="pq' + (selP[o.n] ? ' sel' : '') + '" data-n="' + esc(o.n) + '"><span class="pq1"><b>' + esc(o.n) + '</b>' + bdg(o.m, t) + dpb(o.m) + '</span><span class="pq2">De serviço: ' + esc(dias) + '</span>' + fo + '</button>';
     }).join('');
 }
 function drawD() {
     $("days").innerHTML = S.map(function (x, i) {
-    return '<button type="button" class="dy' + (isWk(x) ? ' we' : '') + (selD[i] ? ' sel' : '') + '" data-i="' + i + '">' + x.d.slice(0, 5) + '<small>' + x.w.slice(0, 3) + '</small></button>';
+        return '<button type="button" class="dy' + (isWk(x) ? ' we' : '') + (selD[i] ? ' sel' : '') + '" data-i="' + i + '">' + x.d.slice(0, 5) + '<small>' + x.w.slice(0, 3) + '</small></button>';
     }).join("");
 }
 function qd(k) {
     selD = {};
     S.forEach(function (x, i) {
-    if (k === "all" || (k === "wd" && !isWk(x)) || (k === "we" && isWk(x))) selD[i] = 1;
+        if (k === "all" || (k === "wd" && !isWk(x)) || (k === "we" && isWk(x))) selD[i] = 1;
     });
     drawD(); drawP(); upd();
 }
@@ -644,13 +644,13 @@ function confirmM() {
     var aviso = $("wc").checked ? ($("wt").value.trim() || "Sem motivo informado") : "";
     var names = Object.keys(selP), added = 0, skipped = 0, multi = names.length > 1;
     Object.keys(selD).forEach(function (i) {
-    var day = S[i], tt = isWk(day) ? 'r' : 'b';
-    names.forEach(function (n) {
-        var mm = M.filter(function (x) { return x.n === n })[0];
-        if (mm && blk(mm, tt)) { skipped++; return }
-        if (mode === "c") { day.c = { n: n, a: (multi && noW[n]) ? '' : aviso }; added++ }
-        else if (!day.p.some(function (o) { return o.n === n })) { day.p.push({ n: n, a: (multi && noW[n]) ? '' : aviso }); added++ }
-    });
+        var day = S[i], tt = isWk(day) ? 'r' : 'b';
+        names.forEach(function (n) {
+            var mm = M.filter(function (x) { return x.n === n })[0];
+            if (mm && blk(mm, tt)) { skipped++; return }
+            if (mode === "c") { day.c = { n: n, a: (multi && noW[n]) ? '' : aviso }; added++ }
+            else if (!day.p.some(function (o) { return o.n === n })) { day.p.push({ n: n, a: (multi && noW[n]) ? '' : aviso }); added++ }
+        });
     });
     render(); closeM();
     toast((added ? added + " inclusão(ões) na escala" : "Nada novo: os militares já estavam nesses dias") + (skipped ? " · " + skipped + " ignorada(s) por dispensa" : ""));
@@ -669,8 +669,8 @@ function buildCols() {
 function renderHead() {
     var h = '<th>Data</th>';
     ['c', 'p'].forEach(function (k) {
-    if (!cfg[k]) return;
-    h += '<th><div class="th">' + esc(gnm(cfg[k])) + '<button class="add" onclick="openM(\'' + k + '\')" aria-label="Adicionar em ' + esc(gnm(cfg[k])) + '" title="Adicionar em ' + esc(gnm(cfg[k])) + '">+</button></div></th>';
+        if (!cfg[k]) return;
+        h += '<th><div class="th">' + esc(gnm(cfg[k])) + '<button class="add" onclick="openM(\'' + k + '\')" aria-label="Adicionar em ' + esc(gnm(cfg[k])) + '" title="Adicionar em ' + esc(gnm(cfg[k])) + '">+</button></div></th>';
     });
     document.getElementById('thr').innerHTML = h;
 }
@@ -699,12 +699,12 @@ function setCfg(nc) {
 $('cfgb').addEventListener('change', function (e) {
     var id = e.target.id, v = e.target.value, d = !!(cfg.c && cfg.p), g1 = cfg.c || cfg.p, nc = { c: cfg.c, p: cfg.p };
     if (id === 'cf-m') {
-    if (v === 'u') nc = { c: cfg.c, p: null };
-    else {
-        var other = gids().filter(function (i) { return i !== g1 })[0];
-        if (!other) { toast('Crie outro grupo na aba Militares para usar escala dupla'); renderCfg(); return }
-        if (cfg.c) nc.p = other; else nc.c = other;
-    }
+        if (v === 'u') nc = { c: cfg.c, p: null };
+        else {
+            var other = gids().filter(function (i) { return i !== g1 })[0];
+            if (!other) { toast('Crie outro grupo na aba Militares para usar escala dupla'); renderCfg(); return }
+            if (cfg.c) nc.p = other; else nc.c = other;
+        }
     }
     else if (id === 'cf-c') { if (d || cfg.c) nc.c = v; else nc.p = v }
     else if (id === 'cf-p') nc.p = v;
@@ -716,9 +716,9 @@ $('cfgb').addEventListener('change', function (e) {
 var grEd = -1;
 function drawGr() {
     $('gr-l').innerHTML = G.length ? G.map(function (g, i) {
-    var n = M.filter(function (m) { return m.g === g.id }).length;
-    if (i === grEd) return '<li class="mi"><input type="text" id="gr-ei" value="' + esc(g.name) + '" maxlength="30" style="flex:1;min-width:120px"><span class="acts"><button type="button" class="sm" data-ga="sv" data-i="' + i + '">Salvar</button><button type="button" class="sm" data-ga="cn">Cancelar</button></span></li>';
-    return '<li class="mi"><b>' + esc(g.name) + '<span class="rb">' + n + '</span></b><span class="acts"><button type="button" class="sm" data-ga="ed" data-i="' + i + '">Editar</button><button type="button" class="sm del" data-ga="dl" data-i="' + i + '">Excluir</button></span></li>';
+        var n = M.filter(function (m) { return m.g === g.id }).length;
+        if (i === grEd) return '<li class="mi"><input type="text" id="gr-ei" value="' + esc(g.name) + '" maxlength="30" style="flex:1;min-width:120px"><span class="acts"><button type="button" class="sm" data-ga="sv" data-i="' + i + '">Salvar</button><button type="button" class="sm" data-ga="cn">Cancelar</button></span></li>';
+        return '<li class="mi"><b>' + esc(g.name) + '<span class="rb">' + n + '</span></b><span class="acts"><button type="button" class="sm" data-ga="ed" data-i="' + i + '">Editar</button><button type="button" class="sm del" data-ga="dl" data-i="' + i + '">Excluir</button></span></li>';
     }).join('') : '<li class="emp">Nenhum grupo.</li>';
 }
 function openGr() { grEd = -1; $('gr-n').value = ''; drawGr(); $('ovgr').hidden = false; $('gr-n').focus() }
@@ -745,9 +745,9 @@ function fixCfg() {
 function grDel(i) {
     var g = G[i], used = cfg.c === g.id || cfg.p === g.id;
     askC('Excluir grupo', 'Excluir o grupo "' + g.name + '"? Os militares dele vão para "Sem grupo".' + (used ? ' Ele sai da escala atual e os militares colocados nessa coluna são retirados.' : ''), 'Excluir', function () {
-    G.splice(i, 1);
-    M.forEach(function (m) { if (m.g === g.id) m.g = 'n'; if (m.prev === g.id) m.prev = 'n' });
-    fixCfg(); grAfter();
+        G.splice(i, 1);
+        M.forEach(function (m) { if (m.g === g.id) m.g = 'n'; if (m.prev === g.id) m.prev = 'n' });
+        fixCfg(); grAfter();
     });
 }
 $('gm-open').onclick = openGr;
@@ -773,13 +773,23 @@ function applyState(st) {
     if (!st || !st.S || !st.S.length || !st.M) return false;
     st = JSON.parse(JSON.stringify(st));
     G = Array.isArray(st.G) ? st.G : [{ id: 'c', name: 'Cabo de dia' }, { id: 'p', name: 'Plantões' }]; cfg = st.cfg || { c: 'c', p: 'p' };
-    SM = st.S; SA = st.SA || []; cur = 'm'; S = SM; M = st.M; LG = st.L || []; UL = st.UL || (st.Lp ? [{ L: st.Lp, mb: null, b: {}, t: 'Lançamento anterior' }] : []); if (st.mb && UL.length && !UL[UL.length - 1].mb) UL[UL.length - 1].mb = st.mb; prevLG = UL.length ? UL[UL.length - 1].L : null; lancs = { m: st.lanc || '', a: st.lancA || '' }; lanc = lancs.m; prs = { m: (st.pr && st.pr.e1 !== undefined) ? st.pr : null, a: st.prA || null }; AP = st.AP || AP; autoSig = st.autoSig || ''; autoStale = !!st.autoStale; autoBak = null; mergeBak = null; LSEQ = st.lq || 0; resetSeq = (st.rs !== undefined) ? st.rs : (st.rk ? LSEQ : -1); editing = -1;
+    SM = st.S; SA = st.SA || []; cur = 'm'; S = SM; M = st.M; LG = st.L || []; UL = st.UL || (st.Lp ? [{ L: st.Lp, mb: null, b: {}, t: 'Lançamento anterior' }] : []); if (st.mb && UL.length && !UL[UL.length - 1].mb) UL[UL.length - 1].mb = st.mb; prevLG = UL.length ? UL[UL.length - 1].L : null; lancs = { m: st.lanc || '', a: st.lancA || '' }; lanc = lancs.m; prs = { m: (st.pr && st.pr.e1 !== undefined) ? st.pr : null, a: st.prA || null }; AP = st.AP || AP; autoSig = st.autoSig || ''; autoStale = !!st.autoStale; (function () {
+        ['m', 'a'].forEach(function (k) {
+            var q = prs[k], arr = k === 'm' ? SM : SA;
+            if (!q || +q.p1 < 0) return;
+            var was = !!(lancs[k] && lancs[k] === sigFrom(arr, q));
+            q.p1 = '-1';
+            if (was) lancs[k] = sigFrom(arr, q);
+        });
+        lanc = lancs.m;
+    })(); autoBak = null; mergeBak = null; LSEQ = st.lq || 0; resetSeq = (st.rs !== undefined) ? st.rs : (st.rk ? LSEQ : -1); editing = -1;
     M.forEach(function (m) { if (m.dp === undefined) m.dp = '' });
     var g = st.sig || {}; $('sn').value = g.n || ''; if (st.ps && PSN[st.ps]) PST = st.ps; $('tt1').value = (st.tt && st.tt.a) || ''; $('tt2').value = (st.tt && st.tt.b) || ''; if (st.pg) { if (st.pg.s) PGS = st.pg.s; if (st.pg.m) PGM = st.pg.m } fillPg({ sp: g.p || '' }); setSp(g.p || ''); $('sf').value = g.f || '';
     render(); renderM(); fillPrint(); upS();
     var q = st.pr || {};
     ['e1', 'e2', 'p1', 'p2'].forEach(function (k) {
-    if (q[k] !== undefined && q[k] !== '' && $(k).querySelector('option[value="' + q[k] + '"]')) $(k).value = String(q[k]);
+        if (k === 'p1') { $(k).value = '-1'; return }
+        if (q[k] !== undefined && q[k] !== '' && $(k).querySelector('option[value="' + q[k] + '"]')) $(k).value = String(q[k]);
     });
     renderCfg(); updLaunch(); renderSug(); renderMini(); renderSub();
     if (LG.length && (!SA.length || autoStale)) regenAuto();
@@ -790,9 +800,9 @@ function pgList() { return pgK === 's' ? PGS : PGM }
 function fillPg(vs) {
     vs = vs || {};
     ['sp', 'np'].forEach(function (id) {
-    var el = $(id), l = id === 'sp' ? PGS : PGM, cur = vs[id] !== undefined ? vs[id] : el.value;
-    el.innerHTML = (id === 'sp' ? '<option value="">Selecione…</option>' : '') + l.map(function (x) { return '<option>' + esc(x) + '</option>' }).join('');
-    el.value = l.indexOf(cur) > -1 ? cur : (id === 'np' ? (l[0] || '') : '');
+        var el = $(id), l = id === 'sp' ? PGS : PGM, cur = vs[id] !== undefined ? vs[id] : el.value;
+        el.innerHTML = (id === 'sp' ? '<option value="">Selecione…</option>' : '') + l.map(function (x) { return '<option>' + esc(x) + '</option>' }).join('');
+        el.value = l.indexOf(cur) > -1 ? cur : (id === 'np' ? (l[0] || '') : '');
     });
 }
 function setSp(v) {
@@ -805,8 +815,8 @@ function drawPg() {
     $('pg-t').textContent = pgK === 's' ? 'Cargos da assinatura' : 'Cargos para criação de militar';
     var l = pgList();
     $('pg-l').innerHTML = l.length ? l.map(function (x, i) {
-    if (i === pgEd) return '<li class="mi"><input type="text" id="pg-ei" value="' + esc(x) + '" maxlength="20" style="flex:1;min-width:120px"><span class="acts"><button type="button" class="sm" data-pa="sv" data-i="' + i + '">Salvar</button><button type="button" class="sm" data-pa="cn">Cancelar</button></span></li>';
-    return '<li class="mi"><b>' + esc(x) + '</b><span class="acts"><button type="button" class="sm" data-pa="ed" data-i="' + i + '">Editar</button><button type="button" class="sm del" data-pa="dl" data-i="' + i + '">Excluir</button></span></li>';
+        if (i === pgEd) return '<li class="mi"><input type="text" id="pg-ei" value="' + esc(x) + '" maxlength="20" style="flex:1;min-width:120px"><span class="acts"><button type="button" class="sm" data-pa="sv" data-i="' + i + '">Salvar</button><button type="button" class="sm" data-pa="cn">Cancelar</button></span></li>';
+        return '<li class="mi"><b>' + esc(x) + '</b><span class="acts"><button type="button" class="sm" data-pa="ed" data-i="' + i + '">Editar</button><button type="button" class="sm del" data-pa="dl" data-i="' + i + '">Excluir</button></span></li>';
     }).join('') : '<li class="emp">Nenhum cargo cadastrado.</li>';
 }
 function openPg(k) { pgK = k; pgEd = -1; $('pg-n').value = ''; drawPg(); $('ovg').hidden = false; $('pg-n').focus() }
@@ -847,7 +857,7 @@ function pSample(k) {
 function drawPs() {
     var d = { '1': 'Modelo atual: cabeçalho cinza e fim de semana em cinza escuro.', '2': 'Cabeçalho escuro, fim de semana em tom avermelhado e linhas alternadas.', '3': 'Sem molduras, só linhas finas. Economiza tinta e fica mais limpo.', '4': 'Letra serifada e filete duplo no título. Aspecto de documento oficial.', '5': 'Linhas mais baixas e fonte menor: cabe mais dias na mesma folha.', '6': 'Bordas grossas, texto em negrito e fim de semana hachurado. Ideal para preto e branco e cópias.', '7': 'Cabeçalho azul, linhas alternadas e fim de semana em azul claro.' };
     $('pp-g').innerHTML = ['1', '2', '3', '4', '5', '6', '7'].map(function (k) {
-    return '<button type="button" class="ps-o' + (pSel === k ? ' sel' : '') + '" data-ps="' + k + '"><span class="nm">' + PSN[k] + (k === '1' ? '<em class="tg">Padrão</em>' : '') + '</span><span class="pd">' + d[k] + '</span>' + pSample(k) + '</button>';
+        return '<button type="button" class="ps-o' + (pSel === k ? ' sel' : '') + '" data-ps="' + k + '"><span class="nm">' + PSN[k] + (k === '1' ? '<em class="tg">Padrão</em>' : '') + '</span><span class="pd">' + d[k] + '</span>' + pSample(k) + '</button>';
     }).join('');
 }
 function askStyle(label, fn) { pAct = fn; pSel = PST; $('pp-ok').textContent = label; drawPs(); $('ovp').hidden = false }
@@ -870,17 +880,17 @@ function renderHist() {
     if (typeof $ !== 'function' || !$('hs-l')) return;
     var q = $('hs-q').value.trim().toUpperCase(), tp = $('hs-t').value;
     var l = LG.filter(function (r) {
-    if (tp && isRed(r) !== (tp === 'r')) return false;
-    if (!q) return true;
-    var h = [r.d, r.w, r.c].concat(r.p).concat((r.tr || []).map(function (z) { return z.by + ' ' + z.for })).join(' ').toUpperCase();
-    return h.indexOf(q) > -1;
+        if (tp && isRed(r) !== (tp === 'r')) return false;
+        if (!q) return true;
+        var h = [r.d, r.w, r.c].concat(r.p).concat((r.tr || []).map(function (z) { return z.by + ' ' + z.for })).join(' ').toUpperCase();
+        return h.indexOf(q) > -1;
     }).reverse();
     $('hs-c').textContent = l.length + ' de ' + LG.length;
     $('hs-l').innerHTML = l.length ? l.map(function (r) {
-    var tr = r.tr || [];
-    function who(k, n) { var t = tr.filter(function (z) { return z.k === k && z.for === n })[0]; return t ? esc(t.by) + '* <i>(tirou o serviço de ' + esc(n) + ')</i>' : esc(n) }
-    var red = isRed(r);
-    return '<li class="mi"><b>' + esc(r.d) + ' · ' + esc(r.w.slice(0, 3)) + '<span class="rb' + (red ? ' rr' : '') + '">' + (red ? 'VERMELHA' : 'PRETA') + '</span></b><span class="acts"><button type="button" class="sm del" data-hd="' + esc(r.d) + '">Excluir</button></span><span class="dest">' + [glc(r) ? '<b>' + esc(glc(r)) + ':</b> ' + (r.c ? who('c', r.c) : 'Vago') : '', glp(r) ? '<b>' + esc(glp(r)) + ':</b> ' + (r.p.length ? r.p.map(function (n) { return who('p', n) }).join(', ') : '—') : ''].filter(Boolean).join(' · ') + '</span></li>';
+        var tr = r.tr || [];
+        function who(k, n) { var t = tr.filter(function (z) { return z.k === k && z.for === n })[0]; return t ? esc(t.by) + '* <i>(tirou o serviço de ' + esc(n) + ')</i>' : esc(n) }
+        var red = isRed(r);
+        return '<li class="mi"><b>' + esc(r.d) + ' · ' + esc(r.w.slice(0, 3)) + '<span class="rb' + (red ? ' rr' : '') + '">' + (red ? 'VERMELHA' : 'PRETA') + '</span></b><span class="acts"><button type="button" class="sm del" data-hd="' + esc(r.d) + '">Excluir</button></span><span class="dest">' + [glc(r) ? '<b>' + esc(glc(r)) + ':</b> ' + (r.c ? who('c', r.c) : 'Vago') : '', glp(r) ? '<b>' + esc(glp(r)) + ':</b> ' + (r.p.length ? r.p.map(function (n) { return who('p', n) }).join(', ') : '—') : ''].filter(Boolean).join(' · ') + '</span></li>';
     }).join('') : '<li class="emp">' + (LG.length ? 'Nada encontrado.' : 'Nenhum dia lançado ainda.') + '</li>';
     $('hs-uc').textContent = UL.length;
     $('hs-u').disabled = !UL.length;
@@ -917,9 +927,9 @@ function renderLast() {
     $('lb-d').textContent = r.d + ' · ' + r.w + ' · ' + (isRed(r) ? 'Escala vermelha' : 'Escala preta');
     var tr = r.tr || [];
     function chip(k, nm) {
-    var t = tr.filter(function (z) { return z.k === k && z.for === nm })[0], cl = k === 'c' ? 'cabo' : 'p';
-    if (!t) return '<span class="' + cl + '">' + esc(nm) + '</span>';
-    return '<span class="' + cl + ' has">' + esc(t.by) + '*</span><small style="color:var(--muted)">tirou o serviço de ' + esc(nm) + ' (a folga do dia é de ' + esc(nm) + ')</small>';
+        var t = tr.filter(function (z) { return z.k === k && z.for === nm })[0], cl = k === 'c' ? 'cabo' : 'p';
+        if (!t) return '<span class="' + cl + '">' + esc(nm) + '</span>';
+        return '<span class="' + cl + ' has">' + esc(t.by) + '*</span><small style="color:var(--muted)">tirou o serviço de ' + esc(nm) + ' (a folga do dia é de ' + esc(nm) + ')</small>';
     }
     $('lb-b').innerHTML = (glc(r) ? '<div class="lg-r"><span class="lg-l">' + esc(glc(r)) + '</span>' + (r.c ? chip('c', r.c) : '<span class="vago">Vago</span>') + '</div>' : '') + (glp(r) ? '<div class="lg-r"><span class="lg-l">' + esc(glp(r)) + '</span><div class="pl">' + (r.p.length ? r.p.map(function (n) { return chip('p', n) }).join('') : '<span class="vago">Sem plantões</span>') + '</div></div>' : '');
 }
@@ -973,11 +983,11 @@ $('fi').onchange = function () {
     var inp = this, f = inp.files && inp.files[0]; if (!f) return;
     var r = new FileReader();
     r.onload = function () {
-    try {
-        var prev = snap();
-        if (!applyState(JSON.parse(r.result))) throw 0;
-        toastUndo('Arquivo importado: ' + f.name, function () { applyState(prev) });
-    } catch (e) { toast('Arquivo inv\u00e1lido: use um .json exportado por esta p\u00e1gina') }
+        try {
+            var prev = snap();
+            if (!applyState(JSON.parse(r.result))) throw 0;
+            toastUndo('Arquivo importado: ' + f.name, function () { applyState(prev) });
+        } catch (e) { toast('Arquivo inv\u00e1lido: use um .json exportado por esta p\u00e1gina') }
     };
     r.readAsText(f); inp.value = '';
 };
@@ -989,4 +999,32 @@ $('fi').onchange = function () {
     ready = true;
     flush();
     if (st && lastJ) setSt('Salvo automaticamente neste navegador', 'ok');
+})();
+
+
+(function () {
+    var q = document.getElementById('hp-q'), list = document.getElementById('hp-list'), none = document.getElementById('hp-none'), cnt = document.getElementById('hp-c');
+    if (!q || !list) return;
+    var items = Array.prototype.slice.call(list.querySelectorAll('details.hp-item'));
+    function norm(s) { s = String(s || '').toLowerCase(); try { s = s.normalize('NFD').replace(/[\u0300-\u036f]/g, '') } catch (e) { } return s }
+    function filter() {
+        var t = norm(q.value).trim(), shown = 0;
+        items.forEach(function (d) {
+            var hit = !t || norm(d.textContent + ' ' + d.getAttribute('data-kw')).indexOf(t) > -1;
+            d.hidden = !hit; if (hit) shown++;
+            if (t) d.open = hit;
+        });
+        none.hidden = shown > 0;
+        cnt.textContent = shown + (shown === 1 ? ' tópico' : ' tópicos');
+    }
+    q.addEventListener('input', filter);
+    document.getElementById('hp-open').onclick = function () { items.forEach(function (d) { if (!d.hidden) d.open = true }) };
+    document.getElementById('hp-close').onclick = function () { items.forEach(function (d) { d.open = false }) };
+    list.addEventListener('click', function (e) {
+        var b = e.target.closest ? e.target.closest('[data-go]') : null;
+        if (!b) return;
+        var tab = document.querySelector('.tab[data-t="' + b.getAttribute('data-go') + '"]');
+        if (tab) { tab.click(); window.scrollTo(0, 0) }
+    });
+    filter();
 })();
