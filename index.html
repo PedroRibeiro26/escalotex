@@ -2,390 +2,907 @@
 <html lang="pt-BR">
 
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <link rel="stylesheet" href="style.css">
-  <title>ESCALOTEX</title>
-  
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <link rel="stylesheet" href="style.css">
+    <title>ESCALOTEX</title>
+
+
 </head>
+
 <body>
-  <div class="wrap">
-    <header class="top">
-      <div class="brand"><span class="logo" aria-hidden="true">E</span><h1>Escalotex</h1></div>
-      <nav class="tabs" role="tablist"><button type="button" class="tab on" data-t="e">Escala</button><button
-          type="button" class="tab" data-t="s">Sugestões</button><button type="button" class="tab"
-          data-t="m">Militares</button><button type="button" class="tab" data-t="d" id="tab-d">Dispensados</button><button type="button" class="tab"
-          data-t="h" id="tab-h">Histórico</button></nav>
-      <div class="dbx"><span id="st" class="st">Carregando…</span><button type="button" class="b2 ghost"
-          id="ex">Exportar arquivo</button><button type="button" class="b2 ghost" id="im">Importar
-          arquivo</button><input type="file" id="fi" accept=".json,application/json" hidden></div>
-    </header>
-
-    <main class="page">
-
-      <!-- ============ ESCALA ============ -->
-      <section id="sec-e">
-        <div class="esc-grid">
-          <div class="esc-col">
-            <div class="subtabs" role="tablist"><button type="button" class="stab on" data-sub="m">Escala
-                manual</button><button type="button" class="stab" data-sub="a">Escala automática</button></div>
-
-            <div id="au-empty" class="note" hidden>A escala automática aparece aqui depois que a
-              primeira escala for lançada. Monte a escala manual, clique em LANÇAR e o sistema sugere a próxima.</div>
-            <div id="au-box" class="aubox" hidden>
-              <div class="au-h"><b>Escala automática</b><span class="au-tag">Sugerida pelo sistema</span></div>
-              <p id="au-t"></p>
-              <div class="au-b"><label class="au-l">Dias <input type="number" id="au-n" min="1" max="31"
-                    value="5"></label><button type="button" class="b2 ghost" id="au-new">Gerar de novo</button><button
-                  type="button" class="b2 ghost" id="au-re">Recalcular mantendo as datas</button><button type="button"
-                  class="b2 ghost" id="au-bak" hidden>Restaurar minha versão anterior</button></div>
-              <p id="au-s" class="ls"></p>
+    <div class="wrap">
+        <header class="top">
+            <div class="brand"><span class="logo" aria-hidden="true">E</span>
+                <h1>Escalotex</h1>
             </div>
+            <nav class="tabs" role="tablist"><button type="button" class="tab on" data-t="e">Escala</button><button
+                    type="button" class="tab" data-t="s">Sugestões</button><button type="button" class="tab"
+                    data-t="m">Militares</button><button type="button" class="tab" data-t="d"
+                    id="tab-d">Dispensados</button><button type="button" class="tab" data-t="h"
+                    id="tab-h">Histórico</button><button type="button" class="tab" data-t="j" id="tab-j">Ajuda</button>
+            </nav>
+            <div class="dbx"><span id="st" class="st">Carregando…</span><button type="button" class="b2 ghost"
+                    id="ex">Exportar arquivo</button><button type="button" class="b2 ghost" id="im">Importar
+                    arquivo</button><input type="file" id="fi" accept=".json,application/json" hidden></div>
+        </header>
 
-            <div id="esc-main">
-              <div class="card tcard">
-                <div class="tc-h">
-                  <div class="legend">
-                    <span><i class="sw" style="background:var(--cabo)"></i>Preta: dia de semana</span>
-                    <span><i class="sw" style="background:var(--red)"></i>Vermelha: fim de semana e feriados</span>
-                    <span><i class="warn" style="width:16px;height:16px">!</i>Aviso: passe o mouse ou clique no ícone para ler o motivo</span>
-                  </div>
-                  <button type="button" class="b2 ghost" id="ad">+ Adicionar dia</button>
-                </div>
-                <div class="scroll">
-                  <table>
-                    <thead><tr id="thr"></tr></thead>
-                    <tbody id="rows"></tbody>
-                  </table>
-                </div>
-              </div>
+        <main class="page">
 
-              <div class="fin-grid">
-                <div class="card fin">
-                  <div class="gh"><span>Período e lançamento</span></div>
-                  <div class="fin-b">
-                    <div class="prt">
-                      <div class="pc"><b>Escala</b><select id="e1" aria-label="Escala: data inicial"></select> até <select id="e2"
-                          aria-label="Escala: data final"></select></div>
-                      <div class="pc"><b>Previsão</b><select id="p1" aria-label="Previsão: data inicial"></select> até <select
-                          id="p2" aria-label="Previsão: data final"></select></div>
+            <!-- ============ ESCALA ============ -->
+            <section id="sec-e">
+                <div class="esc-grid">
+                    <div class="esc-col">
+                        <div class="subtabs" role="tablist"><button type="button" class="stab on" data-sub="m">Escala
+                                manual</button><button type="button" class="stab" data-sub="a">Escala
+                                automática</button></div>
+
+                        <div id="au-empty" class="note" hidden>A escala automática aparece aqui depois que a
+                            primeira escala for lançada. Monte a escala manual, clique em LANÇAR e o sistema sugere a
+                            próxima.</div>
+                        <div id="au-box" class="aubox" hidden>
+                            <div class="au-h"><b>Escala automática</b><span class="au-tag">Sugerida pelo sistema</span>
+                            </div>
+                            <p id="au-t"></p>
+                            <div class="au-b"><label class="au-l">Dias <input type="number" id="au-n" min="1" max="31"
+                                        value="5"></label><button type="button" class="b2 ghost" id="au-new">Gerar de
+                                    novo</button><button type="button" class="b2 ghost" id="au-re">Recalcular mantendo
+                                    as datas</button><button type="button" class="b2 ghost" id="au-bak" hidden>Restaurar
+                                    minha versão anterior</button></div>
+                            <p id="au-s" class="ls"></p>
+                        </div>
+
+                        <div id="esc-main">
+                            <div class="card tcard">
+                                <div class="tc-h">
+                                    <div class="legend">
+                                        <span><i class="sw" style="background:var(--cabo)"></i>Preta: dia de
+                                            semana</span>
+                                        <span><i class="sw" style="background:var(--red)"></i>Vermelha: fim de semana e
+                                            feriados</span>
+                                        <span><i class="warn" style="width:16px;height:16px">!</i>Aviso: passe o mouse
+                                            ou clique no ícone para ler o motivo</span>
+                                    </div>
+                                    <button type="button" class="b2 ghost" id="ad">+ Adicionar dia</button>
+                                </div>
+                                <div class="scroll">
+                                    <table>
+                                        <thead>
+                                            <tr id="thr"></tr>
+                                        </thead>
+                                        <tbody id="rows"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="fin-grid">
+                                <div class="card fin">
+                                    <div class="gh"><span>Período e lançamento</span></div>
+                                    <div class="fin-b">
+                                        <div class="prt">
+                                            <div class="pc"><b>Escala</b><select id="e1"
+                                                    aria-label="Escala: data inicial"></select> até <select id="e2"
+                                                    aria-label="Escala: data final"></select></div>
+                                            <div class="pc"><b>Previsão</b><select id="p1"
+                                                    aria-label="Previsão: data inicial"></select> até <select id="p2"
+                                                    aria-label="Previsão: data final"></select></div>
+                                        </div>
+                                        <div class="ttl">
+                                            <label>Título da impressão<input type="text" id="tt1"
+                                                    placeholder="Escala de Serviço de" maxlength="60"
+                                                    autocomplete="off"></label>
+                                            <label>Título da previsão<input type="text" id="tt2"
+                                                    placeholder="Previsão da Escala de Serviço de" maxlength="60"
+                                                    autocomplete="off"></label>
+                                            <p class="ttl-n">Em branco, vale o título padrão. A data do período entra
+                                                sempre na linha abaixo do título. <button type="button" class="sm"
+                                                    id="tt-r">Restaurar padrão</button></p>
+                                        </div>
+                                        <p class="note nt">LANÇAR conta os dias de folga somente da ESCALA; a PREVISÃO
+                                            não conta.</p>
+                                        <div class="lx"><button type="button" class="btn" id="lc">LANÇAR</button><span
+                                                id="ls" class="ls"></span><button type="button" class="btn ghost"
+                                                id="pv">Visualizar</button><button type="button" class="btn" id="pb"
+                                                onclick="doPrint()" disabled>Imprimir</button></div>
+                                    </div>
+                                </div>
+
+                                <div class="sig card" id="sig">
+                                    <div class="gh"><span>Assinatura</span></div>
+                                    <div class="sg">
+                                        <label class="sg-n">Nome completo<input type="text" id="sn"
+                                                placeholder="Nome completo do militar" autocomplete="off"></label>
+                                        <label>P/G <button type="button" class="sm" data-pg="s"
+                                                style="align-self:flex-start;text-transform:none">Gerenciar
+                                                cargos</button><select id="sp" class="sel2">
+                                                <option value="">Selecione…</option>
+                                                <option>SD EV</option>
+                                                <option>SD EP</option>
+                                                <option>AL</option>
+                                                <option>CB EP</option>
+                                                <option>3º SGT</option>
+                                                <option>2º SGT</option>
+                                                <option>1º SGT</option>
+                                                <option>ST</option>
+                                                <option>ASP OF</option>
+                                                <option>2º TEN</option>
+                                                <option>1º TEN</option>
+                                                <option>CAP</option>
+                                                <option>MAJ</option>
+                                                <option>TC</option>
+                                                <option>CEL</option>
+                                            </select></label>
+                                        <label>Função<input type="text" id="sf"
+                                                placeholder="Digite a função (ex.: Cabo de Dia)"
+                                                autocomplete="off"></label>
+                                    </div>
+                                    <div class="sp">
+                                        <div class="sline"></div>
+                                        <div id="s1">Nome completo</div>
+                                        <div id="s2">Função</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="ttl">
-                      <label>Título da impressão<input type="text" id="tt1" placeholder="Escala de Serviço de" maxlength="60" autocomplete="off"></label>
-                      <label>Título da previsão<input type="text" id="tt2" placeholder="Previsão da Escala de Serviço de" maxlength="60" autocomplete="off"></label>
-                      <p class="ttl-n">Em branco, vale o título padrão. A data do período entra sempre na linha abaixo do título. <button type="button" class="sm" id="tt-r">Restaurar padrão</button></p>
+
+                    <aside class="esc-side">
+                        <div id="lastbox" class="aubox lastbox" hidden>
+                            <div class="au-h"><b>Último dia lançado</b></div>
+                            <span class="au-tag" id="lb-d"></span>
+                            <div id="lb-b"></div>
+                        </div>
+
+                        <div id="mini" class="mini" data-t="b">
+                            <div class="mn-h"><b>Sugestões</b><span class="mn-t"><button type="button" data-mt="b"
+                                        class="on" title="Escala preta (dia de semana)">P</button><button type="button"
+                                        data-mt="r"
+                                        title="Escala vermelha (fim de semana e feriados)">V</button></span><button
+                                    type="button" id="mn-x" aria-label="Recolher ou abrir">▾</button></div>
+                            <div class="mn-b">
+                                <div id="mn-g"></div>
+                                <small class="mn-n">Mais folgados (os mesmos na escala manual e na automática). ✓ = já
+                                    escalado na escala em
+                                    exibição. P = preta (dia de semana) · V = vermelha (fim de semana e
+                                    feriados).</small>
+                            </div>
+                        </div>
+
+                        <div class="aubox" id="cfgbox">
+                            <div class="au-h"><b>Tipo de escala</b><span class="au-tag">Grupos da escala</span></div>
+                            <div class="au-b" id="cfgb"></div>
+                            <p class="cfg-n">Dupla: duas colunas (dois grupos). Única: só um grupo, sem segunda coluna,
+                                inclusive na impressão. Crie novos grupos na aba Militares.</p>
+                        </div>
+                    </aside>
+                </div>
+            </section>
+
+            <!-- ============ SUGESTÕES ============ -->
+            <section id="sec-s" hidden data-t="b">
+                <div class="toolbar">
+                    <div class="tb-l">
+                        <div class="seg" role="tablist"><button type="button" class="on" data-st="b"><i></i>Escala preta
+                                · dia de
+                                semana</button><button type="button" data-st="r"><i></i>Escala vermelha · fim de semana
+                                e feriados</button>
+                        </div>
+                        <p class="hint">A folga de cada escala é contada <b>separadamente</b>: a preta conta só os dias
+                            de semana lançados
+                            e a vermelha só os fins de semana e feriados, sempre a partir do dia seguinte ao serviço. A
+                            previsão não conta.
+                        </p>
                     </div>
-                    <p class="note nt">LANÇAR conta os dias de folga somente da ESCALA; a PREVISÃO não conta.</p>
-                    <div class="lx"><button type="button" class="btn" id="lc">LANÇAR</button><span id="ls" class="ls"></span><button
-                        type="button" class="btn ghost" id="pv">Visualizar</button><button type="button" class="btn" id="pb"
-                        onclick="doPrint()" disabled>Imprimir</button></div>
-                  </div>
+                    <div class="sgt">
+                        <button type="button" class="b2 ghost" id="sg-r">Resetar todas as folgas</button><button
+                            type="button" class="b2 ghost" id="sg-u">Desfazer último lançamento</button>
+                    </div>
                 </div>
+                <p id="sg-e" class="note">Nenhuma escala lançada ainda. A contagem começa depois que você
+                    clicar em LANÇAR, no final da aba Escala.</p>
+                <div class="cols" id="sgcols"></div>
+            </section>
 
-                <div class="sig card" id="sig">
-                  <div class="gh"><span>Assinatura</span></div>
-                  <div class="sg">
-                    <label class="sg-n">Nome completo<input type="text" id="sn" placeholder="Nome completo do militar"
-                        autocomplete="off"></label>
-                    <label>P/G <button type="button" class="sm" data-pg="s"
-                        style="align-self:flex-start;text-transform:none">Gerenciar cargos</button><select id="sp" class="sel2">
-                        <option value="">Selecione…</option>
-                        <option>SD EV</option>
-                        <option>SD EP</option>
-                        <option>AL</option>
-                        <option>CB EP</option>
-                        <option>3º SGT</option>
-                        <option>2º SGT</option>
-                        <option>1º SGT</option>
-                        <option>ST</option>
-                        <option>ASP OF</option>
-                        <option>2º TEN</option>
-                        <option>1º TEN</option>
-                        <option>CAP</option>
-                        <option>MAJ</option>
-                        <option>TC</option>
-                        <option>CEL</option>
-                      </select></label>
-                    <label>Função<input type="text" id="sf" placeholder="Digite a função (ex.: Cabo de Dia)"
-                        autocomplete="off"></label>
-                  </div>
-                  <div class="sp">
-                    <div class="sline"></div>
-                    <div id="s1">Nome completo</div>
-                    <div id="s2">Função</div>
-                  </div>
+            <!-- ============ MILITARES ============ -->
+            <section id="sec-m" hidden>
+                <div class="card newm">
+                    <div class="lb"><span>Novo militar · entra direto em "Sem grupo"</span><button type="button"
+                            class="b2 ghost" id="gm-open">Gerenciar grupos</button></div>
+                    <div class="mf2"><select id="np" aria-label="Posto ou graduação">
+                            <option>SD EV</option>
+                            <option>SD EP</option>
+                            <option>CB</option>
+                            <option>AL</option>
+                        </select><button type="button" class="b2 ghost" data-pg="m"
+                            title="Criar, editar e excluir cargos">Cargos</button><input type="text" id="nn"
+                            placeholder="Nome de guerra (ex.: SOUZA)" autocomplete="off"><button type="button"
+                            class="b2" id="nc">Criar militar</button></div>
                 </div>
-              </div>
+                <div class="cols" id="gcols"></div>
+            </section>
+
+            <!-- ============ DISPENSADOS ============ -->
+            <section id="sec-d" hidden>
+                <div class="dp card" id="dp">
+                    <div class="gh"><span>Dispensados</span><button type="button" class="b2 ghost" id="da">+ Adicionar à
+                            dispensa</button></div>
+                    <ul class="ml" id="l-d"></ul>
+                </div>
+            </section>
+
+            <!-- ============ HISTÓRICO ============ -->
+            <section id="sec-h" hidden>
+                <div class="mf2 filters"><input type="text" id="hs-q" placeholder="Buscar militar ou data…"
+                        autocomplete="off"><select id="hs-t" aria-label="Filtrar por escala">
+                        <option value="">Todas as escalas</option>
+                        <option value="b">Preta · dia de semana</option>
+                        <option value="r">Vermelha · fim de semana e feriados</option>
+                    </select></div>
+                <div class="hist-grid">
+                    <div class="card">
+                        <div class="gh"><span>Dias lançados</span><span id="hs-c"></span></div>
+                        <p class="hint inl">Cada dia lançado fica registrado aqui, com o cabo de dia, os plantões e as
+                            trocas de serviço.
+                            Para corrigir um dia, exclua-o daqui ou monte-o de novo na aba Escala e lance outra vez (o
+                            novo lançamento
+                            substitui o anterior).</p>
+                        <ul class="ml" id="hs-l"></ul>
+                    </div>
+                    <div class="card">
+                        <div class="gh"><span>Passos que podem ser desfeitos</span><span id="hs-uc"></span></div>
+                        <p class="hint inl">Todo lançamento e exclusão entra nesta lista, do mais recente para o mais
+                            antigo.</p>
+                        <div class="hs-act"><button type="button" class="b2 ghost" id="hs-u">Desfazer último
+                                passo</button></div>
+                        <ul class="ml" id="hs-ul"></ul>
+                    </div>
+                </div>
+            </section>
+
+
+            <!-- ============ AJUDA ============ -->
+            <section id="sec-j" hidden>
+                <div class="hp-top">
+                    <input type="text" id="hp-q" placeholder="Buscar na ajuda (ex.: lançar, troca, dispensa, imprimir)…"
+                        autocomplete="off" aria-label="Buscar na ajuda">
+                    <button type="button" class="b2 ghost" id="hp-open">Abrir todos</button>
+                    <button type="button" class="b2 ghost" id="hp-close">Fechar todos</button>
+                </div>
+                <div class="card">
+                    <div class="gh"><span>Ajuda do Escalotex</span><span id="hp-c"></span></div>
+                    <div class="hp-intro">Passo a passo de cada tarefa. <b>Regra de ouro:</b> <b>importe</b> o arquivo
+                        mais recente antes de usar e <b>exporte</b> depois de usar. Toque em um tópico para abrir.</div>
+                    <div class="hp-key">
+                        <div><b>Escala preta</b>Dias de semana.</div>
+                        <div><b>Escala vermelha</b>Sábados, domingos e feriados.</div>
+                        <div><b>P / V</b>Dias de folga na escala preta / vermelha.</div>
+                        <div><b>LANÇAR</b>Confirma o serviço cumprido, conta a folga e libera a impressão.</div>
+                    </div>
+                </div>
+                <div class="hp-list" id="hp-list">
+                    <details class="hp-item"
+                        data-kw="comecar rotina importar exportar arquivo banco json salvar backup">
+                        <summary><span class="hp-n">1</span><span class="hp-t">Começar a usar: a rotina de todo
+                                dia</span></summary>
+                        <div class="hp-body">
+                            <div class="hp-warn"><b>Não existe banco de dados.</b> Tudo fica em um único arquivo: <span
+                                    class="hp-k">escala-servico-banco.json</span>. A página <span
+                                    class="hp-k">index.html</span> é só o programa.</div>
+                            <h4>Antes de usar</h4>
+                            <ol>
+                                <li>Abra o <span class="hp-k">index.html</span> no navegador.</li>
+                                <li>Clique em <b>Importar arquivo</b> (canto superior direito) e escolha o <span
+                                        class="hp-k">escala-servico-banco.json</span> <b>mais recente</b>.</li>
+                                <li>Na aba <b>Escala</b>, confira a caixa <b>Último dia lançado</b> para ter certeza de
+                                    que é a versão certa.</li>
+                            </ol>
+                            <h4>Depois de usar</h4>
+                            <ol>
+                                <li>Clique em <b>Exportar arquivo</b>.</li>
+                                <li>Guarde o arquivo baixado no lugar de sempre (pasta compartilhada, pendrive, e-mail
+                                    para si mesmo), <b>substituindo o antigo</b>.</li>
+                            </ol>
+                            <div class="hp-tip">Dica: guarde com a data no nome (ex.: <span
+                                    class="hp-k">escala-servico-banco 2026-10-16.json</span>) e mantenha algumas versões
+                                antigas como cópia de segurança.</div>
+                        </div>
+                    </details>
+                    <details class="hp-item"
+                        data-kw="salvar outro computador celular navegador anonimo desfazer importar cuidados">
+                        <summary><span class="hp-n">2</span><span class="hp-t">Salvar, levar para outro computador e
+                                cuidados com o arquivo</span></summary>
+                        <div class="hp-body">
+                            <h4>Levar os dados para outro computador ou celular</h4>
+                            <ol>
+                                <li>No aparelho de origem, clique em <b>Exportar arquivo</b>.</li>
+                                <li>Envie o <span class="hp-k">.json</span> para o outro aparelho.</li>
+                                <li>No outro aparelho, abra o <span class="hp-k">index.html</span> e clique em
+                                    <b>Importar arquivo</b>.</li>
+                            </ol>
+                            <h4>Entenda o aviso &ldquo;Salvo automaticamente neste navegador&rdquo;</h4>
+                            <ul>
+                                <li>É só uma cópia de trabalho, gravada <b>naquele navegador, naquele aparelho</b>.</li>
+                                <li>Ela some ao limpar os dados de navegação, usar aba anônima ou trocar de perfil.</li>
+                                <li>Se aparecer <b>&ldquo;Não foi possível salvar neste navegador&rdquo;</b>, exporte
+                                    imediatamente.</li>
+                            </ul>
+                            <h4>Cuidados</h4>
+                            <ul>
+                                <li><b>Uma pessoa por vez.</b> Se duas pessoas alteram o mesmo arquivo, vale o último
+                                    exportado e o trabalho da outra se perde. Combine quem está com a &ldquo;vez&rdquo;.
+                                </li>
+                                <li><b>Importar substitui tudo</b> o que está na tela. Logo após importar aparece o
+                                    aviso <b>Arquivo importado</b> com o botão <b>Desfazer</b>.</li>
+                                <li>Só são aceitos <span class="hp-k">.json</span> gerados pelo próprio Escalotex.</li>
+                                <li>O arquivo contém nomes dos militares: trate como informação interna.</li>
+                                <li>Não edite o <span class="hp-k">.json</span> à mão: um erro pode torná-lo inválido.
+                                </li>
+                            </ul>
+                        </div>
+                    </details>
+                    <details class="hp-item"
+                        data-kw="militar cadastrar criar grupo cargo posto graduacao sem grupo excluir">
+                        <summary><span class="hp-n">3</span><span class="hp-t">Cadastrar militares e organizar
+                                grupos</span></summary>
+                        <div class="hp-body">
+                            <h4>Criar um militar</h4>
+                            <ol>
+                                <li>Abra a aba <b>Militares</b>.</li>
+                                <li>Escolha o <b>posto/graduação</b> (use <b>Cargos</b> para criar, renomear ou excluir
+                                    opções da lista).</li>
+                                <li>Digite o <b>nome de guerra</b> (ex.: <span class="hp-k">SOUZA</span>).</li>
+                                <li>Clique em <b>Criar militar</b>. Ele fica como <span class="hp-k">SD EV SOUZA</span>
+                                    e o nome não pode repetir.</li>
+                                <li>O militar novo entra em <b>Sem grupo</b> e <b>não aparece nas listas da escala</b>
+                                    até ser colocado em um grupo: use o menu do militar para <b>mudar de grupo</b>.</li>
+                            </ol>
+                            <h4>Gerenciar grupos (ex.: &ldquo;Técnico de dia&rdquo;)</h4>
+                            <ol>
+                                <li>Em <b>Militares</b>, abra <b>Gerenciar grupos</b>.</li>
+                                <li>Crie, renomeie ou exclua grupos (nomes repetidos não são aceitos).</li>
+                                <li>Ao excluir um grupo, os militares dele vão para <b>Sem grupo</b>.</li>
+                                <li>Para o grupo virar coluna da escala, defina em <b>Escala &rarr; Tipo de escala</b>
+                                    (tópico 13).</li>
+                            </ol>
+                            <h4>Excluir um militar</h4>
+                            <p>Use <b>Excluir</b> no cartão dele. Aparece o aviso com <b>Desfazer</b>.</p>
+                            <button type="button" class="b2 ghost hp-go" data-go="m">Ir para Militares</button>
+                        </div>
+                    </details>
+                    <details class="hp-item" data-kw="folga ajuste manual inicial comecar corrigir errada">
+                        <summary><span class="hp-n">4</span><span class="hp-t">Informar a folga inicial de cada
+                                militar</span></summary>
+                        <div class="hp-body">
+                            <p>Ao começar a usar o sistema, ajuste a folga real de cada um para que as sugestões já
+                                saiam corretas.</p>
+                            <ol>
+                                <li>Abra <b>Sugestões</b> ou <b>Militares</b> e clique em <b>Folga</b> no militar.</li>
+                                <li>Digite a folga <b>atual</b> da escala <b>preta</b> e da <b>vermelha</b>.</li>
+                                <li>Confirme. O valor passa a ser a folga atual e <b>continua contando normalmente</b>.
+                                </li>
+                            </ol>
+                            <ul>
+                                <li>Valores ajustados manualmente aparecem com <b>*</b> nas listas.</li>
+                                <li>O ajuste de uma escala <b>é desfeito</b> quando o militar for lançado de serviço
+                                    nela.</li>
+                                <li><b>Remover ajustes</b> apaga os ajustes daquele militar.</li>
+                            </ul>
+                            <button type="button" class="b2 ghost hp-go" data-go="s">Ir para Sugestões</button>
+                        </div>
+                    </details>
+                    <details class="hp-item"
+                        data-kw="escala manual adicionar militar dia plantao cabo de dia aviso sugestao">
+                        <summary><span class="hp-n">5</span><span class="hp-t">Montar a escala manualmente (adicionar
+                                militares)</span></summary>
+                        <div class="hp-body">
+                            <h4>Adicionar vários dias de uma vez</h4>
+                            <ol>
+                                <li>Na aba <b>Escala</b>, escolha <b>Escala manual</b>.</li>
+                                <li>Clique no <b>+</b> do cabeçalho da coluna (<b>Cabo de dia</b> ou <b>Plantões</b>).
+                                </li>
+                                <li>Use a busca e selecione o(s) militar(es). Na lista <b>Disponíveis</b>, quem está
+                                    <b>mais folgado aparece primeiro</b>, com a folga <b>P</b> (preta) e <b>V</b>
+                                    (vermelha).</li>
+                                <li>Marque os <b>dias</b>. Atalhos: <b>Todos</b>, <b>Dias úteis</b>, <b>Fim de
+                                        semana</b> e <b>Limpar</b>.</li>
+                                <li>(Opcional) marque <b>Incluir aviso</b> e escreva o texto. Com vários militares,
+                                    escolha quais recebem o aviso.</li>
+                                <li>Confirme.</li>
+                            </ol>
+                            <h4>Adicionar em um dia só</h4>
+                            <p>Clique no <b>+</b> pequeno dentro da célula daquele dia.</p>
+                            <h4>Retirar alguém</h4>
+                            <p>Clique no <b>&times;</b> da etiqueta do militar. Aparece um aviso com <b>Desfazer</b>.
+                            </p>
+                            <ul>
+                                <li>No <b>cabo de dia</b> só cabe <b>um por dia</b> (escolher outro substitui). Nos
+                                    <b>plantões</b> podem ser vários.</li>
+                                <li>Militares <b>dispensados</b> naquele tipo de dia não aparecem e são ignorados (o
+                                    sistema informa quantos).</li>
+                                <li>A lista <b>Já de serviço nesta escala</b> mostra quantos dias de folga o militar
+                                    teria nos dias escolhidos.</li>
+                            </ul>
+                            <div class="hp-tip">Use a caixa <b>Sugestões</b> (à direita) para ver rapidamente os 3 mais
+                                folgados de cada grupo. O <b>&#10003;</b> indica quem já está escalado.</div>
+                            <button type="button" class="b2 ghost hp-go" data-go="e">Ir para Escala</button>
+                        </div>
+                    </details>
+                    <details class="hp-item"
+                        data-kw="dia editar data feriado remover adicionar dia semana vermelha preta">
+                        <summary><span class="hp-n">6</span><span class="hp-t">Editar, adicionar e remover dias
+                                (inclusive feriados)</span></summary>
+                        <div class="hp-body">
+                            <ol>
+                                <li>Para <b>mudar data, dia da semana ou marcar Feriado</b>, clique no <b>&#9998;</b> da
+                                    linha do dia. Formato da data: <span class="hp-k">dd/mm/aa</span> (data inválida é
+                                    recusada).</li>
+                                <li>Para <b>remover o dia</b>, clique no <b>&#10005;</b> (com <b>Desfazer</b>). A escala
+                                    precisa ter ao menos um dia.</li>
+                                <li>Para <b>criar o dia seguinte</b> ao último da tabela, clique em <b>+ Adicionar
+                                        dia</b>.</li>
+                            </ol>
+                            <div class="hp-tip">A marcação <b>Feriado</b> é o que faz um dia de semana contar como
+                                <b>escala vermelha</b>. Sábados e domingos já são vermelhos.</div>
+                        </div>
+                    </details>
+                    <details class="hp-item" data-kw="periodo previsao datas intervalo">
+                        <summary><span class="hp-n">7</span><span class="hp-t">Definir o período da escala e a
+                                previsão</span></summary>
+                        <div class="hp-body">
+                            <ol>
+                                <li>No cartão <b>Período e lançamento</b>, em <b>Escala</b>, informe as datas
+                                    <b>de/até</b>. Esse intervalo será <b>impresso e contado</b>.</li>
+                                <li>(Opcional) em <b>Previsão</b>, informe outro intervalo. Ele sai como <b>segunda
+                                        tabela</b> na impressão. Por padrão ela fica em <b>Sem previsão</b> (mesmo ao
+                                    adicionar vários dias ou importar o arquivo); só muda se você escolher uma data
+                                    inicial.</li>
+                            </ol>
+                            <div class="hp-warn">A <b>previsão nunca conta folga</b>. Só a <b>escala</b> conta, e só
+                                depois de lançada.</div>
+                            <button type="button" class="b2 ghost hp-go" data-go="e">Ir para Escala</button>
+                        </div>
+                    </details>
+                    <details class="hp-item" data-kw="lancar lancamento confirmar folga impressao liberada">
+                        <summary><span class="hp-n">8</span><span class="hp-t">LANÇAR a escala (confirmar o serviço
+                                cumprido)</span></summary>
+                        <div class="hp-body">
+                            <ol>
+                                <li>Confira militares e datas na tabela.</li>
+                                <li>Clique em <b>LANÇAR</b>.</li>
+                                <li>Leia o aviso do sistema, se houver: <b>dias sem ninguém</b>, <b>tudo já lançado</b>
+                                    ou <b>dias fora do intervalo</b> com militares ainda não lançados.</li>
+                                <li>Confirme.</li>
+                            </ol>
+                            <h4>O que acontece ao lançar</h4>
+                            <ul>
+                                <li>Os militares de serviço <b>passam a contar folga a partir do dia seguinte</b>.</li>
+                                <li>Cada dia entra no <b>Histórico</b>.</li>
+                                <li>A <b>impressão é liberada</b>.</li>
+                                <li>Se o dia já estava lançado, o novo lançamento <b>substitui</b> o anterior.</li>
+                            </ul>
+                            <div class="hp-warn">Se você <b>alterar qualquer coisa depois de lançar</b> (militares,
+                                datas, período), a impressão volta a ser bloqueada e aparece &ldquo;Há alterações não
+                                lançadas&rdquo;. Lance de novo para liberar.</div>
+                            <div class="hp-tip">Lançou errado? Use <b>Desfazer</b> no aviso logo após lançar, ou veja o
+                                tópico 14.</div>
+                        </div>
+                    </details>
+                    <details class="hp-item" data-kw="imprimir pdf estilo titulo assinatura visualizar a4 salvar">
+                        <summary><span class="hp-n">9</span><span class="hp-t">Imprimir ou salvar em PDF</span>
+                        </summary>
+                        <div class="hp-body">
+                            <ol>
+                                <li>(Opcional) preencha a <b>Assinatura</b>: <b>Nome completo</b>, <b>P/G</b> e
+                                    <b>Função</b>. Aparece ao final da folha.</li>
+                                <li>(Opcional) edite os <b>Títulos da impressão</b> e da previsão. A data entra sempre
+                                    na linha abaixo; em branco, vale o padrão; <b>Restaurar padrão</b> limpa os dois.
+                                </li>
+                                <li>Clique em <b>LANÇAR</b> (a impressão só funciona depois).</li>
+                                <li>Clique em <b>Visualizar</b> para ver a prévia, ou em <b>Imprimir</b>.</li>
+                                <li>Na janela <b>Escolha o estilo do PDF</b>, selecione o estilo desejado.</li>
+                                <li>Na janela de impressão do navegador, escolha a impressora ou <b>&ldquo;Salvar como
+                                        PDF&rdquo;</b>.</li>
+                            </ol>
+                            <h4>Estilos disponíveis</h4>
+                            <ul>
+                                <li><b>Clássico</b> (padrão), <b>Moderno</b>, <b>Minimalista</b> (economiza tinta),
+                                    <b>Formal</b> (aspecto de documento oficial), <b>Compacto</b> (cabem mais dias por
+                                    folha), <b>Alto contraste</b> (bom para preto e branco e cópias) e <b>Azul
+                                        institucional</b>.</li>
+                                <li>O estilo muda só a aparência e fica salvo no arquivo.</li>
+                            </ul>
+                            <div class="hp-tip">Formato A4. Nomes com <b>aviso</b> ou <b>troca de serviço</b> saem com
+                                asterisco (<b>*</b>). Fins de semana e feriados saem destacados.</div>
+                            <button type="button" class="b2 ghost hp-go" data-go="e">Ir para Escala</button>
+                        </div>
+                    </details>
+                    <details class="hp-item" data-kw="automatica escala automatica gerar recalcular proxima">
+                        <summary><span class="hp-n">10</span><span class="hp-t">Usar a escala automática</span>
+                        </summary>
+                        <div class="hp-body">
+                            <p>Ela só funciona <b>depois do primeiro lançamento</b>.</p>
+                            <ol>
+                                <li>Na aba <b>Escala</b>, escolha <b>Escala automática</b>.</li>
+                                <li>Em <b>Dias</b>, informe quantos dias gerar (1 a 31; padrão 5). A escala começa <b>no
+                                        dia seguinte ao último lançado</b>.</li>
+                                <li>Revise: entram os <b>mais folgados</b>, respeitando dispensas e evitando quem serviu
+                                    no último dia lançado.</li>
+                                <li>Edite se quiser (adicionar, retirar, trocar, mudar datas), como na escala manual.
+                                </li>
+                                <li>Clique em <b>LANÇAR</b>. Os dias vão para a escala manual e a impressão é liberada.
+                                    <b>Imprima nessa hora</b>: ao sair da aba, o sistema gera a próxima automática.</li>
+                            </ol>
+                            <h4>Botões</h4>
+                            <ul>
+                                <li><b>Gerar de novo:</b> descarta a atual (inclusive suas edições) e cria outra.</li>
+                                <li><b>Recalcular mantendo as datas:</b> mantém datas, dias da semana e feriados e refaz
+                                    só os militares.</li>
+                                <li><b>Restaurar minha versão anterior:</b> devolve sua versão editada, quando ela foi
+                                    regenerada.</li>
+                            </ul>
+                            <button type="button" class="b2 ghost hp-go" data-go="e">Ir para Escala</button>
+                        </div>
+                    </details>
+                    <details class="hp-item" data-kw="troca servico trocar substituir assumir">
+                        <summary><span class="hp-n">11</span><span class="hp-t">Fazer uma troca de serviço</span>
+                        </summary>
+                        <div class="hp-body">
+                            <ol>
+                                <li>Na escala, clique no <b>&#8644;</b> da etiqueta de quem estava escalado.</li>
+                                <li>Escolha <b>quem assume</b> (a lista já exclui quem está ocupado naquele dia ou
+                                    dispensado).</li>
+                                <li>Confirme.</li>
+                                <li>Clique em <b>LANÇAR</b> (ou lance de novo, se o dia já tinha sido lançado).</li>
+                            </ol>
+                            <ul>
+                                <li>Quem assumiu aparece no lugar, na escala e na impressão, com <b>*</b>.</li>
+                                <li>Ao lançar, quem <b>zera a folga do dia é o militar substituído</b>.</li>
+                                <li>A folga de <b>quem assumiu continua contando</b> normalmente.</li>
+                                <li>A troca fica registrada no <b>Histórico</b>.</li>
+                            </ul>
+                        </div>
+                    </details>
+                    <details class="hp-item" data-kw="dispensa dispensado retornar volta licenca curso baixa">
+                        <summary><span class="hp-n">12</span><span class="hp-t">Dispensar um militar e fazê-lo
+                                retornar</span></summary>
+                        <div class="hp-body">
+                            <h4>Dispensar</h4>
+                            <ol>
+                                <li>Abra a aba <b>Dispensados</b> e clique em <b>+ Adicionar à dispensa</b> (ou use
+                                    <b>Dispensar</b> no cartão do militar).</li>
+                                <li>Escolha o <b>Militar</b>.</li>
+                                <li>Escolha a <b>Abrangência</b>: <b>Total</b>, <b>Somente dias de semana (preta)</b> ou
+                                    <b>Somente fim de semana e feriados (vermelha)</b>.</li>
+                                <li>Informe o <b>Destino (motivo)</b>: curso, baixa médica, licença etc.</li>
+                                <li>Informe <b>início</b> e <b>fim</b> (o fim não pode ser antes do início).</li>
+                                <li>Confirme.</li>
+                            </ol>
+                            <h4>Retornar</h4>
+                            <ol>
+                                <li>Na aba <b>Dispensados</b>, clique em <b>Retornar</b> no militar.</li>
+                                <li>Ele volta ao grupo em que estava e os dados da dispensa são apagados.</li>
+                            </ol>
+                            <ul>
+                                <li>O militar dispensado <b>sai das listas</b> daquele tipo de escala (adicionar,
+                                    Sugestões e automática).</li>
+                                <li>Se ele já estava em dias de uma escala montada, <b>continua lá</b>; retire
+                                    manualmente se necessário.</li>
+                                <li>O ⚠ avisa quando faltam 2 dias ou menos, no último dia e depois do fim.</li>
+                            </ul>
+                            <div class="hp-warn">O sistema <b>não devolve</b> o militar sozinho quando a dispensa acaba:
+                                ele só avisa. Você precisa clicar em <b>Retornar</b>.</div>
+                            <button type="button" class="b2 ghost hp-go" data-go="d">Ir para Dispensados</button>
+                        </div>
+                    </details>
+                    <details class="hp-item" data-kw="tipo de escala grupos colunas dupla unica tecnico guia tfm">
+                        <summary><span class="hp-n">13</span><span class="hp-t">Mudar o tipo de escala (colunas e
+                                grupos)</span></summary>
+                        <div class="hp-body">
+                            <ol>
+                                <li>Na aba <b>Escala</b>, localize a caixa <b>Tipo de escala</b>.</li>
+                                <li>Escolha <b>Dupla</b> (duas colunas) ou <b>Única</b> (uma coluna; pode ser um por dia
+                                    ou vários por dia).</li>
+                                <li>Selecione o grupo de cada coluna (padrão: <b>Cabo de dia</b> e <b>Plantões</b>).
+                                </li>
+                                <li>Confirme.</li>
+                            </ol>
+                            <div class="hp-warn">Mudar os grupos <b>limpa os militares já colocados nas colunas que
+                                    mudaram</b> (o sistema pede confirmação). Dias já lançados no histórico <b>não são
+                                    alterados</b>.</div>
+                            <div class="hp-tip">Para usar um grupo novo (ex.: Técnico de dia, Guia de TFM), crie-o antes
+                                na aba <b>Militares</b> (tópico 3). Na escala <b>Única</b>, a impressão sai sem a
+                                segunda coluna.</div>
+                            <button type="button" class="b2 ghost hp-go" data-go="e">Ir para Escala</button>
+                        </div>
+                    </details>
+                    <details class="hp-item"
+                        data-kw="desfazer erro corrigir excluir historico lancei errado reset folgas">
+                        <summary><span class="hp-n">14</span><span class="hp-t">Corrigir erros e desfazer</span>
+                        </summary>
+                        <div class="hp-body">
+                            <h4>Desfazer o último passo</h4>
+                            <ol>
+                                <li>Abra <b>Histórico</b> (ou <b>Sugestões</b>) e clique em <b>Desfazer último
+                                        passo</b>. Também há o botão <b>Desfazer</b> no aviso logo após lançar.</li>
+                                <li>O passo marcado <b>PRÓXIMO A DESFAZER</b> é revertido. A lista guarda até <b>30
+                                        passos</b> (lançamentos e exclusões).</li>
+                            </ol>
+                            <h4>Corrigir um dia já lançado</h4>
+                            <ol>
+                                <li><b>Opção A:</b> em <b>Histórico</b>, exclua o dia. As folgas são recalculadas como
+                                    se ele nunca tivesse sido lançado.</li>
+                                <li><b>Opção B:</b> monte o dia de novo na aba <b>Escala</b> e clique em <b>LANÇAR</b>:
+                                    o novo lançamento substitui o anterior.</li>
+                            </ol>
+                            <h4>Outros desfazeres</h4>
+                            <ul>
+                                <li><b>Importei o arquivo errado:</b> use <b>Desfazer</b> no aviso logo após importar.
+                                    Se já saiu da tela, importe o arquivo correto.</li>
+                                <li><b>Folga de alguém errada:</b> use o botão <b>Folga</b> (tópico 4).</li>
+                                <li><b>Recomeçar a contagem de todos:</b> em <b>Sugestões</b>, <b>Resetar todas as
+                                        folgas</b> (o histórico é mantido).</li>
+                            </ul>
+                            <button type="button" class="b2 ghost hp-go" data-go="h">Ir para Histórico</button>
+                        </div>
+                    </details>
+                    <details class="hp-item" data-kw="historico consultar buscar filtrar">
+                        <summary><span class="hp-n">15</span><span class="hp-t">Consultar o histórico</span></summary>
+                        <div class="hp-body">
+                            <ol>
+                                <li>Abra a aba <b>Histórico</b>.</li>
+                                <li>Use a <b>busca</b> (militar ou data) e o <b>filtro</b> por escala preta ou vermelha.
+                                </li>
+                                <li>Cada item mostra data, dia da semana, tipo, cabo de dia, plantões e trocas de
+                                    serviço (<span class="hp-k">FULANO* (tirou o serviço de BELTRANO)</span>).</li>
+                            </ol>
+                            <div class="hp-tip">O histórico e a lista de passos fazem parte do arquivo exportado. Sem o
+                                arquivo, eles são perdidos.</div>
+                            <button type="button" class="b2 ghost hp-go" data-go="h">Ir para Histórico</button>
+                        </div>
+                    </details>
+                    <details class="hp-item" data-kw="folga contagem regra preta vermelha sugestao ordem como funciona">
+                        <summary><span class="hp-n">16</span><span class="hp-t">Entender como a folga é contada</span>
+                        </summary>
+                        <div class="hp-body">
+                            <ul>
+                                <li>A folga é contada <b>separadamente</b>: <b>preta</b> (dias de semana) e
+                                    <b>vermelha</b> (sábados, domingos e feriados).</li>
+                                <li>Conta os dias do mesmo tipo <b>lançados</b> desde o último serviço do militar,
+                                    começando <b>no dia seguinte</b> ao serviço.</li>
+                                <li><b>Só dias lançados contam.</b> Escala montada e não lançada não altera nada;
+                                    previsão não conta.</li>
+                                <li>Militar novo começa a contar a partir do <b>cadastro</b>.</li>
+                                <li>Ao ser lançado de serviço, a folga <b>daquele tipo</b> volta a zero.</li>
+                                <li><b>Ordem de sugestão:</b> mais dias de folga &rarr; serviu há mais tempo &rarr;
+                                    ordem alfabética.</li>
+                                <li>Em <b>troca de serviço</b>, zera quem foi <b>substituído</b>.</li>
+                            </ul>
+                            <div class="hp-tip">Na aba <b>Sugestões</b>, alterne entre <b>Escala preta</b> e <b>Escala
+                                    vermelha</b>; os 3 primeiros recebem a etiqueta <b>Sugestão</b>.</div>
+                            <button type="button" class="b2 ghost hp-go" data-go="s">Ir para Sugestões</button>
+                        </div>
+                    </details>
+                    <details class="hp-item"
+                        data-kw="problema erro vazio perdi dados imprimir cinza inavlido invalido reset zero apagar duvida faq">
+                        <summary><span class="hp-n">17</span><span class="hp-t">Problemas comuns</span></summary>
+                        <div class="hp-body">
+                            <ul>
+                                <li><b>Abri a página e está tudo vazio.</b> Provavelmente é outro navegador/aparelho,
+                                    aba anônima ou dados limpos. Use <b>Importar arquivo</b> com o último <span
+                                        class="hp-k">.json</span>.</li>
+                                <li><b>Posso usar em dois computadores?</b> Sim, levando o arquivo: exporte em um e
+                                    importe no outro.</li>
+                                <li><b>Duas pessoas ao mesmo tempo?</b> Não. Uma sobrescreve a outra; passe o arquivo de
+                                    mão em mão.</li>
+                                <li><b>O botão Imprimir está cinza.</b> A escala não foi lançada ou foi alterada depois
+                                    de lançar. Clique em <b>LANÇAR</b>.</li>
+                                <li><b>Militar não aparece para escalar.</b> Veja se ele está em <b>Sem grupo</b> ou
+                                    <b>dispensado</b> para aquele tipo de escala.</li>
+                                <li><b>&ldquo;Arquivo inválido&rdquo; ao importar.</b> Use somente um <span
+                                        class="hp-k">.json</span> exportado pelo Escalotex.</li>
+                                <li><b>Preciso apagar tudo e começar do zero.</b> Importe o <span
+                                        class="hp-k">reset_config.json</span> (reseta todas as configurações) ou limpe
+                                    os dados do site nas configurações do navegador e abra o <span
+                                        class="hp-k">index.html</span> sem importar nada. Guarde antes uma cópia do
+                                    <span class="hp-k">.json</span>.</li>
+                            </ul>
+                        </div>
+                    </details>
+                </div>
+                <div class="hp-none" id="hp-none" hidden>Nenhum tópico encontrado para essa busca.</div>
+            </section>
+
+            <footer class="foot">Desenvolvido por Pedro Ribeiro da Rosa</footer>
+        </main>
+    </div>
+
+    <div id="ov" class="ov" hidden>
+        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="mt">
+            <div class="mh">
+                <h2 id="mt"></h2><button class="x" onclick="closeM()" aria-label="Fechar">×</button>
             </div>
-          </div>
-
-          <aside class="esc-side">
-            <div id="lastbox" class="aubox lastbox" hidden>
-              <div class="au-h"><b>Último dia lançado</b></div>
-              <span class="au-tag" id="lb-d"></span>
-              <div id="lb-b"></div>
+            <div class="mb">
+                <div class="lb"><span id="lp">Militar</span></div>
+                <input type="text" id="q" placeholder="Buscar militar…" autocomplete="off">
+                <div id="people" class="people"></div>
+                <div id="p2w" hidden>
+                    <div class="lb"><span>Já de serviço nesta escala · folga até o dia escolhido</span></div>
+                    <div id="people2" class="plist2" style="margin-top:8px"></div>
+                </div>
+                <div class="lb"><span>Dia(s)</span>
+                    <span class="quick"><button onclick="qd('all')">Todos</button><button onclick="qd('wd')">Dias
+                            úteis</button><button onclick="qd('we')">Fim de semana</button><button
+                            onclick="qd('none')">Limpar</button></span>
+                </div>
+                <div id="days" class="days"></div>
+                <label class="chk"><input type="checkbox" id="wc"> Incluir aviso <i class="warn"
+                        style="width:16px;height:16px">!</i> <span
+                        style="color:var(--muted);font-weight:500">(opcional)</span></label>
+                <input type="text" id="wt" placeholder="Texto do aviso (ex.: dispensa, aguardando troca)" hidden>
+                <div id="wtg" hidden>
+                    <div class="lb"><span>Aplicar o aviso a: (marcados recebem)</span><span class="quick"><button
+                                type="button" onclick="wq(0)">Todos</button><button type="button"
+                                onclick="wq(1)">Nenhum</button></span></div>
+                    <div id="wtl" class="people" style="max-height:140px;margin-top:8px"></div>
+                </div>
             </div>
-
-            <div id="mini" class="mini" data-t="b">
-              <div class="mn-h"><b>Sugestões</b><span class="mn-t"><button type="button" data-mt="b" class="on"
-                    title="Escala preta (dia de semana)">P</button><button type="button" data-mt="r"
-                    title="Escala vermelha (fim de semana e feriados)">V</button></span><button type="button" id="mn-x"
-                  aria-label="Recolher ou abrir">▾</button></div>
-              <div class="mn-b">
-                <div id="mn-g"></div>
-                <small class="mn-n">Mais folgados (os mesmos na escala manual e na automática). ✓ = já escalado na escala em
-                  exibição. P = preta (dia de semana) · V = vermelha (fim de semana e feriados).</small>
-              </div>
+            <div class="mf"><span id="cnt"></span><button class="b2 ghost" onclick="closeM()">Cancelar</button><button
+                    class="b2" id="ok" onclick="confirmM()">Adicionar à escala</button></div>
+        </div>
+    </div>
+    <div id="ov2" class="ov" hidden>
+        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="mt2">
+            <div class="mh">
+                <h2 id="mt2">Adicionar à dispensa</h2><button type="button" class="x" onclick="closeD()"
+                    aria-label="Fechar">×</button>
             </div>
-
-            <div class="aubox" id="cfgbox">
-              <div class="au-h"><b>Tipo de escala</b><span class="au-tag">Grupos da escala</span></div>
-              <div class="au-b" id="cfgb"></div>
-              <p class="cfg-n">Dupla: duas colunas (dois grupos). Única: só um grupo, sem segunda coluna, inclusive na impressão. Crie novos grupos na aba Militares.</p>
+            <div class="mb">
+                <div class="lb"><span>Militar</span></div><select id="dm" class="sel2"></select>
+                <div class="lb"><span>Abrangência da dispensa *</span></div>
+                <select id="dt" class="sel2" aria-label="Abrangência da dispensa">
+                    <option value="a">Total · todas as escalas (preta e vermelha)</option>
+                    <option value="b">Somente dias de semana (escala preta) · continua na escala vermelha</option>
+                    <option value="r">Somente fim de semana e feriados (escala vermelha) · continua na escala preta
+                    </option>
+                </select>
+                <div class="lb"><span>Destino (motivo da dispensa) *</span></div>
+                <input type="text" id="dd" placeholder="Ex.: curso em Brasília, baixa médica, licença…"
+                    autocomplete="off">
+                <div class="dts"><label>Início da dispensa *<input type="date" id="di"></label><label>Fim da dispensa
+                        *<input type="date" id="df"></label></div>
             </div>
-          </aside>
+            <div class="mf"><span style="flex:1;font-size:.78rem;color:var(--muted)">O militar sai das listas da(s)
+                    escala(s)
+                    dispensada(s).</span><button type="button" class="b2 ghost"
+                    onclick="closeD()">Cancelar</button><button type="button" class="b2" id="dok" disabled>Confirmar
+                    dispensa</button></div>
         </div>
-      </section>
-
-      <!-- ============ SUGESTÕES ============ -->
-      <section id="sec-s" hidden data-t="b">
-        <div class="toolbar">
-          <div class="tb-l">
-            <div class="seg" role="tablist"><button type="button" class="on" data-st="b"><i></i>Escala preta · dia de
-                semana</button><button type="button" data-st="r"><i></i>Escala vermelha · fim de semana e feriados</button>
+    </div>
+    <div id="ovf" class="ov" hidden>
+        <div class="modal" style="max-width:460px" role="dialog" aria-modal="true" aria-labelledby="fT">
+            <div class="mh">
+                <h2 id="fT">Ajustar folga</h2><button type="button" class="x" onclick="closeF()"
+                    aria-label="Fechar">×</button>
             </div>
-            <p class="hint">A folga de cada escala é contada <b>separadamente</b>: a preta conta só os dias de semana lançados
-              e a vermelha só os fins de semana e feriados, sempre a partir do dia seguinte ao serviço. A previsão não conta.
-            </p>
-          </div>
-          <div class="sgt">
-            <button type="button" class="b2 ghost" id="sg-r">Resetar todas as folgas</button><button type="button"
-              class="b2 ghost" id="sg-u">Desfazer último lançamento</button>
-          </div>
+            <div class="mb">
+                <div class="lb"><span id="fN"></span></div>
+                <div class="dts"><label>Preta · dias de semana<input type="number" id="fb" min="0"
+                            max="999"></label><label>Vermelha · fim de semana e feriados<input type="number" id="fr"
+                            min="0" max="999"></label></div>
+                <p class="hint" style="margin:0">O valor digitado vira a folga atual do militar e continua contando
+                    normalmente.
+                    O ajuste de uma escala é desfeito quando ele for lançado em serviço nela. Valores marcados com * nas
+                    listas
+                    são ajustes manuais.</p>
+            </div>
+            <div class="mf"><button type="button" class="b2 ghost" id="fcl">Remover ajustes</button><span
+                    style="flex:1"></span><button type="button" class="b2 ghost"
+                    onclick="closeF()">Cancelar</button><button type="button" class="b2" id="fok">Salvar</button></div>
         </div>
-        <p id="sg-e" class="note">Nenhuma escala lançada ainda. A contagem começa depois que você
-          clicar em LANÇAR, no final da aba Escala.</p>
-        <div class="cols" id="sgcols"></div>
-      </section>
-
-      <!-- ============ MILITARES ============ -->
-      <section id="sec-m" hidden>
-        <div class="card newm">
-          <div class="lb"><span>Novo militar · entra direto em "Sem grupo"</span><button type="button" class="b2 ghost" id="gm-open">Gerenciar grupos</button></div>
-          <div class="mf2"><select id="np" aria-label="Posto ou graduação">
-              <option>SD EV</option>
-              <option>SD EP</option>
-              <option>CB</option>
-              <option>AL</option>
-            </select><button type="button" class="b2 ghost" data-pg="m"
-              title="Criar, editar e excluir cargos">Cargos</button><input type="text" id="nn" placeholder="Nome de guerra (ex.: SOUZA)" autocomplete="off"><button
-              type="button" class="b2" id="nc">Criar militar</button></div>
+    </div>
+    <div id="ov3" class="ov" hidden>
+        <div class="modal" style="max-width:860px" role="dialog" aria-modal="true">
+            <div class="mh">
+                <h2>Visualização</h2><button type="button" class="x"
+                    onclick="document.getElementById('ov3').hidden=true" aria-label="Fechar">×</button>
+            </div>
+            <div class="mb" style="padding:0;background:#8a8f94">
+                <div id="pvb" class="pv"></div>
+            </div>
+            <div class="mf"><span id="pvn" style="flex:1;font-size:.78rem;color:var(--muted)"></span><button
+                    type="button" class="b2 ghost" onclick="document.getElementById('ov3').hidden=true">Fechar</button>
+            </div>
         </div>
-        <div class="cols" id="gcols"></div>
-      </section>
-
-      <!-- ============ DISPENSADOS ============ -->
-      <section id="sec-d" hidden>
-        <div class="dp card" id="dp">
-          <div class="gh"><span>Dispensados</span><button type="button" class="b2 ghost" id="da">+ Adicionar à dispensa</button></div>
-          <ul class="ml" id="l-d"></ul>
+    </div>
+    <div id="ovp" class="ov" hidden>
+        <div class="modal" style="max-width:900px" role="dialog" aria-modal="true" aria-labelledby="pp-t">
+            <div class="mh">
+                <h2 id="pp-t">Escolha o estilo do PDF</h2><button type="button" class="x" onclick="closePs()"
+                    aria-label="Fechar">×</button>
+            </div>
+            <div class="mb">
+                <div class="ps-g" id="pp-g"></div>
+            </div>
+            <div class="mf"><span style="flex:1;font-size:.78rem;color:var(--muted)">O estilo muda só a aparência; os
+                    dados da
+                    escala são os mesmos.</span><button type="button" class="b2 ghost"
+                    onclick="closePs()">Cancelar</button><button type="button" class="b2" id="pp-ok">Continuar</button>
+            </div>
         </div>
-      </section>
-
-      <!-- ============ HISTÓRICO ============ -->
-      <section id="sec-h" hidden>
-        <div class="mf2 filters"><input type="text" id="hs-q" placeholder="Buscar militar ou data…" autocomplete="off"><select
-            id="hs-t" aria-label="Filtrar por escala">
-            <option value="">Todas as escalas</option>
-            <option value="b">Preta · dia de semana</option>
-            <option value="r">Vermelha · fim de semana e feriados</option>
-          </select></div>
-        <div class="hist-grid">
-          <div class="card">
-            <div class="gh"><span>Dias lançados</span><span id="hs-c"></span></div>
-            <p class="hint inl">Cada dia lançado fica registrado aqui, com o cabo de dia, os plantões e as trocas de serviço.
-              Para corrigir um dia, exclua-o daqui ou monte-o de novo na aba Escala e lance outra vez (o novo lançamento
-              substitui o anterior).</p>
-            <ul class="ml" id="hs-l"></ul>
-          </div>
-          <div class="card">
-            <div class="gh"><span>Passos que podem ser desfeitos</span><span id="hs-uc"></span></div>
-            <p class="hint inl">Todo lançamento e exclusão entra nesta lista, do mais recente para o mais antigo.</p>
-            <div class="hs-act"><button type="button" class="b2 ghost" id="hs-u">Desfazer último passo</button></div>
-            <ul class="ml" id="hs-ul"></ul>
-          </div>
+    </div>
+    <div id="ovg" class="ov" hidden>
+        <div class="modal" style="max-width:460px" role="dialog" aria-modal="true" aria-labelledby="pg-t">
+            <div class="mh">
+                <h2 id="pg-t"></h2><button type="button" class="x" onclick="closePg()" aria-label="Fechar">×</button>
+            </div>
+            <div class="mb">
+                <ul class="ml" id="pg-l" style="max-height:280px;overflow-y:auto;border-bottom:1px solid var(--line)">
+                </ul>
+                <div class="lb"><span>Novo cargo</span></div>
+                <div class="mf2" style="margin:0"><input type="text" id="pg-n" placeholder="Ex.: 3º SGT" maxlength="20"
+                        autocomplete="off"><button type="button" class="b2" id="pg-a">Adicionar</button></div>
+                <p class="hint" style="margin:0">Renomear ou excluir um cargo muda só esta lista. Militares já
+                    cadastrados
+                    mantêm o nome como está.</p>
+            </div>
+            <div class="mf"><span style="flex:1"></span><button type="button" class="b2 ghost"
+                    onclick="closePg()">Fechar</button></div>
         </div>
-      </section>
-
-      <footer class="foot">Desenvolvido por Pedro Ribeiro da Rosa</footer>
-    </main>
-  </div>
-
-  <div id="ov" class="ov" hidden>
-    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="mt">
-      <div class="mh">
-        <h2 id="mt"></h2><button class="x" onclick="closeM()" aria-label="Fechar">×</button>
-      </div>
-      <div class="mb">
-        <div class="lb"><span id="lp">Militar</span></div>
-        <input type="text" id="q" placeholder="Buscar militar…" autocomplete="off">
-        <div id="people" class="people"></div>
-        <div id="p2w" hidden>
-          <div class="lb"><span>Já de serviço nesta escala · folga até o dia escolhido</span></div>
-          <div id="people2" class="plist2" style="margin-top:8px"></div>
+    </div>
+    <div id="ovgr" class="ov" hidden>
+        <div class="modal" style="max-width:460px" role="dialog" aria-modal="true">
+            <div class="mh">
+                <h2>Grupos</h2><button type="button" class="x" onclick="closeGr()" aria-label="Fechar">×</button>
+            </div>
+            <div class="mb">
+                <ul class="ml" id="gr-l" style="max-height:280px;overflow-y:auto;border-bottom:1px solid var(--line)">
+                </ul>
+                <div class="lb"><span>Novo grupo</span></div>
+                <div class="mf2" style="margin:0"><input type="text" id="gr-n" placeholder="Ex.: Técnico de dia"
+                        maxlength="30" autocomplete="off"><button type="button" class="b2" id="gr-a">Criar</button>
+                </div>
+                <p class="hint" style="margin:0">Ao excluir um grupo, os militares dele vão para "Sem grupo". Escolha
+                    quais grupos entram na escala na aba Escala.</p>
+            </div>
+            <div class="mf"><span style="flex:1"></span><button type="button" class="b2 ghost"
+                    onclick="closeGr()">Fechar</button></div>
         </div>
-        <div class="lb"><span>Dia(s)</span>
-          <span class="quick"><button onclick="qd('all')">Todos</button><button onclick="qd('wd')">Dias
-              úteis</button><button onclick="qd('we')">Fim de semana</button><button
-              onclick="qd('none')">Limpar</button></span>
+    </div>
+    <div id="ovc" class="ov" hidden>
+        <div class="modal" role="alertdialog" aria-modal="true">
+            <div class="mh">
+                <h2 id="cT"></h2><button type="button" class="x" onclick="cClose()" aria-label="Fechar">×</button>
+            </div>
+            <div class="mb">
+                <p id="cM" style="margin:0;line-height:1.5"></p>
+            </div>
+            <div class="mf"><span style="flex:1"></span><button type="button" class="b2 ghost"
+                    onclick="cClose()">Cancelar</button><button type="button" class="b2" id="cOk"></button></div>
         </div>
-        <div id="days" class="days"></div>
-        <label class="chk"><input type="checkbox" id="wc"> Incluir aviso <i class="warn"
-            style="width:16px;height:16px">!</i> <span
-            style="color:var(--muted);font-weight:500">(opcional)</span></label>
-        <input type="text" id="wt" placeholder="Texto do aviso (ex.: dispensa, aguardando troca)" hidden>
-        <div id="wtg" hidden>
-          <div class="lb"><span>Aplicar o aviso a: (marcados recebem)</span><span class="quick"><button type="button"
-                onclick="wq(0)">Todos</button><button type="button" onclick="wq(1)">Nenhum</button></span></div>
-          <div id="wtl" class="people" style="max-height:140px;margin-top:8px"></div>
+    </div>
+    <div id="ovs" class="ov" hidden>
+        <div class="modal" style="max-width:480px" role="dialog" aria-modal="true" aria-labelledby="swT">
+            <div class="mh">
+                <h2 id="swT">Troca de serviço</h2><button type="button" class="x" onclick="closeSw()"
+                    aria-label="Fechar">×</button>
+            </div>
+            <div class="mb">
+                <p id="sw-i" style="margin:0;line-height:1.5"></p>
+                <div class="lb"><span>Quem assume o serviço (não zera a própria folga)</span></div>
+                <select id="sw-s" class="sel2" aria-label="Militar que assume o serviço"></select>
+                <p class="hint" style="margin:0">O militar escolhido aparece no lugar na escala e na impressão (com *).
+                    Ao
+                    LANÇAR, quem zera a folga do dia é o militar substituído; a folga de quem assumiu continua contando
+                    normalmente,
+                    como se ele não tivesse tirado o serviço. Se o dia já foi lançado, lance de novo para atualizar.</p>
+            </div>
+            <div class="mf"><span style="flex:1"></span><button type="button" class="b2 ghost"
+                    onclick="closeSw()">Cancelar</button><button type="button" class="b2" id="sw-ok">Confirmar
+                    troca</button></div>
         </div>
-      </div>
-      <div class="mf"><span id="cnt"></span><button class="b2 ghost" onclick="closeM()">Cancelar</button><button
-          class="b2" id="ok" onclick="confirmM()">Adicionar à escala</button></div>
     </div>
-  </div>
-  <div id="ov2" class="ov" hidden>
-    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="mt2">
-      <div class="mh">
-        <h2 id="mt2">Adicionar à dispensa</h2><button type="button" class="x" onclick="closeD()"
-          aria-label="Fechar">×</button>
-      </div>
-      <div class="mb">
-        <div class="lb"><span>Militar</span></div><select id="dm" class="sel2"></select>
-        <div class="lb"><span>Abrangência da dispensa *</span></div>
-        <select id="dt" class="sel2" aria-label="Abrangência da dispensa">
-          <option value="a">Total · todas as escalas (preta e vermelha)</option>
-          <option value="b">Somente dias de semana (escala preta) · continua na escala vermelha</option>
-          <option value="r">Somente fim de semana e feriados (escala vermelha) · continua na escala preta</option>
-        </select>
-        <div class="lb"><span>Destino (motivo da dispensa) *</span></div>
-        <input type="text" id="dd" placeholder="Ex.: curso em Brasília, baixa médica, licença…" autocomplete="off">
-        <div class="dts"><label>Início da dispensa *<input type="date" id="di"></label><label>Fim da dispensa *<input
-              type="date" id="df"></label></div>
-      </div>
-      <div class="mf"><span style="flex:1;font-size:.78rem;color:var(--muted)">O militar sai das listas da(s) escala(s)
-          dispensada(s).</span><button type="button" class="b2 ghost" onclick="closeD()">Cancelar</button><button
-          type="button" class="b2" id="dok" disabled>Confirmar dispensa</button></div>
-    </div>
-  </div>
-  <div id="ovf" class="ov" hidden>
-    <div class="modal" style="max-width:460px" role="dialog" aria-modal="true" aria-labelledby="fT">
-      <div class="mh">
-        <h2 id="fT">Ajustar folga</h2><button type="button" class="x" onclick="closeF()" aria-label="Fechar">×</button>
-      </div>
-      <div class="mb">
-        <div class="lb"><span id="fN"></span></div>
-        <div class="dts"><label>Preta · dias de semana<input type="number" id="fb" min="0"
-              max="999"></label><label>Vermelha · fim de semana e feriados<input type="number" id="fr" min="0"
-              max="999"></label></div>
-        <p class="hint" style="margin:0">O valor digitado vira a folga atual do militar e continua contando normalmente.
-          O ajuste de uma escala é desfeito quando ele for lançado em serviço nela. Valores marcados com * nas listas
-          são ajustes manuais.</p>
-      </div>
-      <div class="mf"><button type="button" class="b2 ghost" id="fcl">Remover ajustes</button><span
-          style="flex:1"></span><button type="button" class="b2 ghost" onclick="closeF()">Cancelar</button><button
-          type="button" class="b2" id="fok">Salvar</button></div>
-    </div>
-  </div>
-  <div id="ov3" class="ov" hidden>
-    <div class="modal" style="max-width:860px" role="dialog" aria-modal="true">
-      <div class="mh">
-        <h2>Visualização</h2><button type="button" class="x" onclick="document.getElementById('ov3').hidden=true"
-          aria-label="Fechar">×</button>
-      </div>
-      <div class="mb" style="padding:0;background:#8a8f94">
-        <div id="pvb" class="pv"></div>
-      </div>
-      <div class="mf"><span id="pvn" style="flex:1;font-size:.78rem;color:var(--muted)"></span><button type="button"
-          class="b2 ghost" onclick="document.getElementById('ov3').hidden=true">Fechar</button></div>
-    </div>
-  </div>
-  <div id="ovp" class="ov" hidden>
-    <div class="modal" style="max-width:900px" role="dialog" aria-modal="true" aria-labelledby="pp-t">
-      <div class="mh">
-        <h2 id="pp-t">Escolha o estilo do PDF</h2><button type="button" class="x" onclick="closePs()"
-          aria-label="Fechar">×</button>
-      </div>
-      <div class="mb">
-        <div class="ps-g" id="pp-g"></div>
-      </div>
-      <div class="mf"><span style="flex:1;font-size:.78rem;color:var(--muted)">O estilo muda só a aparência; os dados da
-          escala são os mesmos.</span><button type="button" class="b2 ghost" onclick="closePs()">Cancelar</button><button
-          type="button" class="b2" id="pp-ok">Continuar</button></div>
-    </div>
-  </div>
-  <div id="ovg" class="ov" hidden>
-    <div class="modal" style="max-width:460px" role="dialog" aria-modal="true" aria-labelledby="pg-t">
-      <div class="mh">
-        <h2 id="pg-t"></h2><button type="button" class="x" onclick="closePg()" aria-label="Fechar">×</button>
-      </div>
-      <div class="mb">
-        <ul class="ml" id="pg-l" style="max-height:280px;overflow-y:auto;border-bottom:1px solid var(--line)"></ul>
-        <div class="lb"><span>Novo cargo</span></div>
-        <div class="mf2" style="margin:0"><input type="text" id="pg-n" placeholder="Ex.: 3º SGT" maxlength="20"
-            autocomplete="off"><button type="button" class="b2" id="pg-a">Adicionar</button></div>
-        <p class="hint" style="margin:0">Renomear ou excluir um cargo muda só esta lista. Militares já cadastrados
-          mantêm o nome como está.</p>
-      </div>
-      <div class="mf"><span style="flex:1"></span><button type="button" class="b2 ghost"
-          onclick="closePg()">Fechar</button></div>
-    </div>
-  </div>
-  <div id="ovgr" class="ov" hidden>
-    <div class="modal" style="max-width:460px" role="dialog" aria-modal="true">
-      <div class="mh"><h2>Grupos</h2><button type="button" class="x" onclick="closeGr()" aria-label="Fechar">×</button></div>
-      <div class="mb">
-        <ul class="ml" id="gr-l" style="max-height:280px;overflow-y:auto;border-bottom:1px solid var(--line)"></ul>
-        <div class="lb"><span>Novo grupo</span></div>
-        <div class="mf2" style="margin:0"><input type="text" id="gr-n" placeholder="Ex.: Técnico de dia" maxlength="30" autocomplete="off"><button type="button" class="b2" id="gr-a">Criar</button></div>
-        <p class="hint" style="margin:0">Ao excluir um grupo, os militares dele vão para "Sem grupo". Escolha quais grupos entram na escala na aba Escala.</p>
-      </div>
-      <div class="mf"><span style="flex:1"></span><button type="button" class="b2 ghost" onclick="closeGr()">Fechar</button></div>
-    </div>
-  </div>
-  <div id="ovc" class="ov" hidden>
-    <div class="modal" role="alertdialog" aria-modal="true">
-      <div class="mh">
-        <h2 id="cT"></h2><button type="button" class="x" onclick="cClose()" aria-label="Fechar">×</button>
-      </div>
-      <div class="mb">
-        <p id="cM" style="margin:0;line-height:1.5"></p>
-      </div>
-      <div class="mf"><span style="flex:1"></span><button type="button" class="b2 ghost"
-          onclick="cClose()">Cancelar</button><button type="button" class="b2" id="cOk"></button></div>
-    </div>
-  </div>
-  <div id="ovs" class="ov" hidden>
-    <div class="modal" style="max-width:480px" role="dialog" aria-modal="true" aria-labelledby="swT">
-      <div class="mh">
-        <h2 id="swT">Troca de serviço</h2><button type="button" class="x" onclick="closeSw()"
-          aria-label="Fechar">×</button>
-      </div>
-      <div class="mb">
-        <p id="sw-i" style="margin:0;line-height:1.5"></p>
-        <div class="lb"><span>Quem assume o serviço (não zera a própria folga)</span></div>
-        <select id="sw-s" class="sel2" aria-label="Militar que assume o serviço"></select>
-        <p class="hint" style="margin:0">O militar escolhido aparece no lugar na escala e na impressão (com *). Ao
-          LANÇAR, quem zera a folga do dia é o militar substituído; a folga de quem assumiu continua contando normalmente,
-          como se ele não tivesse tirado o serviço. Se o dia já foi lançado, lance de novo para atualizar.</p>
-      </div>
-      <div class="mf"><span style="flex:1"></span><button type="button" class="b2 ghost"
-          onclick="closeSw()">Cancelar</button><button type="button" class="b2" id="sw-ok">Confirmar troca</button></div>
-    </div>
-  </div>
-  <div id="pr"></div>
-  <div id="toast" hidden></div>
-   <script src="app.js"></script>
+    <div id="pr"></div>
+    <div id="toast" hidden></div>
+    <script src="app.js"></script>
 </body>
-
 </html>
