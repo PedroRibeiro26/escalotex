@@ -21,7 +21,7 @@ Esse arquivo é o **banco de dados de verdade**. A página `index.html` é só o
 
 | Quando | O que fazer |
 |---|---|
-| **ANTES de cada uso** | Abrir o `index.html` e clicar em **Importar arquivo**, escolhendo o `escala-servico-banco.json` **mais recente**. |
+| **ANTES de cada uso** | Abrir o `index.html` e clicar em **Importar arquivo**, escolhendo o `reset_config.json` **mais recente**. |
 | **DEPOIS de cada uso** | Clicar em **Exportar arquivo** e **guardar o novo `escala-servico-banco.json`**, substituindo o anterior (ou guardando com a data no nome). |
 
 Se essa rotina for seguida, a escala estará sempre atualizada, em qualquer computador ou celular, por qualquer pessoa que abrir a página.
