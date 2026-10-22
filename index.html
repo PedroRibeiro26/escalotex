@@ -1,0 +1,2034 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="light dark">
+  <meta name="description"
+    content="Escalotex: monte, lance e imprima a escala de serviço e acompanhe a folga dos militares.">
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" type="image/png" href="favicon.png">
+  <title>Escalotex</title>
+</head>
+
+<body>
+  <div class="wrap">
+    <header class="top">
+      <div class="brand"><span class="logo" aria-hidden="true"></span>
+        <h1>Escalotex</h1>
+      </div>
+      <nav class="tabs" role="tablist"><button type="button" class="tab on" data-t="e">Escala</button><button
+          type="button" class="tab" data-t="s">Folgas</button><button type="button" class="tab"
+          data-t="m">Militares</button><button type="button" class="tab" data-t="d"
+          id="tab-d">Dispensados</button><button type="button" class="tab" data-t="h"
+          id="tab-h">Histórico</button><button type="button" class="tab" data-t="a" id="tab-a">Ajuda</button></nav>
+      <div class="dbx"><span id="st" class="st">Carregando…</span><button type="button" class="b2 ghost"
+          id="ex">Exportar arquivo</button><button type="button" class="b2 ghost" id="im">Importar
+          arquivo</button><input type="file" id="fi" accept=".json,application/json" hidden></div>
+    </header>
+
+    <main class="page">
+
+      <!-- ============ ESCALA ============ -->
+      <section id="sec-e">
+        <div class="hp-ctx"><button type="button" class="hp-link" data-help="montar escala">? Ajuda desta tela</button>
+        </div>
+
+        <div class="esc-grid">
+          <div class="esc-col">
+            <div class="subtabs" role="tablist"><button type="button" class="stab on" data-sub="m">Escala
+                manual</button><button type="button" class="stab" data-sub="a">Escala automática</button></div>
+
+            <div id="au-empty" class="note" hidden>A escala automática aparece aqui depois que a
+              primeira escala for lançada. Monte a escala manual, clique em LANÇAR e o sistema sugere a próxima.</div>
+            <div id="au-box" class="aubox" hidden>
+              <div class="au-h"><b>Escala automática</b><span class="au-tag">Sugerida pelo sistema</span></div>
+              <p id="au-t"></p>
+              <div class="au-b"><label class="au-l">Dias <input type="number" id="au-n" min="1" max="31"
+                    value="5"></label><button type="button" class="b2 ghost" id="au-new">Gerar de novo</button><button
+                  type="button" class="b2 ghost" id="au-re">Recalcular mantendo as datas</button><button type="button"
+                  class="b2 ghost" id="au-bak" hidden>Restaurar minha versão anterior</button></div>
+              <p id="au-s" class="ls"></p>
+            </div>
+
+            <div id="esc-main">
+              <div class="aubox" id="cfgbox">
+                <div class="au-h"><b>Tipo de escala</b><span class="au-tag">Grupos da escala</span></div>
+                <div class="au-b" id="cfgb"></div>
+                <p class="cfg-n">Dupla: duas colunas (dois grupos). Única: só um grupo, sem segunda coluna, inclusive na
+                  impressão. Crie novos grupos na aba Militares.</p>
+              </div>
+              <div class="note cfg-gate">Escolha o <b>Tipo de escala</b> acima para liberar a criação da escala. A
+                tabela é montada conforme a escolha.</div>
+              <div id="lastbox" class="aubox lastbox" hidden>
+                <div class="au-h"><b>Último dia lançado</b></div>
+                <span class="au-tag" id="lb-d"></span>
+                <div id="lb-b"></div>
+              </div>
+
+              <div class="card tcard">
+                <div class="tc-h">
+                  <div class="legend">
+                    <span><i class="sw sw-k"></i>Preta: dia de semana</span>
+                    <span><i class="sw sw-r"></i>Vermelha: fim de semana e feriados</span>
+                    <span><i class="warn warn-sm">!</i>Aviso: passe o mouse ou clique no ícone
+                      para ler o motivo</span>
+                  </div>
+                  <button type="button" class="b2 ghost" id="ad">+ Adicionar dia</button>
+                </div>
+                <div class="scroll">
+                  <table>
+                    <thead>
+                      <tr id="thr"></tr>
+                    </thead>
+                    <tbody id="rows"></tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div class="fin-grid">
+                <div class="card fin">
+                  <div class="gh"><span>Período e lançamento</span></div>
+                  <div class="fin-b">
+                    <div class="prt">
+                      <div class="pc"><b>Escala</b><select id="e1" aria-label="Escala: data inicial"></select> até
+                        <select id="e2" aria-label="Escala: data final"></select>
+                      </div>
+                      <div class="pc"><b>Previsão</b><select id="p1" aria-label="Previsão: data inicial"></select> até
+                        <select id="p2" aria-label="Previsão: data final"></select>
+                      </div>
+                    </div>
+                    <div class="ttl">
+                      <label>Título da impressão<input type="text" id="tt1" placeholder="Escala de Serviço de"
+                          maxlength="60" autocomplete="off"></label>
+                      <label>Título da previsão<input type="text" id="tt2"
+                          placeholder="Previsão da Escala de Serviço de" maxlength="60" autocomplete="off"></label>
+                      <p class="ttl-n">Em branco, vale o título padrão. A data do período entra sempre na linha abaixo
+                        do título. <button type="button" class="sm" id="tt-r">Restaurar padrão</button></p>
+                    </div>
+                    <p class="note nt">LANÇAR conta os dias de folga somente da ESCALA; a PREVISÃO não conta.</p>
+                    <div class="lx"><button type="button" class="btn" id="lc">LANÇAR</button><span id="ls"
+                        class="ls"></span><button type="button" class="btn ghost" id="pv">Visualizar e
+                        editar</button><button type="button" class="btn" id="pb" onclick="doPrint()"
+                        disabled>Imprimir</button></div>
+                  </div>
+                </div>
+
+                <div class="sig card" id="sig">
+                  <div class="gh"><span>Assinatura</span></div>
+                  <div class="sg">
+                    <label class="sg-n">Nome completo<input type="text" id="sn" placeholder="Nome completo do militar"
+                        autocomplete="off"></label>
+                    <label>P/G <button type="button" class="sm" data-pg="s">Gerenciar cargos</button><select id="sp"
+                        class="sel2">
+                        <option value="">Selecione…</option>
+                        <option>SD EV</option>
+                        <option>SD EP</option>
+                        <option>AL</option>
+                        <option>CB EP</option>
+                        <option>3º SGT</option>
+                        <option>2º SGT</option>
+                        <option>1º SGT</option>
+                        <option>ST</option>
+                        <option>ASP OF</option>
+                        <option>2º TEN</option>
+                        <option>1º TEN</option>
+                        <option>CAP</option>
+                        <option>MAJ</option>
+                        <option>TC</option>
+                        <option>CEL</option>
+                      </select></label>
+                    <label>Função<input type="text" id="sf" placeholder="Digite a função (ex.: Cabo de Dia)"
+                        autocomplete="off"></label>
+                  </div>
+                  <div class="sp">
+                    <div class="sline"></div>
+                    <div id="s1">Nome completo</div>
+                    <div id="s2">Função</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <aside class="esc-side">
+
+            <div id="mini" class="mini" data-t="b">
+              <div class="mn-h"><b>Sugestões</b><span class="mn-t"><button type="button" data-mt="b" class="on"
+                    title="Escala preta (dia de semana)">P</button><button type="button" data-mt="r"
+                    title="Escala vermelha (fim de semana e feriados)">V</button></span><button type="button" id="mn-x"
+                  aria-label="Recolher ou abrir">▾</button></div>
+              <div class="mn-b">
+                <div id="mn-g"></div>
+                <small class="mn-n">Mais folgados (os mesmos na escala manual e na automática). ✓ = já escalado na
+                  escala em
+                  exibição. P = preta (dia de semana) · V = vermelha (fim de semana e feriados).</small>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <!-- ============ SUGESTÕES ============ -->
+      <section id="sec-s" hidden data-t="b">
+        <div class="hp-ctx"><button type="button" class="hp-link" data-help="folga sugestões">? Ajuda desta
+            tela</button></div>
+
+        <div class="toolbar">
+          <div class="tb-l">
+            <div class="seg" role="tablist"><button type="button" class="on" data-st="b"><i></i>Escala preta · dia de
+                semana</button><button type="button" data-st="r"><i></i>Escala vermelha · fim de semana e
+                feriados</button>
+            </div>
+            <p class="hint">A folga de cada escala é contada <b>separadamente</b>: a preta conta só os dias de semana
+              lançados
+              e a vermelha só os fins de semana e feriados, sempre a partir do dia seguinte ao serviço. A previsão não
+              conta.
+            </p>
+          </div>
+          <div class="sgt">
+            <button type="button" class="b2 ghost" id="sg-r">Resetar todas as folgas</button><button type="button"
+              class="b2 ghost" id="sg-u">Desfazer último lançamento</button>
+          </div>
+        </div>
+        <p id="sg-e" class="note">Nenhuma escala lançada ainda. A contagem começa depois que você
+          clicar em LANÇAR, no final da aba Escala.</p>
+        <div class="cols" id="sgcols"></div>
+      </section>
+
+      <!-- ============ MILITARES ============ -->
+      <section id="sec-m" hidden>
+        <div class="hp-ctx"><button type="button" class="hp-link" data-help="cadastrar militar grupo">? Ajuda desta
+            tela</button></div>
+
+        <div class="card newm">
+          <div class="lb"><span>Novo militar · entra direto em "Sem grupo"</span><button type="button" class="b2 ghost"
+              id="gm-open">Gerenciar grupos</button></div>
+          <div class="mf2"><select id="np" aria-label="Posto ou graduação">
+              <option>SD EV</option>
+              <option>SD EP</option>
+              <option>CB</option>
+              <option>AL</option>
+            </select><button type="button" class="b2 ghost" data-pg="m"
+              title="Criar, editar e excluir cargos">Cargos</button><input type="text" id="nn"
+              placeholder="Nome de guerra (ex.: SOUZA)" autocomplete="off"><button type="button" class="b2"
+              id="nc">Criar militar</button></div>
+        </div>
+        <div class="cols" id="gcols"></div>
+      </section>
+
+      <!-- ============ DISPENSADOS ============ -->
+      <section id="sec-d" hidden>
+        <div class="hp-ctx"><button type="button" class="hp-link" data-help="dispensa">? Ajuda desta tela</button></div>
+
+        <div class="dp card" id="dp">
+          <div class="gh"><span>Dispensados</span><button type="button" class="b2 ghost" id="da">+ Adicionar à
+              dispensa</button></div>
+          <ul class="ml" id="l-d"></ul>
+        </div>
+      </section>
+
+      <!-- ============ HISTÓRICO ============ -->
+      <section id="sec-h" hidden>
+        <div class="hp-ctx"><button type="button" class="hp-link" data-help="histórico desfazer">? Ajuda desta
+            tela</button></div>
+
+        <div class="mf2 filters"><input type="text" id="hs-q" placeholder="Buscar militar ou data…"
+            autocomplete="off"><select id="hs-t" aria-label="Filtrar por escala">
+            <option value="">Todas as escalas</option>
+            <option value="b">Preta · dia de semana</option>
+            <option value="r">Vermelha · fim de semana e feriados</option>
+          </select></div>
+        <div class="hist-grid">
+          <div class="card">
+            <div class="gh"><span>Dias lançados</span><span id="hs-c"></span></div>
+            <p class="hint inl">Cada dia lançado fica registrado aqui, com o cabo de dia, os plantões e as trocas de
+              serviço.
+              Para corrigir um dia, exclua-o daqui ou monte-o de novo na aba Escala e lance outra vez (o novo lançamento
+              substitui o anterior).</p>
+            <ul class="ml" id="hs-l"></ul>
+          </div>
+          <div class="card">
+            <div class="gh"><span>Passos que podem ser desfeitos</span><span id="hs-uc"></span></div>
+            <p class="hint inl">Todo lançamento e exclusão entra nesta lista, do mais recente para o mais antigo.</p>
+            <div class="hs-act"><button type="button" class="b2 ghost" id="hs-u">Desfazer último passo</button></div>
+            <ul class="ml" id="hs-ul"></ul>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- ============ AJUDA ============ -->
+      <section id="sec-a" hidden>
+        <div class="hp-hero card">
+          <h2>Central de ajuda</h2>
+          <p>Digite o que você quer fazer ou uma palavra-chave. Exemplos: <em>dispensar</em>, <em>folga</em>,
+            <em>imprimir</em>, <em>backup</em>, <em>troca</em>.
+          </p>
+          <div class="hp-search">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" aria-hidden="true">
+              <circle cx="11" cy="11" r="7"></circle>
+              <path d="M20 20l-3.5-3.5"></path>
+            </svg>
+            <input type="search" id="hp-q" placeholder="Buscar na ajuda… (ex.: como dispensar um militar)"
+              autocomplete="off" aria-label="Buscar na ajuda">
+            <button type="button" class="hp-x" id="hp-clear" hidden aria-label="Limpar busca">×</button>
+          </div>
+          <div class="hp-quick"><span>O que você quer fazer?</span><button type="button" class="hp-chip"
+              data-q="montar escala">Montar a escala</button><button type="button" class="hp-chip"
+              data-q="lançar imprimir">Lançar e imprimir</button><button type="button" class="hp-chip"
+              data-q="cadastrar militar">Cadastrar militar</button><button type="button" class="hp-chip"
+              data-q="dispensar militar">Dispensar militar</button><button type="button" class="hp-chip"
+              data-q="troca de serviço">Troca de serviço</button><button type="button" class="hp-chip"
+              data-q="desfazer">Errei, quero desfazer</button><button type="button" class="hp-chip"
+              data-q="exportar backup">Salvar meus dados</button><button type="button" class="hp-chip"
+              data-q="vazio perdi dados">Está tudo vazio</button></div>
+        </div>
+        <div class="hp-bar">
+          <div class="hp-cats" role="group" aria-label="Filtrar por assunto"><button type="button" class="hp-chip on"
+              data-cf="all">Todos</button><button type="button" class="hp-chip" data-cf="inicio">Começar</button><button
+              type="button" class="hp-chip" data-cf="militares">Militares e grupos</button><button type="button"
+              class="hp-chip" data-cf="escala">Montar a escala</button><button type="button" class="hp-chip"
+              data-cf="lancar">Lançar e imprimir</button><button type="button" class="hp-chip" data-cf="folga">Folga e
+              sugestões</button><button type="button" class="hp-chip" data-cf="dispensa">Dispensas</button><button
+              type="button" class="hp-chip" data-cf="trocas">Trocas e avisos</button><button type="button"
+              class="hp-chip" data-cf="historico">Histórico e desfazer</button><button type="button" class="hp-chip"
+              data-cf="arquivo">Salvar e backup</button><button type="button" class="hp-chip"
+              data-cf="problemas">Problemas comuns</button></div>
+          <div class="hp-tools"><span id="hp-n" aria-live="polite"></span><button type="button" class="hp-tb"
+              id="hp-exp">Abrir todos</button><button type="button" class="hp-tb" id="hp-col">Fechar todos</button>
+          </div>
+        </div>
+        <div id="hp-none" class="hp-none card" hidden>
+          <b id="hp-none-t"></b>
+          <p>Tente uma palavra mais simples (ex.: <em>folga</em>, <em>imprimir</em>, <em>militar</em>) ou escolha um
+            assunto acima.</p>
+        </div>
+        <div id="hp-list" class="hp-list">
+          <h3 class="hp-cat" data-cat="inicio">Começar <span>5</span></h3>
+          <details class="hp" id="h-visao-geral" data-cat="inicio" data-p="0"
+            data-k="começar iniciar primeiro uso tutorial resumo fluxo passo a passo como usar para que serve visão geral">
+            <summary><span class="hp-st"><span class="hp-t">Como o sistema funciona (visão geral)</span><span
+                  class="hp-s">Os passos de quem gerencia a escala, do cadastro à impressão.</span></span></summary>
+            <div class="hp-b">
+              <p>O ESCALOTEX monta a escala de serviço, conta a folga de cada militar e imprime a folha. O caminho
+                normal é sempre este:</p>
+              <ol>
+                <li><b>Cadastre</b> os militares na aba <kbd>Militares</kbd> e coloque cada um em um grupo (Cabo de dia,
+                  Plantões…).</li>
+                <li><b>Monte</b> os dias na aba <kbd>Escala</kbd>: você mesmo (<kbd>Escala manual</kbd>) ou deixando o
+                  sistema sugerir os mais folgados (<kbd>Escala automática</kbd>).</li>
+                <li><b>Confira</b> o período (Escala e, se quiser, Previsão) e preencha a Assinatura.</li>
+                <li>Clique em <kbd>LANÇAR</kbd>. Isso registra quem serviu e começa a contar a folga.</li>
+                <li>Clique em <kbd>Visualizar e editar</kbd> para ver a folha e, se quiser, ajustar a tabela; depois
+                  clique em <kbd>Imprimir</kbd> (ou salve em PDF).</li>
+                <li>Clique em <kbd>Exportar arquivo</kbd> para guardar seus dados.</li>
+              </ol>
+              <p class="hp-tip"><b>Dica:</b> Se for lembrar de uma coisa só: <b>importe o arquivo antes de usar e
+                  exporte depois</b>. O sistema não tem banco de dados.</p>
+              <div class="hp-acts"><button type="button" class="b2 ghost hp-go" data-gotab="e">Ir para a aba
+                  Escala</button></div>
+              <div class="hp-rel"><span>Veja também:</span><button type="button" class="hp-relb"
+                  data-open="arquivo-regra">Regra de ouro: não existe banco de dados</button><button type="button"
+                  class="hp-relb" data-open="primeiro-uso">Primeiro uso: do zero até a primeira escala
+                  impressa</button><button type="button" class="hp-relb" data-open="abas">O que cada aba faz</button>
+              </div>
+            </div>
+          </details>
+          <details class="hp" id="h-primeiro-uso" data-cat="inicio" data-p="0"
+            data-k="primeiro uso do zero começar configurar iniciar instalar novo tutorial primeira escala">
+            <summary><span class="hp-st"><span class="hp-t">Primeiro uso: do zero até a primeira escala
+                  impressa</span><span class="hp-s">Roteiro completo para quem está começando agora.</span></span>
+            </summary>
+            <div class="hp-b">
+              <ol>
+                <li>Se você já tem um arquivo <kbd>escala-servico-banco.json</kbd>, clique em <kbd>Importar
+                    arquivo</kbd> e escolha o mais recente. Para começar do zero, importe o
+                  <kbd>reset_config.json</kbd>. Na primeira vez, pule este passo.
+                </li>
+                <li>O sistema começa <b>sem grupos e sem cargos</b>. Na aba <kbd>Militares</kbd>, clique em
+                  <kbd>Gerenciar grupos</kbd> e crie os grupos que você usa (ex.: Cabo de dia, Plantões).
+                </li>
+                <li>Ainda em <kbd>Militares</kbd>, clique em <kbd>Cargos</kbd> e cadastre os postos e graduações (ex.:
+                  SD EV, CB, 3º SGT).</li>
+                <li>Escolha o posto, digite o nome de guerra (ex.: SOUZA) e clique em <kbd>Criar militar</kbd>. Repita
+                  para cada militar. Em cada linha, clique em <kbd>Grupos</kbd> e marque o(s) grupo(s) dele. Um militar
+                  pode estar em vários.</li>
+                <li>Recomendado: clique em <kbd>Folga</kbd> em cada militar e informe a folga real de hoje (preta e
+                  vermelha). Assim as sugestões já nascem corretas.</li>
+                <li>Na aba <kbd>Escala</kbd>, escolha o <b>Tipo de escala</b> (Dupla ou Única). Até escolher, a criação
+                  da escala fica bloqueada. Ao escolher, a tabela aparece pronta.</li>
+                <li>Clique no <b>+</b> da coluna, escolha militares e dias e confirme.</li>
+                <li>Em <b>Período e lançamento</b>, confira as datas da <b>Escala</b>. Preencha o cartão
+                  <b>Assinatura</b> (nome, P/G e função).
+                </li>
+                <li>Clique em <kbd>LANÇAR</kbd> e escolha o padrão de impressão na lista.</li>
+                <li>Clique em <kbd>Visualizar e editar</kbd>, ajuste a tabela se quiser e depois <kbd>Imprimir</kbd>.
+                </li>
+                <li>Clique em <kbd>Exportar arquivo</kbd> e guarde o arquivo baixado.</li>
+              </ol>
+              <p class="hp-tip"><b>Dica:</b> Depois da primeira escala lançada, a <b>Escala automática</b> passa a
+                sugerir os próximos dias sozinha.</p>
+              <div class="hp-acts"><button type="button" class="b2 ghost hp-go" data-gotab="m">Ir para
+                  Militares</button></div>
+              <div class="hp-rel"><span>Veja também:</span><button type="button" class="hp-relb"
+                  data-open="cadastrar-militar">Cadastrar um militar</button><button type="button" class="hp-relb"
+                  data-open="mudar-grupo">Colocar um militar em um grupo ou trocar de grupo</button><button
+                  type="button" class="hp-relb" data-open="ajustar-folga">Ajustar a folga de um militar
+                  manualmente</button><button type="button" class="hp-relb" data-open="montar-manual">Montar a escala
+                  manualmente (passo a passo)</button><button type="button" class="hp-relb" data-open="lancar">LANÇAR: o
+                  que faz e quando usar</button><button type="button" class="hp-relb" data-open="imprimir">Imprimir ou
+                  salvar em PDF</button><button type="button" class="hp-relb" data-open="exportar">Exportar (salvar) o
+                  arquivo</button></div>
+            </div>
+          </details>
+          <details class="hp" id="h-abas" data-cat="inicio" data-p="0"
+            data-k="abas menu telas navegação onde fica o que é cada aba mapa">
+            <summary><span class="hp-st"><span class="hp-t">O que cada aba faz</span><span class="hp-s">Mapa rápido das
+                  abas do menu lateral.</span></span></summary>
+            <div class="hp-b">
+              <dl class="hp-dl">
+                <dt>Escala</dt>
+                <dd>Tela principal. Tem o <b>Tipo de escala</b>, o <b>Último dia lançado</b>, a tabela dos dias, o
+                  período e lançamento, a assinatura, a Escala automática e o painel Sugestões.</dd>
+                <dt>Folgas</dt>
+                <dd>Lista, por grupo, quem está mais folgado (do mais para o menos). Daqui você ajusta folgas e desfaz
+                  lançamentos.</dd>
+                <dt>Militares</dt>
+                <dd>Cadastro do efetivo, grupos, cargos, folga, dispensa e exclusão.</dd>
+                <dt>Dispensados</dt>
+                <dd>Quem está fora da escala por um período, com aviso de retorno.</dd>
+                <dt>Histórico</dt>
+                <dd>Cada dia lançado, trocas de serviço e a lista de passos que podem ser desfeitos.</dd>
+                <dt>Ajuda</dt>
+                <dd>Este guia. Use a busca para achar o assunto.</dd>
+              </dl>
+              <p>No fim do menu lateral ficam o indicador de salvamento e os botões <kbd>Exportar arquivo</kbd> e
+                <kbd>Importar arquivo</kbd>. Em telas estreitas (celular) o menu vira uma barra no topo.
+              </p>
+              <div class="hp-rel"><span>Veja também:</span><button type="button" class="hp-relb"
+                  data-open="visao-geral">Como o sistema funciona (visão geral)</button><button type="button"
+                  class="hp-relb" data-open="glossario">Glossário: o que significa cada palavra</button></div>
+            </div>
+          </details>
+          <details class="hp" id="h-preta-vermelha" data-cat="inicio" data-p="0"
+            data-k="preta vermelha dia de semana fim de semana feriado sabado domingo cor diferença tipo de escala">
+            <summary><span class="hp-st"><span class="hp-t">Escala preta e escala vermelha: qual a
+                  diferença?</span><span class="hp-s">Dia de semana é preta; fim de semana e feriado é
+                  vermelha.</span></span></summary>
+            <div class="hp-b">
+              <ul>
+                <li><b>Escala preta:</b> dias de semana (segunda a sexta).</li>
+                <li><b>Escala vermelha:</b> sábados, domingos e <b>feriados</b>.</li>
+              </ul>
+              <p>A folga de cada militar é contada <b>separadamente</b> nas duas. Quem serviu em um domingo zera a folga
+                <i>vermelha</i>, mas continua com a mesma folga <i>preta</i>.
+              </p>
+              <p>Na tabela, as linhas vermelhas ficam avermelhadas e as pretas têm uma marca escura na lateral. Nas
+                listas, <b>P</b> significa preta e <b>V</b> vermelha.</p>
+              <p class="hp-tip"><b>Dica:</b> Para um feriado em dia de semana contar como vermelho, marque
+                <b>Feriado</b> ao editar o dia (✎).
+              </p>
+              <div class="hp-rel"><span>Veja também:</span><button type="button" class="hp-relb"
+                  data-open="feriado">Marcar um feriado</button><button type="button" class="hp-relb"
+                  data-open="como-folga">Como a folga é contada</button></div>
+            </div>
+          </details>
+          <details class="hp" id="h-glossario" data-cat="inicio" data-p="0"
+            data-k="glossario significado palavras termos dicionario o que é cabo plantão folga lançar previsão aviso asterisco vago">
+            <summary><span class="hp-st"><span class="hp-t">Glossário: o que significa cada palavra</span><span
+                  class="hp-s">Cabo de dia, plantão, folga, lançar, previsão e outras palavras do sistema.</span></span>
+            </summary>
+            <div class="hp-b">
+              <dl class="hp-dl">
+                <dt>Cabo de dia</dt>
+                <dd>Um militar por dia (grupo padrão da primeira coluna).</dd>
+                <dt>Plantões</dt>
+                <dd>Vários militares por dia (grupo padrão da segunda coluna).</dd>
+                <dt>Grupo</dt>
+                <dd>Conjunto de militares que formam uma coluna da escala (ex.: Técnico de dia, Guia de TFM). Você cria
+                  os grupos.</dd>
+                <dt>Sem grupo</dt>
+                <dd>Onde o militar novo entra. Quem está sem grupo não aparece para ser escalado.</dd>
+                <dt>Folga</dt>
+                <dd>Quantos dias o militar está sem servir. Quanto maior, mais folgado ele está e mais indicado para o
+                  próximo serviço.</dd>
+                <dt>P e V</dt>
+                <dd>P = folga na escala preta (dias de semana). V = folga na escala vermelha (fim de semana e feriados).
+                </dd>
+                <dt>Escala (período)</dt>
+                <dd>Intervalo de datas que será impresso <b>e contado</b> ao lançar.</dd>
+                <dt>Previsão</dt>
+                <dd>Intervalo opcional impresso como segunda tabela. É só informativo e <b>não conta folga</b>.</dd>
+                <dt>Lançar</dt>
+                <dd>Confirmar que a escala foi cumprida: registra no histórico e começa a contar a folga a partir do dia
+                  seguinte.</dd>
+                <dt>Dispensa</dt>
+                <dd>Afastamento do militar por um período (curso, baixa, licença…).</dd>
+                <dt>Troca de serviço</dt>
+                <dd>Quando um militar assume o serviço de outro.</dd>
+                <dt>Aviso ⚠</dt>
+                <dd>Observação presa a um militar em um dia. Na impressão o nome sai com asterisco (*).</dd>
+                <dt>Asterisco (*)</dt>
+                <dd>Marca nomes com aviso ou troca de serviço na impressão e valores de folga ajustados à mão nas
+                  listas.</dd>
+                <dt>VAGO / SEM PLANTÕES</dt>
+                <dd>Célula da tabela ainda sem ninguém escalado.</dd>
+              </dl>
+              <div class="hp-rel"><span>Veja também:</span><button type="button" class="hp-relb"
+                  data-open="preta-vermelha">Escala preta e escala vermelha: qual a diferença?</button><button
+                  type="button" class="hp-relb" data-open="como-folga">Como a folga é contada</button></div>
+            </div>
+          </details>
+          <h3 class="hp-cat" data-cat="militares">Militares e grupos <span>8</span></h3>
+          <details class="hp" id="h-cadastrar-militar" data-cat="militares" data-p="1"
+            data-k="cadastrar criar adicionar incluir novo militar soldado efetivo nome de guerra posto graduação">
+            <summary><span class="hp-st"><span class="hp-t">Cadastrar um militar</span><span class="hp-s">Posto + nome
+                  de guerra. O novo militar entra em “Sem grupo”.</span></span></summary>
+            <div class="hp-b">
+              <ol>
+                <li>Abra a aba <kbd>Militares</kbd>.</li>
+                <li>Escolha o <b>posto/graduação</b> na lista (SD EV, SD EP, CB, AL…).</li>
+                <li>Digite o <b>nome de guerra</b> (ex.: <kbd>SOUZA</kbd>).</li>
+                <li>Clique em <kbd>Criar militar</kbd>.</li>
+              </ol>
+              <p>O nome fica como <b>posto + nome</b> (ex.: <i>SD EV SOUZA</i>) e <b>não pode repetir</b>.</p>
+              <p class="hp-warn"><b>Atenção:</b> O militar novo entra em <b>Sem grupo</b> e <b>não aparece para ser
+                  escalado</b> até você colocá-lo em um grupo.</p>
+              <p class="hp-tip"><b>Dica:</b> Falta o posto na lista? Use o botão <kbd>Cargos</kbd> ao lado.</p>
+              <div class="hp-acts"><button type="button" class="b2 ghost hp-go" data-gotab="m">Abrir Militares</button>
+              </div>
+              <div class="hp-rel"><span>Veja também:</span><button type="button" class="hp-relb"
+                  data-open="mudar-grupo">Colocar um militar em um grupo ou trocar de grupo</button><button
+                  type="button" class="hp-relb" data-open="cargos">Editar a lista de postos e graduações
+                  (cargos)</button><button type="button" class="hp-relb" data-open="militar-nao-aparece">Um militar não
+                  aparece na lista para escalar</button></div>
+            </div>
+          </details>
+          <details class="hp" id="h-mudar-grupo" data-cat="militares" data-p="0"
+            data-k="grupo mudar trocar mover colocar militar cabo de dia plantões sem grupo coluna">
+            <summary><span class="hp-st"><span class="hp-t">Colocar um militar em um grupo ou trocar de
+                  grupo</span><span class="hp-s">Use o botão Grupos na linha do militar.</span></span></summary>
+            <div class="hp-b">
+              <ol>
+                <li>Abra a aba <kbd>Militares</kbd>.</li>
+                <li>Clique no título da coluna (ex.: <b>Sem grupo</b>) para abri-la, se estiver fechada.</li>
+                <li>Na linha do militar, clique em <kbd>Grupos</kbd>.</li>
+                <li>Marque <b>todos</b> os grupos em que ele participa (um ou vários) e clique em <kbd>Salvar</kbd>. Sem
+                  nenhum marcado, ele fica em <b>Sem grupo</b>.</li>
+              </ol>
+              <p class="hp-tip"><b>Dica:</b> Só militares em um grupo aparecem nas listas para escalar e nas sugestões.
+                Quem está em vários grupos aparece em todos eles, com a folga contada separadamente em cada um.</p>
+              <div class="hp-acts"><button type="button" class="b2 ghost hp-go" data-gotab="m">Abrir Militares</button>
+              </div>
+              <div class="hp-rel"><span>Veja também:</span><button type="button" class="hp-relb"
+                  data-open="grupos">Criar, renomear e excluir grupos</button><button type="button" class="hp-relb"
+                  data-open="militar-nao-aparece">Um militar não aparece na lista para escalar</button></div>
+            </div>
+          </details>
+          <details class="hp" id="h-multi-grupos" data-cat="militares" data-p="0"
+            data-k="vários grupos mais de um grupo dois grupos militar em dois grupos folga separada grupos do militar">
+            <summary><span class="hp-st"><span class="hp-t">Militar em vários grupos (folga separada)</span><span
+                  class="hp-s">Um militar pode participar de quantos grupos precisar.</span></span></summary>
+            <div class="hp-b">
+              <ol>
+                <li>Abra a aba <kbd>Militares</kbd> e clique em <kbd>Grupos</kbd> na linha do militar.</li>
+                <li>Marque todos os grupos em que ele participa e clique em <kbd>Salvar</kbd>.</li>
+              </ol>
+              <p>Ele aparece na lista de cada grupo e nas sugestões de cada um. A <b>folga é contada separadamente por
+                  grupo</b>: servir como Cabo de dia não zera a folga dele nos Plantões, e vice-versa. A linha mostra
+                “Grupos (2)” quando há mais de um.</p>
+              <div class="hp-acts"><button type="button" class="b2 ghost hp-go" data-gotab="m">Abrir Militares</button>
+              </div>
+              <div class="hp-rel"><span>Veja também:</span><button type="button" class="hp-relb"
+                  data-open="como-folga">Como a folga é contada</button><button type="button" class="hp-relb"
+                  data-open="mudar-grupo">Colocar um militar em um grupo ou trocar de grupo</button></div>
+            </div>
+          </details>
+          <details class="hp" id="h-militar-nao-aparece" data-cat="militares" data-p="0"
+            data-k="não aparece sumiu falta militar lista escalar adicionar disponível não encontro buscar">
+            <summary><span class="hp-st"><span class="hp-t">Um militar não aparece na lista para escalar</span><span
+                  class="hp-s">Confira estas causas, da mais comum para a menos comum.</span></span></summary>
+            <div class="hp-b">
+              <ol>
+                <li><b>Está em “Sem grupo”?</b> Coloque-o em um grupo (aba Militares).</li>
+                <li><b>Está dispensado?</b> Dispensado total some de tudo; dispensa parcial some só da escala dispensada
+                  (preta ou vermelha). Veja a aba <kbd>Dispensados</kbd>.</li>
+                <li><b>O grupo dele não é uma das colunas da escala?</b> Confira em <kbd>Tipo de escala</kbd> na aba
+                  Escala.</li>
+                <li><b>Já está escalado naquele dia?</b> Ele aparece na lista “Já de serviço nesta escala”, não em
+                  “Disponíveis”.</li>
+                <li><b>É cabo de dia e o dia já tem um?</b> Só há um cabo por dia; escolher outro substitui.</li>
+                <li><b>Digitou o nome errado na busca?</b> Limpe o campo de busca da janela.</li>
+              </ol>
+              <p>Se tiver incluído alguém dispensado, o sistema ignora a inclusão e informa quantas foram ignoradas.</p>
+              <div class="hp-rel"><span>Veja também:</span><button type="button" class="hp-relb"
+                  data-open="mudar-grupo">Colocar um militar em um grupo ou trocar de grupo</button><button
+                  type="button" class="hp-relb" data-open="dispensar">Dispensar um militar (curso, baixa,
+                  licença)</button><button type="button" class="hp-relb" data-open="tipo-escala">Mudar o tipo de escala
+                  (uma ou duas colunas, outros grupos)</button></div>
+            </div>
+          </details>
+          <details class="hp" id="h-grupos" data-cat="militares" data-p="1"
+            data-k="grupo grupos criar novo renomear excluir apagar técnico de dia guia de tfm gerenciar grupos coluna">
+            <summary><span class="hp-st"><span class="hp-t">Criar, renomear e excluir grupos</span><span
+                  class="hp-s">Ex.: criar “Técnico de dia” ou “Guia de TFM”.</span></span></summary>
+            <div class="hp-b">
+              <p>O sistema começa <b>sem nenhum grupo</b>. Crie os seus aqui antes de cadastrar os militares.</p>
+              <ol>
+                <li>Abra a aba <kbd>Militares</kbd>.</li>
+                <li>Clique em <kbd>Gerenciar grupos</kbd>.</li>
+                <li>Para criar: digite o nome em <b>Novo grupo</b> e clique em <kbd>Criar</kbd> (nomes repetidos não são
+                  aceitos).</li>
+                <li>Para renomear ou excluir: use os botões na linha do grupo.</li>
+              </ol>
+              <p class="hp-warn"><b>Atenção:</b> Ao <b>excluir</b> um grupo, os militares saem dele (quem estava só nele
+                vai para <b>Sem grupo</b>; quem está em outros grupos continua neles). Se o grupo estava sendo usado na
+                escala atual, ele sai da escala e os militares dessa
+                coluna são retirados.</p>
+              <p class="hp-tip"><b>Dica:</b> Depois de criar o grupo, escolha-o como coluna da escala em
+                <kbd>Escala</kbd> → <b>Tipo de escala</b>.
+              </p>
+              <div class="hp-acts"><button type="button" class="b2 ghost hp-go" data-gotab="m">Abrir Militares</button>
+              </div>
+              <div class="hp-rel"><span>Veja também:</span><button type="button" class="hp-relb"
+                  data-open="tipo-escala">Mudar o tipo de escala (uma ou duas colunas, outros grupos)</button><button
+                  type="button" class="hp-relb" data-open="mudar-grupo">Colocar um militar em um grupo ou trocar de
+                  grupo</button></div>
+            </div>
+          </details>
+          <details class="hp" id="h-cargos" data-cat="militares" data-p="0"
+            data-k="cargos posto graduação p/g sd cb sgt tenente capitão major criar editar renomear excluir lista">
+            <summary><span class="hp-st"><span class="hp-t">Editar a lista de postos e graduações (cargos)</span><span
+                  class="hp-s">Botões “Cargos” e “Gerenciar cargos”.</span></span></summary>
+            <div class="hp-b">
+              <p>O sistema começa <b>sem nenhum cargo</b>. Cadastre os postos e graduações que você usa pelos botões
+                abaixo.</p>
+              <ol>
+                <li>Ao criar militar (aba <kbd>Militares</kbd>): clique em <kbd>Cargos</kbd> para editar as opções do
+                  seletor de posto.</li>
+                <li>Na assinatura (aba <kbd>Escala</kbd>): clique em <kbd>Gerenciar cargos</kbd> para editar as opções
+                  do seletor <b>P/G</b>.</li>
+                <li>Na janela, adicione um novo cargo, renomeie ou exclua os existentes.</li>
+              </ol>
+              <p class="hp-warn"><b>Atenção:</b> Renomear ou excluir um cargo muda <b>só a lista</b>. Militares já
+                cadastrados mantêm o nome como está.</p>
+              <div class="hp-rel"><span>Veja também:</span><button type="button" class="hp-relb"
+                  data-open="cadastrar-militar">Cadastrar um militar</button><button type="button" class="hp-relb"
+                  data-open="assinatura">Preencher a assinatura da escala</button></div>
+            </div>
+          </details>
+          <details class="hp" id="h-excluir-militar" data-cat="militares" data-p="0"
+            data-k="excluir apagar remover militar deletar tirar do sistema transferido baixa">
+            <summary><span class="hp-st"><span class="hp-t">Excluir um militar</span><span class="hp-s">Use “Excluir” só
+                  para quem saiu de vez; para afastamento, use Dispensar.</span></span></summary>
+            <div class="hp-b">
+              <ol>
+                <li>Abra a aba <kbd>Militares</kbd>.</li>
+                <li>Na linha do militar, clique em <kbd>Excluir</kbd>.</li>
+                <li>Se foi sem querer, clique em <kbd>Desfazer</kbd> no aviso que aparece logo em seguida.</li>
+              </ol>
+              <p class="hp-tip"><b>Dica:</b> Se o militar só vai ficar fora por um tempo (curso, licença), use
+                <kbd>Dispensar</kbd>: ele sai das listas e volta depois com um clique.
+              </p>
+              <div class="hp-rel"><span>Veja também:</span><button type="button" class="hp-relb"
+                  data-open="dispensar">Dispensar um militar (curso, baixa, licença)</button><button type="button"
+                  class="hp-relb" data-open="desfazer">Desfazer o último lançamento ou exclusão</button></div>
+            </div>
+          </details>
+          <details class="hp" id="h-corrigir-nome" data-cat="militares" data-p="0"
+            data-k="corrigir editar mudar nome posto errado digitei errado renomear militar graduação promoção promovido">
+            <summary><span class="hp-st"><span class="hp-t">Corrigir o nome ou o posto de um militar</span><span
+                  class="hp-s">Não há botão de editar nome: crie de novo com o nome certo.</span></span></summary>
+            <div class="hp-b">
+              <ol>
+                <li>Em <kbd>Militares</kbd>, crie o militar de novo com o nome e o posto corretos e coloque-o no grupo.
+                </li>
+                <li>Use <kbd>Folga</kbd> para informar a folga que o militar antigo tinha.</li>
+                <li>Confira a escala: se o nome antigo ainda aparecer em algum dia, retire-o com <b>×</b> e adicione o
+                  novo.</li>
+                <li>Por fim, exclua o cadastro antigo (<kbd>Excluir</kbd>).</li>
+              </ol>
+              <p class="hp-tip"><b>Dica:</b> Em promoções, o mesmo caminho serve: crie o militar com o novo posto e
+                ajuste a folga.</p>
+              <div class="hp-rel"><span>Veja também:</span><button type="button" class="hp-relb"
+                  data-open="cadastrar-militar">Cadastrar um militar</button><button type="button" class="hp-relb"
+                  data-open="ajustar-folga">Ajustar a folga de um militar manualmente</button><button type="button"
+                  class="hp-relb" data-open="excluir-militar">Excluir um militar</button></div>
+            </div>
+          </details>
+          <h3 class="hp-cat" data-cat="escala">Montar a escala <span>12</span></h3>
+          <details class="hp" id="h-montar-manual" data-cat="escala" data-p="1"
+            data-k="montar escala manual fazer criar escalar adicionar militares dias colocar nome tabela">
+            <summary><span class="hp-st"><span class="hp-t">Montar a escala manualmente (passo a passo)</span><span
+                  class="hp-s">Escolha quem serve em cada dia usando o botão +.</span></span></summary>
+            <div class="hp-b">
+              <p class="hp-warn"><b>Antes de começar:</b> escolha o <b>Tipo de escala</b> no alto da aba Escala.
+                Enquanto ele não for escolhido, a tabela não aparece.</p>
+              <ol>
+                <li>Abra a aba <kbd>Escala</kbd> e deixe selecionado <kbd>Escala manual</kbd>.</li>
+                <li>Cada linha da tabela é um dia. Para escalar <b>um dia só</b>, clique no <b>+</b> pequeno dentro da
+                  célula.</li>
+                <li>Para escalar <b>vários dias de uma vez</b>, clique no <b>+</b> do cabeçalho da coluna.</li>
+                <li>Na janela, busque e clique nos militares (aparece um ✓). A lista já vem <b>do mais folgado para o
+                    menos folgado</b>.</li>
+                <li>Marque os dias (use os atalhos <b>Todos</b>, <b>Dias úteis</b>, <b>Fim de semana</b> ou
+                  <b>Limpar</b>).
+                </li>
+                <li>Se quiser, marque <b>Incluir aviso</b> e escreva o texto.</li>
+                <li>Clique em <kbd>Adicionar à escala</kbd>.</li>
+                <li>Repita para as outras colunas (ex.: depois do Cabo de dia, os Plantões).</li>
+              </ol>
+              <p class="hp-tip"><b>Dica:</b> O painel <b>Sugestões</b> (canto da tela) mostra os 3 mais folgados de cada
+                grupo para você escolher.</p>
+              <div class="hp-acts"><button type="button" class="b2 ghost hp-go" data-gotab="e">Ir para a Escala</button>
+              </div>
+              <div class="hp-rel"><span>Veja também:</span><button type="button" class="hp-relb"
+                  data-open="varios-dias">Escalar o mesmo militar em vários dias de uma vez</button><button
+                  type="button" class="hp-relb" data-open="cabo-plantao">Cabo de dia e plantões: quantos por
+                  dia?</button><button type="button" class="hp-relb" data-open="ler-tabela">Como ler a tabela da escala
+                  (cores e símbolos)</button><button type="button" class="hp-relb" data-open="lancar">LANÇAR: o que faz
+                  e quando usar</button></div>
+            </div>
+          </details>
+          <details class="hp" id="h-varios-dias" data-cat="escala" data-p="0"
+            data-k="varios dias de uma vez vários dias lote todos dias úteis fim de semana atalho semana inteira">
+            <summary><span class="hp-st"><span class="hp-t">Escalar o mesmo militar em vários dias de uma
+                  vez</span><span class="hp-s">Use o + do cabeçalho da coluna e os atalhos de dias.</span></span>
+            </summary>
+            <div class="hp-b">
+              <ol>
+                <li>Clique no <b>+</b> do <b>cabeçalho</b> da coluna (não o da célula).</li>
+                <li>Escolha o(s) militar(es).</li>
+                <li>Marque os dias um a um, ou use <b>Todos</b>, <b>Dias úteis</b> ou <b>Fim de semana</b>.
+                  <b>Limpar</b> desmarca tudo.
+                </li>
+                <li>Confira no rodapé da janela quantos militares e quantos dias estão selecionados.</li>
+                <li>Clique em <kbd>Adicionar à escala</kbd>.</li>
+              </ol>
+              <p>Na lista <b>Já de serviço nesta escala</b> você vê quem já está escalado em outros dias e quantos dias
+                de folga ele teria em relação aos dias escolhidos.</p>
+              <div class="hp-rel"><span>Veja também:</span><button type="button" class="hp-relb"
+                  data-open="montar-manual">Montar a escala manualmente (passo a passo)</button><button type="button"
+                  class="hp-relb" data-open="cabo-plantao">Cabo de dia e plantões: quantos por dia?</button></div>
+            </div>
+          </details>
+          <details class="hp" id="h-cabo-plantao" data-cat="escala" data-p="0"
+            data-k="cabo de dia plantão plantões quantos um por dia vários substituir quantidade">
+            <summary><span class="hp-st"><span class="hp-t">Cabo de dia e plantões: quantos por dia?</span><span
+                  class="hp-s">Cabo de dia é um por dia; plantões podem ser vários.</span></span></summary>
+            <div class="hp-b">
+              <ul>
+                <li><b>Cabo de dia:</b> só um por dia. Se escolher outro para o mesmo dia, ele <b>substitui</b> o
+                  anterior.</li>
+                <li><b>Plantões:</b> você pode escolher vários militares por dia.</li>
+                <li>Na célula vazia aparece <b>VAGO</b> (cabo de dia) ou <b>SEM PLANTÕES</b>.</li>
+              </ul>
+              <p>Se você usar o Tipo de escala <b>Única</b>, a coluna única pode ser configurada como <b>um por dia</b>
+                ou <b>vários por dia</b>.</p>
+              <div class="hp-rel"><span>Veja também:</span><button type="button" class="hp-relb"
+                  data-open="tipo-escala">Mudar o tipo de escala (uma ou duas colunas, outros grupos)</button><button
+                  type="button" class="hp-relb" data-open="montar-manual">Montar a escala manualmente (passo a
+                  passo)</button></div>
+            </div>
+          </details>
+          <details class="hp" id="h-retirar-militar" data-cat="escala" data-p="0"
+            data-k="retirar tirar remover militar da escala × x apagar nome dia errado">
+            <summary><span class="hp-st"><span class="hp-t">Retirar um militar da escala</span><span class="hp-s">Clique
+                  no × da etiqueta do militar.</span></span></summary>
+            <div class="hp-b">
+              <ol>
+                <li>Na tabela da aba <kbd>Escala</kbd>, ache a etiqueta do militar no dia.</li>
+                <li>Clique no <b>×</b> da etiqueta.</li>
+                <li>Se foi sem querer, clique em <kbd>Desfazer</kbd> no aviso que aparece.</li>
+              </ol>
+              <p>Se o dia já tinha sido lançado, <b>lance de novo</b> para atualizar as folgas.</p>
+              <div class="hp-rel"><span>Veja também:</span><button type="button" class="hp-relb"
+                  data-open="lancar">LANÇAR: o que faz e quando usar</button><button type="button" class="hp-relb"
+                  data-open="desfazer">Desfazer o último lançamento ou exclusão</button></div>
+            </div>
+          </details>
+          <details class="hp" id="h-editar-dia" data-cat="escala" data-p="0"
+            data-k="adicionar dia remover dia mudar data editar data lápis ✎ ✕ novo dia dia da semana">
+            <summary><span class="hp-st"><span class="hp-t">Adicionar, remover ou mudar a data de um dia</span><span
+                  class="hp-s">Use + Adicionar dia, ✎ (editar) e ✕ (remover).</span></span></summary>
+            <div class="hp-b">
+              <ul>
+                <li><b>+ Adicionar dia</b> cria o dia seguinte ao último da tabela.</li>
+                <li><b>✎</b> (ao lado da data) abre um quadro para alterar a <b>data</b> (formato dd/mm/aa), o <b>dia da
+                    semana</b> e a marcação <b>Feriado</b>. Termine em <kbd>Salvar</kbd> (ou <kbd>Cancelar</kbd>). Data
+                  inválida é recusada.</li>
+                <li><b>✕</b> (ou <kbd>Excluir dia</kbd> dentro do quadro de edição) remove o dia da escala, com opção de
+                  <b>Desfazer</b>. A escala precisa ter pelo menos um dia.
+                </li>
+              </ul>
+              <p class="hp-tip"><b>Dica:</b> Para começar uma escala em outra data, edite a data do primeiro dia e vá
+                adicionando dias.</p>
+              <div class="hp-rel"><span>Veja também:</span><button type="button" class="hp-relb"
+                  data-open="feriado">Marcar um feriado</button><button type="button" class="hp-relb"
+                  data-open="montar-manual">Montar a escala manualmente (passo a passo)</button></div>
+            </div>
+          </details>
+          <details class="hp" id="h-feriado" data-cat="escala" data-p="0"
+            data-k="feriado marcar feriado dia santo vermelha folga data comemorativa">
+            <summary><span class="hp-st"><span class="hp-t">Marcar um feriado</span><span class="hp-s">Feriado em dia de
+                  semana passa a contar como escala vermelha.</span></span></summary>
+            <div class="hp-b">
+              <ol>
+                <li>Na aba <kbd>Escala</kbd>, clique no <b>✎</b> do dia.</li>
+                <li>No quadro que abre, marque a opção <b>Feriado</b>.</li>
+                <li>Clique em <kbd>Salvar</kbd>. A linha fica avermelhada.</li>
+              </ol>
+              <p class="hp-warn"><b>Atenção:</b> Faça isso <b>antes de lançar</b>: a marcação decide se o dia conta
+                folga preta ou vermelha. Se já lançou, corrija o dia e lance de novo.</p>
+              <p>Sábados e domingos já são vermelhos automaticamente.</p>
+              <div class="hp-rel"><span>Veja também:</span><button type="button" class="hp-relb"
+                  data-open="preta-vermelha">Escala preta e escala vermelha: qual a diferença?</button><button
+                  type="button" class="hp-relb" data-open="editar-dia">Adicionar, remover ou mudar a data de um
+                  dia</button></div>
+            </div>
+          </details>
+          <details class="hp" id="h-ler-tabela" data-cat="escala" data-p="0"
+            data-k="ler tabela cores símbolos legenda ícones ⚠ ⇄ × ✎ ✕ amarelo vermelho preto significado">
+            <summary><span class="hp-st"><span class="hp-t">Como ler a tabela da escala (cores e símbolos)</span><span
+                  class="hp-s">O que significam as cores, o ⚠, o ⇄, o ×, o ✎ e o ✕.</span></span></summary>
+            <div class="hp-b">
+              <dl class="hp-dl">
+                <dt>Marca escura na lateral</dt>
+                <dd>Dia de semana (escala preta).</dd>
+                <dt>Linha avermelhada</dt>
+                <dd>Sábado, domingo ou feriado (escala vermelha).</dd>
+                <dt>Etiqueta amarela com ⚠</dt>
+                <dd>O militar tem um aviso. Passe o mouse ou clique no ícone para ler.</dd>
+                <dt>⇄</dt>
+                <dd>Troca de serviço (outro militar assume).</dd>
+                <dt>×</dt>
+                <dd>Retira o militar daquele dia.</dd>
+                <dt>✎</dt>
+                <dd>Edita a data do dia.</dd>
+                <dt>✕</dt>
+                <dd>Remove o dia inteiro.</dd>
+                <dt>VAGO / SEM PLANTÕES</dt>
+                <dd>Ninguém escalado ainda naquela coluna.</dd>
+              </dl>
+              <div class="hp-rel"><span>Veja também:</span><button type="button" class="hp-relb" data-open="troca">Troca
+                  de serviço (um militar assume o serviço de outro)</button><button type="button" class="hp-relb"
+                  data-open="aviso">Colocar um aviso (⚠) em um militar</button><button type="button" class="hp-relb"
+                  data-open="retirar-militar">Retirar um militar da escala</button></div>
+            </div>
+          </details>
+          <details class="hp" id="h-tipo-escala" data-cat="escala" data-p="1"
+            data-k="tipo de escala dupla única uma coluna duas colunas grupos técnico de dia guia de tfm configurar colunas">
+            <summary><span class="hp-st"><span class="hp-t">Mudar o tipo de escala (uma ou duas colunas, outros
+                  grupos)</span><span class="hp-s">Defina quais grupos viram colunas e se a escala é dupla ou
+                  única.</span></span></summary>
+            <div class="hp-b">
+              <ol>
+                <li>Na aba <kbd>Escala</kbd>, ache a caixa <b>Tipo de escala</b>, no alto da página (acima do <b>Último
+                    dia lançado</b> e da tabela).</li>
+                <li>Na primeira vez o campo mostra “Escolha o tipo…” e a criação da escala fica <b>bloqueada</b>.
+                  Escolha <b>Dupla</b> (duas colunas) ou <b>Única</b> (uma coluna): a tabela é liberada na hora, com os
+                  primeiros grupos cadastrados.</li>
+                <li>Se quiser, troque o grupo de cada coluna.</li>
+                <li>Na escala única, escolha também se é <b>um por dia</b> ou <b>vários por dia</b>.</li>
+                <li>Confirme quando o sistema pedir.</li>
+              </ol>
+              <p class="hp-warn"><b>Atenção:</b> Mudar os grupos <b>limpa os militares já colocados nas colunas que
+                  mudaram</b>. Os dias já lançados no histórico não são alterados. Na escala <b>Única</b> não existe
+                segunda coluna, nem na impressão.</p>
+              <p class="hp-tip"><b>Dica:</b> A Dupla precisa de pelo menos 2 grupos e a Única de 1. Crie em
+                <kbd>Militares</kbd> → <b>Gerenciar grupos</b>.
+              </p>
+              <div class="hp-rel"><span>Veja também:</span><button type="button" class="hp-relb"
+                  data-open="grupos">Criar, renomear e excluir grupos</button><button type="button" class="hp-relb"
+                  data-open="cabo-plantao">Cabo de dia e plantões: quantos por dia?</button></div>
+            </div>
+          </details>
+          <details class="hp" id="h-automatica" data-cat="escala" data-p="1"
+            data-k="escala automática automatico sugerir gerar sugestão próxima escala dias gerar de novo recalcular restaurar">
+            <summary><span class="hp-st"><span class="hp-t">Escala automática: deixar o sistema sugerir</span><span
+                  class="hp-s">Gera os próximos dias com os militares mais folgados.</span></span></summary>
+            <div class="hp-b">
+              <p>A escala automática só funciona <b>depois da primeira escala lançada</b>. Antes disso aparece uma
+                explicação.</p>
+              <ol>
+                <li>Na aba <kbd>Escala</kbd>, clique em <kbd>Escala automática</kbd>.</li>
+                <li>Em <b>Dias</b>, escolha quantos dias gerar (1 a 31; padrão 5).</li>
+                <li>Confira a escala sugerida. Você pode editar como na manual (adicionar, retirar, trocar, mudar
+                  datas).</li>
+                <li>Para refazer: <kbd>Gerar de novo</kbd> (descarta as suas edições) ou <kbd>Recalcular mantendo as
+                    datas</kbd> (mantém datas, dias da semana e feriados e refaz só os militares).</li>
+                <li>Se ela foi regenerada e você tinha editado, <kbd>Restaurar minha versão anterior</kbd> devolve a
+                  sua.</li>
+                <li>Clique em <kbd>LANÇAR</kbd> e depois <kbd>Imprimir</kbd>.</li>
+              </ol>
+              <dl class="hp-dl">
+                <dt>Como o sistema escolhe</dt>
+                <dd>Começa no dia seguinte ao último dia lançado, usa os mais folgados (preta e vermelha contadas
+                  separadamente), respeita dispensas e evita repetir quem serviu no último dia lançado, quando há gente
+                  suficiente.</dd>
+                <dt>Quantos plantões por dia</dt>
+                <dd>A quantidade mais comum do que foi lançado na primeira vez.</dd>
+                <dt>Atualização</dt>
+                <dd>A automática se atualiza sozinha sempre que outra escala é lançada.</dd>
+              </dl>
+              <p class="hp-warn"><b>Atenção:</b> Ao lançar uma escala automática, os dias vão para a <b>escala
+                  manual</b> para ficarem registrados. <b>Imprima nessa hora</b>: ao sair da aba, o sistema gera a
+                próxima automática.</p>
+              <div class="hp-acts"><button type="button" class="b2 ghost hp-go" data-gotab="e">Ir para a Escala</button>
+              </div>
+              <div class="hp-rel"><span>Veja também:</span><button type="button" class="hp-relb"
+                  data-open="lancar">LANÇAR: o que faz e quando usar</button><button type="button" class="hp-relb"
+                  data-open="p-auto">A escala automática não aparece ou está vazia</button><button type="button"
+                  class="hp-relb" data-open="periodo">Definir o período da Escala e da Previsão</button></div>
+            </div>
+          </details>
+          <details class="hp" id="h-periodo" data-cat="escala" data-p="0"
+            data-k="período datas intervalo de até início fim escala previsão selecionar datas imprimir">
+            <summary><span class="hp-st"><span class="hp-t">Definir o período da Escala e da Previsão</span><span
+                  class="hp-s">Escolha as datas inicial e final que serão impressas e lançadas.</span></span></summary>
+            <div class="hp-b">
+              <ol>
+                <li>Na aba <kbd>Escala</kbd>, vá ao cartão <b>Período e lançamento</b>.</li>
+                <li>Em <b>Escala</b>, escolha a data inicial e a final. Esses dias <b>contam folga</b> quando você
+                  lançar.</li>
+                <li>Em <b>Previsão</b>, escolha outro intervalo ou deixe <b>Sem previsão</b>. Esses dias <b>não contam
+                    folga</b>.</li>
+              </ol>
+              <p class="hp-tip"><b>Dica:</b> Se mudar o período depois de lançar, a impressão volta a ficar bloqueada
+                até você lançar de novo.</p>
+              <div class="hp-rel"><span>Veja também:</span><button type="button" class="hp-relb" data-open="previsao">O
+                  que é a Previsão (e por que não conta folga)</button><button type="button" class="hp-relb"
+                  data-open="lancar">LANÇAR: o que faz e quando usar</button></div>
+            </div>
+          </details>
+          <details class="hp" id="h-previsao" data-cat="escala" data-p="0"
+            data-k="previsão previsao futuro segunda tabela não conta folga informativa planejamento próximos dias">
+            <summary><span class="hp-st"><span class="hp-t">O que é a Previsão (e por que não conta folga)</span><span
+                  class="hp-s">Uma segunda tabela, só informativa, impressa abaixo da escala.</span></span></summary>
+            <div class="hp-b">
+              <p>A <b>Previsão</b> é um intervalo opcional que sai impresso como <b>segunda tabela</b> da folha. Serve
+                para informar a próxima semana, por exemplo.</p>
+              <ul>
+                <li>Ela <b>nunca conta folga</b>: só a <b>Escala</b> conta, e só depois de lançada.</li>
+                <li>O título dela tem campo próprio (veja “Mudar o título da impressão”).</li>
+                <li>Deixe <b>Sem previsão</b> para imprimir só a escala.</li>
+              </ul>
+              <div class="hp-rel"><span>Veja também:</span><button type="button" class="hp-relb"
+                  data-open="periodo">Definir o período da Escala e da Previsão</button><button type="button"
+                  class="hp-relb" data-open="titulo">Mudar o título da impressão e da previsão</button></div>
+            </div>
+          </details>
+          <details class="hp" id="h-titulo" data-cat="escala" data-p="0"
+            data-k="título titulo impressão cabeçalho frase nome da escala texto restaurar padrão personalizar">
+            <summary><span class="hp-st"><span class="hp-t">Mudar o título da impressão e da previsão</span><span
+                  class="hp-s">Troque a frase do título; a data sempre vem na linha de baixo.</span></span></summary>
+            <div class="hp-b">
+              <ol>
+                <li>Na aba <kbd>Escala</kbd>, em <b>Período e lançamento</b>, ache os campos <b>Título da impressão</b>
+                  e <b>Título da previsão</b>.</li>
+                <li>Digite a frase desejada (até 60 letras).</li>
+                <li>Para voltar ao padrão, deixe em branco ou clique em <kbd>Restaurar padrão</kbd>.</li>
+              </ol>
+              <p>Padrões: <i>Escala de Serviço de</i> e <i>Previsão da Escala de Serviço de</i>. A data do período entra
+                sempre na linha abaixo. Os títulos ficam salvos no arquivo exportado.</p>
+              <div class="hp-rel"><span>Veja também:</span><button type="button" class="hp-relb"
+                  data-open="imprimir">Imprimir ou salvar em PDF</button><button type="button" class="hp-relb"
+                  data-open="previsao">O que é a Previsão (e por que não conta folga)</button></div>
+            </div>
+          </details>
+          <h3 class="hp-cat" data-cat="lancar">Lançar e imprimir <span>7</span></h3>
+          <details class="hp" id="h-lancar" data-cat="lancar" data-p="1"
+            data-k="lançar lancar confirmar registrar fechar escala cumprida contar folga liberar impressão botão lançar">
+            <summary><span class="hp-st"><span class="hp-t">LANÇAR: o que faz e quando usar</span><span
+                  class="hp-s">Confirma a escala cumprida e começa a contar a folga.</span></span></summary>
+            <div class="hp-b">
+              <p class="hp-tip"><b>Padrão e último dia:</b> ao clicar em LANÇAR aparece a lista de padrões de impressão;
+                escolha um para continuar. Depois de lançar, o quadro <b>Último dia lançado</b> (abaixo do Tipo de
+                escala) mostra o último dia registrado e quem serviu.</p>
+              <ol>
+                <li>Confira o período <b>Escala</b> em <b>Período e lançamento</b>.</li>
+                <li>Clique em <kbd>LANÇAR</kbd>.</li>
+                <li>Leia os avisos antes de confirmar: dias sem ninguém escalado, “tudo já estava lançado” (nada muda)
+                  ou dias fora do intervalo com militares ainda não lançados.</li>
+                <li>Confirme. Aparece um aviso com opção de <kbd>Desfazer</kbd>.</li>
+              </ol>
+              <p>O que acontece ao lançar:</p>
+              <ul>
+                <li>Os militares de serviço nesses dias <b>passam a contar folga a partir do dia seguinte</b>.</li>
+                <li>Cada dia entra no <b>Histórico</b>.</li>
+                <li>A <b>impressão é liberada</b>.</li>
+                <li>Se o dia já estava lançado, o novo lançamento <b>substitui</b> o anterior.</li>
+                <li>A <b>Previsão</b> nunca conta folga.</li>
+              </ul>
+              <p class="hp-tip"><b>Dica:</b> Lançar errado não é problema: use <kbd>Desfazer</kbd> ou corrija e lance de
+                novo.</p>
+              <div class="hp-acts"><button type="button" class="b2 ghost hp-go" data-gotab="e">Ir para a Escala</button>
+              </div>
+              <div class="hp-rel"><span>Veja também:</span><button type="button" class="hp-relb"
+                  data-open="imprimir">Imprimir ou salvar em PDF</button><button type="button" class="hp-relb"
+                  data-open="desfazer">Desfazer o último lançamento ou exclusão</button><button type="button"
+                  class="hp-relb" data-open="como-folga">Como a folga é contada</button></div>
+            </div>
+          </details>
+          <details class="hp" id="h-imprimir" data-cat="lancar" data-p="1"
+            data-k="imprimir impressão pdf salvar pdf papel a4 folha imprimir escala gerar pdf baixar">
+            <summary><span class="hp-st"><span class="hp-t">Imprimir ou salvar em PDF</span><span class="hp-s">Lançar,
+                  visualizar, editar a tabela e imprimir.</span></span></summary>
+            <div class="hp-b">
+              <p class="hp-tip"><b>Padrões de impressão:</b> em Visualizar e editar, LANÇAR e Imprimir, aparece a lista
+                de padrões. Escolha um e continue. Veja “Padrões de impressão”.</p>
+              <ol>
+                <li>Clique em <kbd>LANÇAR</kbd> (a impressão só é liberada depois).</li>
+                <li>Se quiser, preencha o cartão <b>Assinatura</b>.</li>
+                <li>Clique em <kbd>Visualizar e editar</kbd> para ver a folha. Ali você pode ajustar qualquer parte da
+                  tabela.</li>
+                <li>Clique em <kbd>Imprimir</kbd> (no botão da tela ou dentro do editor). Abre a janela de impressão do
+                  navegador.</li>
+                <li>Para papel, escolha a impressora. Para arquivo, escolha <b>“Salvar como PDF”</b> como impressora.
+                </li>
+              </ol>
+              <p>A folha é <b>A4</b> e traz: título com as datas, tabela da Escala, tabela da Previsão (se houver) e a
+                assinatura (se preenchida). Fins de semana e feriados saem destacados; vagas saem como <b>VAGO</b>;
+                nomes com aviso ou troca saem com <b>*</b>.</p>
+              <div class="hp-acts"><button type="button" class="b2 ghost hp-go" data-gotab="e">Ir para a Escala</button>
+              </div>
+              <div class="hp-rel"><span>Veja também:</span><button type="button" class="hp-relb"
+                  data-open="imprimir-cinza">O botão Imprimir está cinza / “Há alterações não lançadas”</button><button
+                  type="button" class="hp-relb" data-open="editor-tabela">Editor da tabela de impressão</button><button
+                  type="button" class="hp-relb" data-open="assinatura">Preencher a assinatura da escala</button></div>
+            </div>
+          </details>
+          <details class="hp" id="h-imprimir-cinza" data-cat="lancar" data-p="0"
+            data-k="imprimir cinza desabilitado bloqueado não funciona não imprime alterações não lançadas liberar impressão">
+            <summary><span class="hp-st"><span class="hp-t">O botão Imprimir está cinza / “Há alterações não
+                  lançadas”</span><span class="hp-s">A escala ainda não foi lançada ou mudou depois de
+                  lançar.</span></span></summary>
+            <div class="hp-b">
+              <p>A impressão só funciona quando a escala mostrada está <b>lançada</b>. Ela volta a ser bloqueada se você
+                alterar qualquer coisa depois de lançar (militares, datas, período) ou se desfizer um lançamento.</p>
+              <ol>
+                <li>Clique em <kbd>LANÇAR</kbd> de novo.</li>
+                <li>Quando aparecer a confirmação, o botão <kbd>Imprimir</kbd> fica ativo.</li>
+              </ol>
+              <p>A mensagem “<i>Há alterações não lançadas. Lance de novo para liberar a impressão.</i>” é o sinal de
+                que isso aconteceu.</p>
+              <div class="hp-rel"><span>Veja também:</span><button type="button" class="hp-relb"
+                  data-open="lancar">LANÇAR: o que faz e quando usar</button><button type="button" class="hp-relb"
+                  data-open="imprimir">Imprimir ou salvar em PDF</button></div>
+            </div>
+          </details>
+          <details class="hp" id="h-editor-tabela" data-cat="lancar" data-p="1"
+            data-k="editor tabela editar célula linha coluna mesclar largura fonte paisagem retrato negrito alinhar visualizar modificar imprimir texto título assinatura">
+            <summary><span class="hp-st"><span class="hp-t">Editor da tabela de impressão</span><span
+                  class="hp-s">Ajuste qualquer parte da folha antes de imprimir.</span></span></summary>
+            <div class="hp-b">
+              <p class="hp-tip"><b>Salvar o formato:</b> depois de ajustar a tabela, use <kbd>Salvar como padrão…</kbd>
+                (grupo <b>Padrão</b> da barra) para reaproveitar o formato nas próximas escalas.</p>
+              <p>Ao clicar em <kbd>Visualizar e editar</kbd> (ou em <kbd>Imprimir</kbd>) abre o editor com a folha
+                como ela vai sair. Clique em qualquer texto para digitar nele.</p>
+              <dl class="hp-dl">
+                <dt>Células</dt>
+                <dd>Digite direto. <kbd>Enter</kbd> desce para a célula de baixo, <kbd>Tab</kbd> vai para a próxima,
+                  <kbd>Shift+Enter</kbd> quebra a linha dentro da célula.
+                </dd>
+                <dt>Linha</dt>
+                <dd>Inserir acima ou abaixo, mover, excluir, marcar como <b>Cabeçalho</b> e <b>Sombrear</b> (fundo cinza
+                  de fim de semana).</dd>
+                <dt>Coluna</dt>
+                <dd>Inserir à esquerda ou à direita, excluir e definir a <b>largura</b> em % (vazio = automática).</dd>
+                <dt>Célula</dt>
+                <dd>Negrito, alinhamento, <b>Mesclar →</b> com a célula da direita e <b>Dividir</b>.</dd>
+                <dt>Blocos</dt>
+                <dd>Cada título, tabela, texto e assinatura é um bloco. Use ↑ ↓ ✕ no topo do bloco para mover ou
+                  remover, e <b>+ Título / + Texto / + Tabela / + Assinatura</b> para criar novos.</dd>
+                <dt>Página</dt>
+                <dd>Tamanho da fonte da tabela e orientação A4 retrato ou paisagem.</dd>
+              </dl>
+              <p>As edições valem <b>só para a folha impressa</b>: a escala, as folgas e o histórico não mudam. Elas
+                ficam guardadas no arquivo exportado. Se você alterar a escala depois, o editor avisa e oferece
+                <kbd>Regerar da escala atual</kbd> (descarta as edições). <kbd>Restaurar da escala</kbd> faz o
+                mesmo quando você quiser.
+              </p>
+              <p class="hp-tip"><b>Dica:</b> Errou? Use <kbd>Desfazer</kbd> e <kbd>Refazer</kbd> do editor.</p>
+              <div class="hp-acts"><button type="button" class="b2 ghost hp-go" data-gotab="e">Ir para a Escala</button>
+              </div>
+              <div class="hp-rel"><span>Veja também:</span><button type="button" class="hp-relb"
+                  data-open="imprimir">Imprimir ou salvar em PDF</button><button type="button" class="hp-relb"
+                  data-open="pdf-grande">A escala não cabe em uma folha</button></div>
+            </div>
+          </details>
+          <details class="hp" id="h-padroes" data-cat="lancar" data-p="0"
+            data-k="padrão padrões de impressão salvar padrão modelo formato clássico lista visualizar lançar imprimir">
+            <summary><span class="hp-st"><span class="hp-t">Padrões de impressão: salvar e escolher</span><span
+                  class="hp-s">Guarde o formato da folha e reuse quando quiser.</span></span></summary>
+            <div class="hp-b">
+              <p>Ao clicar em <kbd>Visualizar e editar</kbd>, <kbd>LANÇAR</kbd> ou <kbd>Imprimir</kbd>, aparece a lista
+                de padrões. O <b>Clássico</b> é o padrão e fica sempre em primeiro.</p>
+              <ol>
+                <li>Abra <kbd>Visualizar e editar</kbd> e ajuste a tabela (tamanho da letra, orientação, larguras,
+                  negrito, alinhamento).</li>
+                <li>Clique em <kbd>Salvar como padrão…</kbd>, dê um nome e confirme. Crie quantos quiser.</li>
+                <li>Nas próximas vezes, escolha o padrão na lista e clique em <kbd>Continuar</kbd>.</li>
+                <li>Para apagar um padrão seu, use o ✕ dele na lista. O Clássico não pode ser excluído.</li>
+              </ol>
+              <p class="hp-warn"><b>Atenção:</b> O padrão guarda o <b>formato</b>, não o texto de cada data. Trocar de
+                padrão refaz a tabela a partir da escala e descarta edições manuais da folha.</p>
+              <div class="hp-acts"><button type="button" class="b2 ghost hp-go" data-gotab="e">Ir para a Escala</button>
+              </div>
+              <div class="hp-rel"><span>Veja também:</span><button type="button" class="hp-relb"
+                  data-open="editor-tabela">Editor da tabela de impressão</button><button type="button" class="hp-relb"
+                  data-open="imprimir">Imprimir ou salvar em PDF</button></div>
+            </div>
+          </details>
+          <details class="hp" id="h-pdf-grande" data-cat="lancar" data-p="0"
+            data-k="não cabe folha grande cortada muitas páginas poucos dias por folha diminuir tamanho fonte paisagem">
+            <summary><span class="hp-st"><span class="hp-t">A escala não cabe em uma folha</span><span
+                  class="hp-s">Diminua a fonte, use paisagem ou divida o período.</span></span></summary>
+            <div class="hp-b">
+              <ul>
+                <li>No <b>editor da tabela</b>, diminua o <b>tamanho da fonte</b> (em <b>Página</b>).</li>
+                <li>Mude a orientação para <b>A4 paisagem</b> se as colunas estiverem apertadas.</li>
+                <li>Divida o período em duas escalas e imprima cada uma separadamente.</li>
+                <li>Tire a <b>Previsão</b> (<b>Sem previsão</b>) se ela estiver ocupando espaço.</li>
+              </ul>
+              <div class="hp-rel"><span>Veja também:</span><button type="button" class="hp-relb"
+                  data-open="editor-tabela">Editor da tabela de impressão</button><button type="button" class="hp-relb"
+                  data-open="periodo">Definir o
+                  período da Escala e da Previsão</button></div>
+            </div>
+          </details>
+          <details class="hp" id="h-assinatura" data-cat="lancar" data-p="0"
+            data-k="assinatura assinar nome completo p/g posto função cargo rodapé comandante responsável linha">
+            <summary><span class="hp-st"><span class="hp-t">Preencher a assinatura da escala</span><span
+                  class="hp-s">Nome, P/G e função saem no final da folha.</span></span></summary>
+            <div class="hp-b">
+              <ol>
+                <li>Na aba <kbd>Escala</kbd>, vá ao cartão <b>Assinatura</b>.</li>
+                <li>Preencha <b>Nome completo</b>, escolha o <b>P/G</b> (posto/graduação) e digite a <b>Função</b> (ex.:
+                  Cabo de Dia).</li>
+                <li>Confira a prévia da linha de assinatura no próprio cartão.</li>
+              </ol>
+              <p>Na impressão aparece o nome em maiúsculas, “ – ”, o P/G e a função logo abaixo. Se deixar vazio, a
+                assinatura não sai. Para editar as opções de P/G, use <kbd>Gerenciar cargos</kbd>.</p>
+              <div class="hp-rel"><span>Veja também:</span><button type="button" class="hp-relb"
+                  data-open="cargos">Editar a lista de postos e graduações (cargos)</button><button type="button"
+                  class="hp-relb" data-open="imprimir">Imprimir ou salvar em PDF</button></div>
+            </div>
+          </details>
+          <h3 class="hp-cat" data-cat="folga">Folga e sugestões <span>6</span></h3>
+          <details class="hp" id="h-como-folga" data-cat="folga" data-p="2"
+            data-k="folga como conta regra contagem dias sem servir quem está mais folgado cálculo ordem sugestão">
+            <summary><span class="hp-st"><span class="hp-t">Como a folga é contada</span><span class="hp-s">As regras do
+                  sistema, uma a uma.</span></span></summary>
+            <div class="hp-b">
+              <p class="hp-tip"><b>Militar em mais de um grupo:</b> a folga é contada separadamente em cada grupo.
+                Servir no grupo A não zera a folga dele no grupo B.</p>
+              <ol>
+                <li>A folga é contada <b>separadamente</b> na escala preta (dias de semana) e na vermelha (fins de
+                  semana e feriados).</li>
+                <li>Folga preta = quantos dias pretos <b>lançados</b> passaram desde o último serviço preto do militar
+                  (começando no <b>dia seguinte</b> ao serviço). A vermelha funciona igual, só com dias vermelhos.</li>
+                <li><b>Só dias lançados contam.</b> Escala montada e não lançada não altera nada, e a previsão não
+                  conta.</li>
+                <li>Quem <b>nunca serviu</b> começa a contar do momento em que foi <b>cadastrado</b>.</li>
+                <li>Ao ser lançado de serviço, a folga <b>daquele tipo</b> volta a zero.</li>
+                <li>Ordem de quem deve ser escalado primeiro: <b>mais dias de folga</b>, depois <b>quem serviu há mais
+                    tempo</b>, depois <b>ordem alfabética</b>.</li>
+                <li>Em troca de serviço, zera quem foi <b>substituído</b>.</li>
+              </ol>
+              <p class="hp-tip"><b>Dica:</b> Folga errada? Use o botão <kbd>Folga</kbd> para ajustar na mão.</p>
+              <div class="hp-rel"><span>Veja também:</span><button type="button" class="hp-relb"
+                  data-open="ajustar-folga">Ajustar a folga de um militar manualmente</button><button type="button"
+                  class="hp-relb" data-open="troca">Troca de serviço (um militar assume o serviço de
+                  outro)</button><button type="button" class="hp-relb" data-open="sugestoes-aba">Ver quem está mais
+                  folgado (aba Folgas)</button></div>
+            </div>
+          </details>
+          <details class="hp" id="h-sugestoes-aba" data-cat="folga" data-p="1"
+            data-k="sugestões sugestao quem está mais folgado ranking lista ordem quem escalar próximo mais tempo sem servir">
+            <summary><span class="hp-st"><span class="hp-t">Ver quem está mais folgado (aba Folgas)</span><span
+                  class="hp-s">Lista, por grupo, do mais folgado ao menos folgado.</span></span></summary>
+            <div class="hp-b">
+              <ol>
+                <li>Abra a aba <kbd>Folgas</kbd>.</li>
+                <li>Escolha <b>Escala preta</b> ou <b>Escala vermelha</b> no seletor do topo (a lista reordena).</li>
+                <li>Leia cada linha: posição, nome, <b>dias de folga</b>, uma barra proporcional, a <b>data do último
+                    serviço</b> e a folga do outro tipo de escala.</li>
+                <li>Os <b>3 primeiros</b> de cada grupo recebem a etiqueta <b>Sugestão</b> (depois que houver
+                  lançamentos).</li>
+              </ol>
+              <p>Quem está <b>dispensado</b> naquele tipo de escala não aparece na lista. Em cada linha há o botão
+                <kbd>Folga</kbd> para ajustar.
+              </p>
+              <div class="hp-acts"><button type="button" class="b2 ghost hp-go" data-gotab="s">Abrir Folgas</button>
+              </div>
+              <div class="hp-rel"><span>Veja também:</span><button type="button" class="hp-relb"
+                  data-open="painel-sugestoes">O painel Sugestões (canto da tela)</button><button type="button"
+                  class="hp-relb" data-open="ajustar-folga">Ajustar a folga de um militar manualmente</button></div>
+            </div>
+          </details>
+          <details class="hp" id="h-painel-sugestoes" data-cat="folga" data-p="0"
+            data-k="painel sugestões lateral canto mini caixa flutuante p v ✓ recolher seta mais folgados">
+            <summary><span class="hp-st"><span class="hp-t">O painel Sugestões (canto da tela)</span><span
+                  class="hp-s">Os 3 mais folgados de cada grupo, sempre à vista na aba Escala.</span></span></summary>
+            <div class="hp-b">
+              <ul>
+                <li>Mostra os <b>3 mais folgados</b> de cada grupo da escala.</li>
+                <li>Os botões <b>P</b> (preta) e <b>V</b> (vermelha) escolhem qual contagem aparece.</li>
+                <li>O <b>✓</b> indica quem <b>já está escalado</b> na escala em exibição.</li>
+                <li>Clique na seta <b>▾</b> para recolher ou abrir. Em telas pequenas ele já começa recolhido.</li>
+                <li>Mostra os mesmos militares na escala manual e na automática.</li>
+              </ul>
+              <div class="hp-rel"><span>Veja também:</span><button type="button" class="hp-relb"
+                  data-open="sugestoes-aba">Ver quem está mais folgado (aba Folgas)</button><button type="button"
+                  class="hp-relb" data-open="montar-manual">Montar a escala manualmente (passo a passo)</button></div>
+            </div>
+          </details>
+          <details class="hp" id="h-ajustar-folga" data-cat="folga" data-p="1"
+            data-k="ajustar folga manual corrigir folga errada digitar dias editar folga botão folga começar a usar valor">
+            <summary><span class="hp-st"><span class="hp-t">Ajustar a folga de um militar manualmente</span><span
+                  class="hp-s">Digite a folga atual (preta e vermelha). Ótimo para começar a usar o
+                  sistema.</span></span></summary>
+            <div class="hp-b">
+              <ol>
+                <li>Em <kbd>Folgas</kbd>, <kbd>Militares</kbd> ou <kbd>Dispensados</kbd>, clique em <kbd>Folga</kbd>
+                  na linha do militar.</li>
+                <li>Digite a folga <b>atual</b> em <b>Preta · dias de semana</b> e em <b>Vermelha · fim de semana e
+                    feriados</b>.</li>
+                <li>Clique em <kbd>Salvar</kbd>.</li>
+              </ol>
+              <ul>
+                <li>O valor digitado passa a ser a folga atual e <b>continua contando normalmente</b>.</li>
+                <li>Valores ajustados à mão aparecem com <b>*</b> nas listas.</li>
+                <li>O ajuste de uma escala é <b>desfeito</b> quando o militar for lançado de serviço nela.</li>
+                <li><kbd>Remover ajustes</kbd> apaga os ajustes daquele militar.</li>
+              </ul>
+              <p class="hp-tip"><b>Dica:</b> No início, informe a folga real de cada militar. Assim as sugestões já saem
+                corretas desde o primeiro dia.</p>
+              <div class="hp-rel"><span>Veja também:</span><button type="button" class="hp-relb"
+                  data-open="como-folga">Como a folga é contada</button><button type="button" class="hp-relb"
+                  data-open="p-folga-errada">A folga de alguém está errada</button></div>
+            </div>
+          </details>
+          <details class="hp" id="h-resetar-folgas" data-cat="folga" data-p="0"
+            data-k="resetar zerar folgas todas recomeçar contagem limpar folga de todos reiniciar">
+            <summary><span class="hp-st"><span class="hp-t">Zerar a folga de todo mundo</span><span
+                  class="hp-s">Recomeça a contagem; o histórico é mantido.</span></span></summary>
+            <div class="hp-b">
+              <ol>
+                <li>Abra a aba <kbd>Folgas</kbd>.</li>
+                <li>Clique em <kbd>Resetar todas as folgas</kbd>.</li>
+                <li>Confirme.</li>
+              </ol>
+              <ul>
+                <li>Zera a contagem de <b>todos</b> (preta e vermelha).</li>
+                <li>O <b>histórico é mantido</b>; a contagem recomeça do próximo lançamento.</li>
+                <li>A escala automática é recalculada.</li>
+                <li>Dá para desfazer logo depois.</li>
+              </ul>
+              <p class="hp-warn"><b>Atenção:</b> Isso afeta todos os militares. Para corrigir só um, use
+                <kbd>Folga</kbd> na linha dele.
+              </p>
+              <div class="hp-acts"><button type="button" class="b2 ghost hp-go" data-gotab="s">Abrir Folgas</button>
+              </div>
+              <div class="hp-rel"><span>Veja também:</span><button type="button" class="hp-relb"
+                  data-open="ajustar-folga">Ajustar a folga de um militar manualmente</button><button type="button"
+                  class="hp-relb" data-open="desfazer">Desfazer o último lançamento ou exclusão</button></div>
+            </div>
+          </details>
+          <details class="hp" id="h-militar-novo-folga" data-cat="folga" data-p="0"
+            data-k="militar novo recém chegado folga começa cadastro transferido chegou nova folga inicial">
+            <summary><span class="hp-st"><span class="hp-t">Militar recém-chegado: de onde começa a folga?</span><span
+                  class="hp-s">Começa a contar do cadastro, não do passado.</span></span></summary>
+            <div class="hp-b">
+              <p>Um militar que <b>nunca serviu</b> começa a contar folga a partir do momento em que foi
+                <b>cadastrado</b>. Ele não nasce com folga acumulada dos lançamentos antigos.
+              </p>
+              <p>Se ele já tinha folga em outra unidade ou você quer que ele já apareça entre os mais folgados, use
+                <kbd>Folga</kbd> e digite os valores.
+              </p>
+              <div class="hp-rel"><span>Veja também:</span><button type="button" class="hp-relb"
+                  data-open="cadastrar-militar">Cadastrar um militar</button><button type="button" class="hp-relb"
+                  data-open="ajustar-folga">Ajustar a folga de um militar manualmente</button></div>
+            </div>
+          </details>
+          <h3 class="hp-cat" data-cat="dispensa">Dispensas <span>4</span></h3>
+          <details class="hp" id="h-dispensar" data-cat="dispensa" data-p="1"
+            data-k="dispensar dispensa afastar afastamento curso baixa licença férias fora da escala destino motivo período">
+            <summary><span class="hp-st"><span class="hp-t">Dispensar um militar (curso, baixa, licença)</span><span
+                  class="hp-s">Ele sai das listas da escala durante o período.</span></span></summary>
+            <div class="hp-b">
+              <ol>
+                <li>Abra a aba <kbd>Dispensados</kbd> e clique em <kbd>+ Adicionar à dispensa</kbd> (ou clique em
+                  <kbd>Dispensar</kbd> na linha do militar, na aba Militares).
+                </li>
+                <li>Escolha o <b>Militar</b>.</li>
+                <li>Escolha a <b>Abrangência</b> (total, só dias de semana ou só fim de semana e feriados).</li>
+                <li>Escreva o <b>Destino/motivo</b> (ex.: curso em Brasília, baixa médica, licença).</li>
+                <li>Informe <b>Início</b> e <b>Fim</b> da dispensa (o fim não pode ser antes do início).</li>
+                <li>Clique em <kbd>Confirmar dispensa</kbd>.</li>
+              </ol>
+              <p>Todos os campos com * são obrigatórios; o botão fica desabilitado até estarem preenchidos.</p>
+              <ul>
+                <li>O militar <b>sai das listas</b> da escala dispensada: não aparece para ser adicionado, nem em
+                  Sugestões, nem na escala automática.</li>
+                <li>A dispensa <b>total</b> move o militar para a coluna <b>Dispensados</b>.</li>
+              </ul>
+              <div class="hp-acts"><button type="button" class="b2 ghost hp-go" data-gotab="d">Abrir
+                  Dispensados</button></div>
+              <div class="hp-rel"><span>Veja também:</span><button type="button" class="hp-relb"
+                  data-open="dispensa-parcial">Dispensa total ou parcial: qual escolher?</button><button type="button"
+                  class="hp-relb" data-open="retorno-dispensa">Avisos de retorno e como devolver o militar à
+                  escala</button><button type="button" class="hp-relb" data-open="dispensado-escalado">Dispensei alguém
+                  que já estava escalado</button></div>
+            </div>
+          </details>
+          <details class="hp" id="h-dispensa-parcial" data-cat="dispensa" data-p="0"
+            data-k="dispensa parcial total abrangência só dias de semana só fim de semana fds disp semana preta vermelha">
+            <summary><span class="hp-st"><span class="hp-t">Dispensa total ou parcial: qual escolher?</span><span
+                  class="hp-s">Total sai de tudo; parcial sai só da preta ou só da vermelha.</span></span></summary>
+            <div class="hp-b">
+              <dl class="hp-dl">
+                <dt>Total</dt>
+                <dd>Fora das escalas preta e vermelha. O militar vai para a coluna <b>Dispensados</b>.</dd>
+                <dt>Somente dias de semana (escala preta)</dt>
+                <dd>Continua disponível na escala vermelha. Aparece a etiqueta <b>DISP. SEMANA</b>.</dd>
+                <dt>Somente fim de semana e feriados (escala vermelha)</dt>
+                <dd>Continua disponível na escala preta. Aparece a etiqueta <b>DISP. FDS</b>.</dd>
+              </dl>
+              <p>Na dispensa parcial o militar <b>mantém o grupo</b>.</p>
+              <div class="hp-rel"><span>Veja também:</span><button type="button" class="hp-relb"
+                  data-open="dispensar">Dispensar um militar (curso, baixa, licença)</button><button type="button"
+                  class="hp-relb" data-open="preta-vermelha">Escala preta e escala vermelha: qual a diferença?</button>
+              </div>
+            </div>
+          </details>
+          <details class="hp" id="h-retorno-dispensa" data-cat="dispensa" data-p="0"
+            data-k="retorno retornar voltar dispensa terminou fim da dispensa devolver militar à escala aviso volta em dias encerrada">
+            <summary><span class="hp-st"><span class="hp-t">Avisos de retorno e como devolver o militar à
+                  escala</span><span class="hp-s">O sistema avisa, mas não devolve sozinho: clique em
+                  Retornar.</span></span></summary>
+            <div class="hp-b">
+              <p>O sistema mostra um ⚠ (na aba Dispensados e nas listas) quando:</p>
+              <ul>
+                <li>faltam <b>2 dias ou menos</b>: “Volta em N dias”;</li>
+                <li>é o <b>último dia</b>: “Último dia de dispensa”;</li>
+                <li>já <b>passou o fim</b>: “Dispensa encerrada… já pode voltar para a escala”.</li>
+              </ul>
+              <ol>
+                <li>Abra a aba <kbd>Dispensados</kbd>.</li>
+                <li>Na linha do militar, clique em <kbd>Retornar</kbd>.</li>
+              </ol>
+              <p>Ele volta ao grupo em que estava e os dados da dispensa são apagados. O botão <kbd>Folga</kbd> permite
+                ajustar a folga dele.</p>
+              <p class="hp-warn"><b>Atenção:</b> O sistema <b>não</b> devolve o militar sozinho quando a dispensa acaba;
+                ele apenas avisa.</p>
+              <div class="hp-acts"><button type="button" class="b2 ghost hp-go" data-gotab="d">Abrir
+                  Dispensados</button></div>
+              <div class="hp-rel"><span>Veja também:</span><button type="button" class="hp-relb"
+                  data-open="dispensar">Dispensar um militar (curso, baixa, licença)</button></div>
+            </div>
+          </details>
+          <details class="hp" id="h-dispensado-escalado" data-cat="dispensa" data-p="0"
+            data-k="dispensado já escalado continua na escala dispensa depois de montar retirar dia errado conflito">
+            <summary><span class="hp-st"><span class="hp-t">Dispensei alguém que já estava escalado</span><span
+                  class="hp-s">Ele continua na escala; retire manualmente se precisar.</span></span></summary>
+            <div class="hp-b">
+              <p>Se o militar já estava em dias de uma escala montada, ele <b>continua lá</b> e o sistema avisa. Para
+                tirá-lo:</p>
+              <ol>
+                <li>Na aba <kbd>Escala</kbd>, clique no <b>×</b> da etiqueta dele em cada dia.</li>
+                <li>Escale outro militar no lugar (<b>+</b>).</li>
+                <li>Se algum desses dias já estava lançado, lance de novo.</li>
+              </ol>
+              <div class="hp-rel"><span>Veja também:</span><button type="button" class="hp-relb"
+                  data-open="retirar-militar">Retirar um militar da escala</button><button type="button" class="hp-relb"
+                  data-open="dispensar">Dispensar um militar (curso, baixa, licença)</button></div>
+            </div>
+          </details>
+          <h3 class="hp-cat" data-cat="trocas">Trocas e avisos <span>2</span></h3>
+          <details class="hp" id="h-troca" data-cat="trocas" data-p="1"
+            data-k="troca de serviço trocar serviço assumir substituir substituição permuta ⇄ outro militar tirou o serviço">
+            <summary><span class="hp-st"><span class="hp-t">Troca de serviço (um militar assume o serviço de
+                  outro)</span><span class="hp-s">Use o ⇄ da etiqueta. Quem zera a folga é o substituído.</span></span>
+            </summary>
+            <div class="hp-b">
+              <ol>
+                <li>Na aba <kbd>Escala</kbd>, clique no <b>⇄</b> da etiqueta de quem estava escalado.</li>
+                <li>Escolha <b>quem assume</b> (a lista mostra grupo e folga e já exclui quem está ocupado naquele dia
+                  ou dispensado).</li>
+                <li>Clique em <kbd>Confirmar troca</kbd>.</li>
+              </ol>
+              <ul>
+                <li>Quem assumiu <b>aparece no lugar</b>, na escala e na impressão (com <b>*</b>).</li>
+                <li>Ao <b>LANÇAR</b>, quem <b>zera a folga do dia é o militar substituído</b>.</li>
+                <li>A folga de <b>quem assumiu continua contando normalmente</b>, como se ele não tivesse tirado
+                  serviço.</li>
+                <li>A troca fica registrada no <b>Histórico</b>.</li>
+              </ul>
+              <p class="hp-warn"><b>Atenção:</b> Se o dia já tinha sido lançado, <b>lance de novo</b> para atualizar as
+                folgas.</p>
+              <div class="hp-rel"><span>Veja também:</span><button type="button" class="hp-relb"
+                  data-open="lancar">LANÇAR: o que faz e quando usar</button><button type="button" class="hp-relb"
+                  data-open="aviso">Colocar um aviso (⚠) em um militar</button><button type="button" class="hp-relb"
+                  data-open="historico-ver">Consultar o histórico de dias lançados</button></div>
+            </div>
+          </details>
+          <details class="hp" id="h-aviso" data-cat="trocas" data-p="0"
+            data-k="aviso ⚠ observação nota alerta incluir aviso texto asterisco impressão aguardando troca dispensa">
+            <summary><span class="hp-st"><span class="hp-t">Colocar um aviso (⚠) em um militar</span><span
+                  class="hp-s">Uma observação presa ao militar naquele dia; sai com * na impressão.</span></span>
+            </summary>
+            <div class="hp-b">
+              <ol>
+                <li>Ao adicionar militares (janela do <b>+</b>), marque <b>Incluir aviso</b>.</li>
+                <li>Escreva o texto (ex.: <i>dispensa</i>, <i>aguardando troca</i>).</li>
+                <li>Com vários militares selecionados, escolha <b>quais deles recebem</b> o aviso (<b>Todos</b> ou
+                  <b>Nenhum</b> ajudam).
+                </li>
+                <li>Confirme em <kbd>Adicionar à escala</kbd>.</li>
+              </ol>
+              <ul>
+                <li>Aparece como <b>⚠</b> na etiqueta amarela. Passe o mouse ou clique no ícone para ler.</li>
+                <li>Na <b>impressão</b>, o nome sai com asterisco (<b>*</b>).</li>
+                <li>Trocas de serviço e retornos de dispensa também geram avisos automáticos.</li>
+              </ul>
+              <div class="hp-rel"><span>Veja também:</span><button type="button" class="hp-relb"
+                  data-open="ler-tabela">Como ler a tabela da escala (cores e símbolos)</button><button type="button"
+                  class="hp-relb" data-open="troca">Troca de serviço (um militar assume o serviço de outro)</button>
+              </div>
+            </div>
+          </details>
+          <h3 class="hp-cat" data-cat="historico">Histórico e desfazer <span>4</span></h3>
+          <details class="hp" id="h-historico-ver" data-cat="historico" data-p="1"
+            data-k="histórico historico consultar buscar procurar dias lançados lista passado quem serviu data filtro">
+            <summary><span class="hp-st"><span class="hp-t">Consultar o histórico de dias lançados</span><span
+                  class="hp-s">Busque por militar ou data e filtre por tipo de escala.</span></span></summary>
+            <div class="hp-b">
+              <ol>
+                <li>Abra a aba <kbd>Histórico</kbd>.</li>
+                <li>Digite um nome ou data em <b>Buscar militar ou data</b>.</li>
+                <li>Se quiser, filtre por <b>Preta</b> ou <b>Vermelha</b>.</li>
+              </ol>
+              <p>Cada item mostra data, dia da semana, tipo (<b>PRETA</b> ou <b>VERMELHA</b>), o <b>cabo de dia</b>, os
+                <b>plantões</b> e as <b>trocas de serviço</b> (ex.: <i>FULANO* (tirou o serviço de BELTRANO)</i>).
+              </p>
+              <div class="hp-acts"><button type="button" class="b2 ghost hp-go" data-gotab="h">Abrir Histórico</button>
+              </div>
+              <div class="hp-rel"><span>Veja também:</span><button type="button" class="hp-relb"
+                  data-open="corrigir-lancado">Corrigir um dia que já foi lançado</button><button type="button"
+                  class="hp-relb" data-open="desfazer">Desfazer o último lançamento ou exclusão</button></div>
+            </div>
+          </details>
+          <details class="hp" id="h-corrigir-lancado" data-cat="historico" data-p="0"
+            data-k="corrigir lancei errado dia errado editar lançamento refazer substituir lançado errado mudar histórico">
+            <summary><span class="hp-st"><span class="hp-t">Corrigir um dia que já foi lançado</span><span
+                  class="hp-s">Lance de novo (substitui) ou exclua o dia do histórico.</span></span></summary>
+            <div class="hp-b">
+              <p>Há dois caminhos:</p>
+              <ol>
+                <li><b>Refazer:</b> na aba <kbd>Escala</kbd>, corrija o dia e clique em <kbd>LANÇAR</kbd> de novo. O
+                  novo lançamento <b>substitui</b> o anterior.</li>
+                <li><b>Excluir:</b> na aba <kbd>Histórico</kbd>, exclua o dia errado (as folgas são recalculadas como se
+                  ele nunca tivesse sido lançado) e monte-o de novo.</li>
+              </ol>
+              <p class="hp-tip"><b>Dica:</b> Se acabou de lançar, <kbd>Desfazer</kbd> no aviso é o jeito mais rápido.
+              </p>
+              <div class="hp-rel"><span>Veja também:</span><button type="button" class="hp-relb"
+                  data-open="lancar">LANÇAR: o que faz e quando usar</button><button type="button" class="hp-relb"
+                  data-open="desfazer">Desfazer o último lançamento ou exclusão</button><button type="button"
+                  class="hp-relb" data-open="excluir-historico">Excluir um dia do histórico</button></div>
+            </div>
+          </details>
+          <details class="hp" id="h-desfazer" data-cat="historico" data-p="1"
+            data-k="desfazer voltar atrás undo cancelar último lançamento último passo errei lançamento exclusão reverter">
+            <summary><span class="hp-st"><span class="hp-t">Desfazer o último lançamento ou exclusão</span><span
+                  class="hp-s">Até 30 passos, do mais recente para o mais antigo.</span></span></summary>
+            <div class="hp-b">
+              <ol>
+                <li>Clique em <kbd>Desfazer</kbd> no aviso que aparece logo após lançar, <b>ou</b></li>
+                <li>na aba <kbd>Histórico</kbd>, clique em <kbd>Desfazer último passo</kbd>, <b>ou</b></li>
+                <li>na aba <kbd>Folgas</kbd>, clique em <kbd>Desfazer último lançamento</kbd>.</li>
+              </ol>
+              <ul>
+                <li>Todo <b>lançamento</b> e toda <b>exclusão</b> entra na lista de passos (até <b>30</b>), do mais
+                  recente para o mais antigo.</li>
+                <li>O item marcado <b>PRÓXIMO A DESFAZER</b> é o que será desfeito.</li>
+                <li>Ao desfazer, a <b>impressão fica bloqueada</b> até você lançar de novo.</li>
+              </ul>
+              <p>Ações pequenas (retirar militar, excluir militar, importar arquivo) têm o próprio <kbd>Desfazer</kbd>
+                no aviso que aparece na hora.</p>
+              <div class="hp-acts"><button type="button" class="b2 ghost hp-go" data-gotab="h">Abrir Histórico</button>
+              </div>
+              <div class="hp-rel"><span>Veja também:</span><button type="button" class="hp-relb"
+                  data-open="corrigir-lancado">Corrigir um dia que já foi lançado</button><button type="button"
+                  class="hp-relb" data-open="p-lancei-errado">Lancei errado. E agora?</button></div>
+            </div>
+          </details>
+          <details class="hp" id="h-excluir-historico" data-cat="historico" data-p="0"
+            data-k="excluir apagar dia histórico remover lançamento deletar registro">
+            <summary><span class="hp-st"><span class="hp-t">Excluir um dia do histórico</span><span class="hp-s">As
+                  folgas são recalculadas como se o dia nunca tivesse sido lançado.</span></span></summary>
+            <div class="hp-b">
+              <ol>
+                <li>Abra a aba <kbd>Histórico</kbd>.</li>
+                <li>Ache o dia (use a busca) e clique em <kbd>Excluir</kbd>.</li>
+                <li>Confirme.</li>
+              </ol>
+              <p>As folgas são recalculadas como se aquele dia <b>nunca</b> tivesse sido lançado. Se foi engano, use
+                <kbd>Desfazer último passo</kbd>.
+              </p>
+              <div class="hp-acts"><button type="button" class="b2 ghost hp-go" data-gotab="h">Abrir Histórico</button>
+              </div>
+              <div class="hp-rel"><span>Veja também:</span><button type="button" class="hp-relb"
+                  data-open="desfazer">Desfazer o último lançamento ou exclusão</button><button type="button"
+                  class="hp-relb" data-open="corrigir-lancado">Corrigir um dia que já foi lançado</button></div>
+            </div>
+          </details>
+          <h3 class="hp-cat" data-cat="arquivo">Salvar e backup <span>8</span></h3>
+          <details class="hp" id="h-arquivo-regra" data-cat="arquivo" data-p="1"
+            data-k="regra de ouro banco de dados arquivo salvar guardar dados json escala-servico-banco importar exportar rotina antes depois">
+            <summary><span class="hp-st"><span class="hp-t">Regra de ouro: não existe banco de dados</span><span
+                  class="hp-s">Importe o arquivo antes de usar e exporte depois.</span></span></summary>
+            <div class="hp-b">
+              <p>O ESCALOTEX <b>não tem servidor, banco de dados nem conta de usuário</b>. Tudo (militares, grupos,
+                escalas, folgas, dispensas, histórico, assinatura, tabela de impressão editada) fica em <b>um único
+                  arquivo</b>:
+                <kbd>escala-servico-banco.json</kbd>. Esse arquivo é o banco de dados de verdade.
+              </p>
+              <ol>
+                <li><b>Antes de usar:</b> clique em <kbd>Importar arquivo</kbd> e escolha o
+                  <kbd>escala-servico-banco.json</kbd> <b>mais recente</b>.
+                </li>
+                <li>Confira a caixa <b>Último dia lançado</b> para ter certeza de que é a versão certa.</li>
+                <li>Faça o trabalho do dia (montar, lançar, imprimir, dispensar…).</li>
+                <li><b>Depois de usar:</b> clique em <kbd>Exportar arquivo</kbd>.</li>
+                <li>Guarde o arquivo baixado no lugar de sempre, <b>substituindo o antigo</b> (ou guarde com a data no
+                  nome).</li>
+              </ol>
+              <p class="hp-warn"><b>Atenção:</b> O texto “Salvo automaticamente neste navegador” é só uma cópia de
+                trabalho <b>daquele navegador, naquele aparelho</b>. O arquivo exportado é o que vale.</p>
+              <div class="hp-rel"><span>Veja também:</span><button type="button" class="hp-relb"
+                  data-open="exportar">Exportar (salvar) o arquivo</button><button type="button" class="hp-relb"
+                  data-open="importar">Importar (abrir) o arquivo</button><button type="button" class="hp-relb"
+                  data-open="salvo-navegador">O que significa “Salvo automaticamente neste navegador”</button><button
+                  type="button" class="hp-relb" data-open="duas-pessoas">Duas pessoas usando ao mesmo tempo</button>
+              </div>
+            </div>
+          </details>
+          <details class="hp" id="h-exportar" data-cat="arquivo" data-p="1"
+            data-k="exportar salvar baixar arquivo backup guardar download json exportar arquivo cópia">
+            <summary><span class="hp-st"><span class="hp-t">Exportar (salvar) o arquivo</span><span class="hp-s">Baixa o
+                  escala-servico-banco.json com todos os dados.</span></span></summary>
+            <div class="hp-b">
+              <ol>
+                <li>Clique em <kbd>Exportar arquivo</kbd> (canto superior).</li>
+                <li>O navegador baixa o <kbd>escala-servico-banco.json</kbd> e o sistema mostra “Arquivo exportado”.
+                </li>
+                <li>Mova o arquivo para a sua pasta de segurança, substituindo o anterior (ou renomeie com a data, ex.:
+                  <i>escala-servico-banco 2026-10-16.json</i>).
+                </li>
+              </ol>
+              <p>Dentro do arquivo vai tudo: grupos e tipo de escala, escala manual e automática, militares, dispensas,
+                ajustes de folga, histórico, passos para desfazer, períodos, assinatura, cargos, títulos e a tabela de
+                impressão editada.</p>
+              <p class="hp-warn"><b>Atenção:</b> É um arquivo de texto (JSON), mas <b>não edite à mão</b>: um erro pode
+                torná-lo inválido.</p>
+              <div class="hp-rel"><span>Veja também:</span><button type="button" class="hp-relb"
+                  data-open="arquivo-regra">Regra de ouro: não existe banco de dados</button><button type="button"
+                  class="hp-relb" data-open="backup">Cópias de segurança e cuidados com o arquivo</button></div>
+            </div>
+          </details>
+          <details class="hp" id="h-importar" data-cat="arquivo" data-p="1"
+            data-k="importar abrir carregar arquivo restaurar json escolher arquivo trazer dados">
+            <summary><span class="hp-st"><span class="hp-t">Importar (abrir) o arquivo</span><span class="hp-s">Carrega
+                  o arquivo salvo e substitui o que está na tela.</span></span></summary>
+            <div class="hp-b">
+              <ol>
+                <li>Clique em <kbd>Importar arquivo</kbd> (canto superior).</li>
+                <li>Escolha o <kbd>escala-servico-banco.json</kbd> mais recente.</li>
+                <li>Aparece “Arquivo importado” com o botão <kbd>Desfazer</kbd>. Se importou o arquivo errado, clique
+                  nele.</li>
+              </ol>
+              <ul>
+                <li><b>Importar substitui tudo</b> o que está na tela pelos dados do arquivo.</li>
+                <li>Importar um arquivo velho faz o sistema <b>voltar no tempo</b> (folgas, histórico e escalas ficam
+                  como naquela data).</li>
+                <li>Só são aceitos arquivos <b>.json gerados pelo próprio ESCALOTEX</b>.</li>
+              </ul>
+              <div class="hp-rel"><span>Veja também:</span><button type="button" class="hp-relb"
+                  data-open="p-invalido">Aparece “Arquivo inválido”</button><button type="button" class="hp-relb"
+                  data-open="p-importei-errado">Importei o arquivo errado</button><button type="button" class="hp-relb"
+                  data-open="arquivo-regra">Regra de ouro: não existe banco de dados</button></div>
+            </div>
+          </details>
+          <details class="hp" id="h-dois-pcs" data-cat="arquivo" data-p="0"
+            data-k="dois computadores celular outro aparelho outro pc sincronizar levar dados trocar de computador notebook tablet">
+            <summary><span class="hp-st"><span class="hp-t">Usar em dois computadores ou no celular</span><span
+                  class="hp-s">Leve o arquivo junto: exporte em um, importe no outro.</span></span></summary>
+            <div class="hp-b">
+              <p>Não há sincronização automática: cada aparelho guarda a própria cópia de trabalho. Para mudar de
+                aparelho:</p>
+              <ol>
+                <li>No primeiro aparelho, clique em <kbd>Exportar arquivo</kbd>.</li>
+                <li>Leve o arquivo (pasta compartilhada, pendrive, e-mail para si mesmo…).</li>
+                <li>No outro aparelho, abra o site e clique em <kbd>Importar arquivo</kbd>.</li>
+                <li>Ao terminar, exporte de novo e guarde o arquivo mais novo.</li>
+              </ol>
+              <p>O layout se adapta ao celular (a tabela vira uma lista de cartões).</p>
+              <div class="hp-rel"><span>Veja também:</span><button type="button" class="hp-relb"
+                  data-open="arquivo-regra">Regra de ouro: não existe banco de dados</button><button type="button"
+                  class="hp-relb" data-open="duas-pessoas">Duas pessoas usando ao mesmo tempo</button></div>
+            </div>
+          </details>
+          <details class="hp" id="h-duas-pessoas" data-cat="arquivo" data-p="0"
+            data-k="duas pessoas ao mesmo tempo compartilhar vários usuários simultâneo colaborar equipe conflito sobrescrever vez">
+            <summary><span class="hp-st"><span class="hp-t">Duas pessoas usando ao mesmo tempo</span><span
+                  class="hp-s">Não dá: vale o último arquivo exportado.</span></span></summary>
+            <div class="hp-b">
+              <p>Cada pessoa teria a <b>sua cópia</b>. Se duas importam o mesmo arquivo, alteram e exportam, <b>vale o
+                  último arquivo e as alterações da outra pessoa se perdem</b>.</p>
+              <ul>
+                <li>Combine <b>quem está com a vez</b> e passe o arquivo adiante.</li>
+                <li>Sempre importe a versão mais recente antes de começar.</li>
+                <li>Exporte ao terminar e avise quem vai usar depois.</li>
+              </ul>
+              <div class="hp-rel"><span>Veja também:</span><button type="button" class="hp-relb"
+                  data-open="arquivo-regra">Regra de ouro: não existe banco de dados</button><button type="button"
+                  class="hp-relb" data-open="dois-pcs">Usar em dois computadores ou no celular</button></div>
+            </div>
+          </details>
+          <details class="hp" id="h-recomecar" data-cat="arquivo" data-p="0"
+            data-k="apagar tudo recomeçar zero resetar sistema limpar tudo reset_config reiniciar começar de novo formatar">
+            <summary><span class="hp-st"><span class="hp-t">Apagar tudo e recomeçar do zero</span><span
+                  class="hp-s">Importe o reset_config.json ou limpe os dados do site no navegador.</span></span>
+            </summary>
+            <div class="hp-b">
+              <p>O <kbd>reset_config.json</kbd> deixa tudo zerado: sem grupos, sem cargos, sem militares e sem
+                histórico.</p>
+              <p class="hp-warn"><b>Atenção:</b> Guarde antes uma cópia do <kbd>.json</kbd> (<kbd>Exportar
+                  arquivo</kbd>). Depois disso não há volta.</p>
+              <p>Há dois jeitos:</p>
+              <ol>
+                <li><b>Importar o <kbd>reset_config.json</kbd>:</b> reseta <b>todas</b> as configurações do ESCALOTEX.
+                </li>
+                <li><b>Limpar os dados do site</b> nas configurações do navegador e abrir a página de novo, sem importar
+                  nenhum arquivo.</li>
+              </ol>
+              <p>Para apenas zerar as folgas (mantendo militares e histórico), use <kbd>Resetar todas as folgas</kbd> na
+                aba Folgas.</p>
+              <div class="hp-rel"><span>Veja também:</span><button type="button" class="hp-relb"
+                  data-open="resetar-folgas">Zerar a folga de todo mundo</button><button type="button" class="hp-relb"
+                  data-open="exportar">Exportar (salvar) o arquivo</button></div>
+            </div>
+          </details>
+          <details class="hp" id="h-backup" data-cat="arquivo" data-p="0"
+            data-k="backup cópia de segurança segurança confidencial nomes sigilo guardar versões datas pasta nuvem proteger">
+            <summary><span class="hp-st"><span class="hp-t">Cópias de segurança e cuidados com o arquivo</span><span
+                  class="hp-s">Guarde com a data no nome e mantenha versões antigas.</span></span></summary>
+            <div class="hp-b">
+              <ul>
+                <li>Guarde o arquivo <b>com a data no nome</b> (ex.: <i>escala-servico-banco 2026-10-16.json</i>) e
+                  mantenha algumas versões antigas.</li>
+                <li><b>Sempre importe o mais recente</b>. Um arquivo velho faz o sistema voltar no tempo.</li>
+                <li>O arquivo contém <b>os nomes dos militares</b>: trate-o como informação interna e não envie a quem
+                  não deve ter acesso.</li>
+                <li>Exporte ao final de <b>todo</b> uso, mesmo que tenha sido rápido.</li>
+                <li>Não edite o arquivo à mão.</li>
+              </ul>
+              <div class="hp-rel"><span>Veja também:</span><button type="button" class="hp-relb"
+                  data-open="exportar">Exportar (salvar) o arquivo</button><button type="button" class="hp-relb"
+                  data-open="importar">Importar (abrir) o arquivo</button></div>
+            </div>
+          </details>
+          <details class="hp" id="h-salvo-navegador" data-cat="arquivo" data-p="0"
+            data-k="salvo automaticamente navegador indicador status salvamento localstorage cache aba anônima limpar dados">
+            <summary><span class="hp-st"><span class="hp-t">O que significa “Salvo automaticamente neste
+                  navegador”</span><span class="hp-s">É só uma cópia de trabalho; o arquivo exportado é o que
+                  vale.</span></span></summary>
+            <div class="hp-b">
+              <p>Esse texto, no canto superior, quer dizer que uma cópia de trabalho foi gravada <b>naquele navegador,
+                  naquele aparelho</b>. Essa cópia:</p>
+              <ul>
+                <li><b>não</b> aparece em outro computador, outro navegador ou outro celular;</li>
+                <li><b>pode ser apagada</b> ao limpar os dados de navegação, usar aba anônima ou trocar de perfil;</li>
+                <li><b>não</b> é compartilhada com ninguém.</li>
+              </ul>
+              <p>Por isso, a cópia do navegador é só uma comodidade. <b>O arquivo exportado é o que vale.</b></p>
+              <div class="hp-rel"><span>Veja também:</span><button type="button" class="hp-relb"
+                  data-open="arquivo-regra">Regra de ouro: não existe banco de dados</button><button type="button"
+                  class="hp-relb" data-open="p-salvar">Aparece “Não foi possível salvar neste navegador”</button></div>
+            </div>
+          </details>
+          <h3 class="hp-cat" data-cat="problemas">Problemas comuns <span>7</span></h3>
+          <details class="hp" id="h-p-vazio" data-cat="problemas" data-p="0"
+            data-k="vazio sumiu perdi perdeu dados apagou nada aparece em branco tela vazia sem militares zerado desapareceu">
+            <summary><span class="hp-st"><span class="hp-t">Abri a página e está tudo vazio. Perdi os dados?</span><span
+                  class="hp-s">Provavelmente é outro navegador ou aparelho. Importe o arquivo.</span></span></summary>
+            <div class="hp-b">
+              <p>Provavelmente você abriu em <b>outro navegador ou aparelho</b>, em <b>aba anônima</b>, ou os dados do
+                navegador foram limpos. Os dados não estão perdidos se você tem o arquivo.</p>
+              <ol>
+                <li>Clique em <kbd>Importar arquivo</kbd>.</li>
+                <li>Escolha o último <kbd>escala-servico-banco.json</kbd>.</li>
+                <li>Confira a caixa <b>Último dia lançado</b>.</li>
+              </ol>
+              <p>Se nunca exportou, tente abrir o site no mesmo navegador e aparelho em que usava antes: a cópia de
+                trabalho pode estar lá.</p>
+              <div class="hp-rel"><span>Veja também:</span><button type="button" class="hp-relb"
+                  data-open="arquivo-regra">Regra de ouro: não existe banco de dados</button><button type="button"
+                  class="hp-relb" data-open="salvo-navegador">O que significa “Salvo automaticamente neste
+                  navegador”</button></div>
+            </div>
+          </details>
+          <details class="hp" id="h-p-salvar" data-cat="problemas" data-p="0"
+            data-k="não foi possível salvar erro salvar navegador cheio bloqueado aba anônima falha salvamento aviso vermelho">
+            <summary><span class="hp-st"><span class="hp-t">Aparece “Não foi possível salvar neste
+                  navegador”</span><span class="hp-s">Exporte o arquivo imediatamente.</span></span></summary>
+            <div class="hp-b">
+              <p>O navegador recusou gravar a cópia de trabalho (modo anônimo, armazenamento bloqueado ou cheio).</p>
+              <ol>
+                <li>Clique em <kbd>Exportar arquivo</kbd> <b>agora</b> e guarde o arquivo.</li>
+                <li>Evite usar aba anônima.</li>
+                <li>Verifique se o navegador permite guardar dados do site.</li>
+              </ol>
+              <div class="hp-rel"><span>Veja também:</span><button type="button" class="hp-relb"
+                  data-open="exportar">Exportar (salvar) o arquivo</button><button type="button" class="hp-relb"
+                  data-open="salvo-navegador">O que significa “Salvo automaticamente neste navegador”</button></div>
+            </div>
+          </details>
+          <details class="hp" id="h-p-invalido" data-cat="problemas" data-p="0"
+            data-k="arquivo inválido erro importar não abre json corrompido não aceita arquivo errado formato">
+            <summary><span class="hp-st"><span class="hp-t">Aparece “Arquivo inválido”</span><span class="hp-s">Use um
+                  .json exportado pelo próprio ESCALOTEX.</span></span></summary>
+            <div class="hp-b">
+              <p>A mensagem completa é: <i>Arquivo inválido: use um .json exportado por esta página</i>.</p>
+              <ul>
+                <li>Escolha um <kbd>escala-servico-banco.json</kbd> gerado por <kbd>Exportar arquivo</kbd>.</li>
+                <li>Não use arquivos de outro programa nem arquivos editados à mão.</li>
+                <li>Se o arquivo estiver corrompido, tente uma cópia de segurança mais antiga.</li>
+              </ul>
+              <div class="hp-rel"><span>Veja também:</span><button type="button" class="hp-relb"
+                  data-open="importar">Importar (abrir) o arquivo</button><button type="button" class="hp-relb"
+                  data-open="backup">Cópias de segurança e cuidados com o arquivo</button></div>
+            </div>
+          </details>
+          <details class="hp" id="h-p-folga-errada" data-cat="problemas" data-p="0"
+            data-k="folga errada incorreta diferente contagem errada número errado conferir corrigir folga militar">
+            <summary><span class="hp-st"><span class="hp-t">A folga de alguém está errada</span><span
+                  class="hp-s">Ajuste com o botão Folga ou recomece a contagem.</span></span></summary>
+            <div class="hp-b">
+              <ol>
+                <li>Confira se os dias foram <b>lançados</b>: só dias lançados contam.</li>
+                <li>Confira se a <b>escala preta/vermelha</b> está certa (feriado marcado, fim de semana).</li>
+                <li>Para corrigir um militar: clique em <kbd>Folga</kbd> e digite os valores certos.</li>
+                <li>Para recomeçar de todos: <kbd>Resetar todas as folgas</kbd> na aba Folgas.</li>
+              </ol>
+              <div class="hp-rel"><span>Veja também:</span><button type="button" class="hp-relb"
+                  data-open="como-folga">Como a folga é contada</button><button type="button" class="hp-relb"
+                  data-open="ajustar-folga">Ajustar a folga de um militar manualmente</button><button type="button"
+                  class="hp-relb" data-open="resetar-folgas">Zerar a folga de todo mundo</button></div>
+            </div>
+          </details>
+          <details class="hp" id="h-p-lancei-errado" data-cat="problemas" data-p="0"
+            data-k="lancei errado erro lançamento engano desfazer corrigir lancei sem querer lançado errado">
+            <summary><span class="hp-st"><span class="hp-t">Lancei errado. E agora?</span><span class="hp-s">Desfaça o
+                  passo ou corrija e lance de novo.</span></span></summary>
+            <div class="hp-b">
+              <ol>
+                <li>Clique em <kbd>Desfazer</kbd> no aviso logo após lançar, ou use <kbd>Desfazer último passo</kbd> no
+                  Histórico.</li>
+                <li>Ou corrija a escala e clique em <kbd>LANÇAR</kbd> de novo: o lançamento do mesmo dia
+                  <b>substitui</b> o anterior.
+                </li>
+              </ol>
+              <div class="hp-rel"><span>Veja também:</span><button type="button" class="hp-relb"
+                  data-open="desfazer">Desfazer o último lançamento ou exclusão</button><button type="button"
+                  class="hp-relb" data-open="corrigir-lancado">Corrigir um dia que já foi lançado</button></div>
+            </div>
+          </details>
+          <details class="hp" id="h-p-importei-errado" data-cat="problemas" data-p="0"
+            data-k="importei errado arquivo errado versão velha voltou no tempo desfazer importação trocar arquivo">
+            <summary><span class="hp-st"><span class="hp-t">Importei o arquivo errado</span><span class="hp-s">Use
+                  Desfazer no aviso logo após importar.</span></span></summary>
+            <div class="hp-b">
+              <ol>
+                <li>Logo após importar, clique em <kbd>Desfazer</kbd> no aviso “Arquivo importado”.</li>
+                <li>Se o aviso já sumiu, importe o arquivo correto (o mais recente).</li>
+              </ol>
+              <p class="hp-warn"><b>Atenção:</b> Se você exportou <b>depois</b> de importar o arquivo errado, esse novo
+                arquivo contém os dados errados. Procure uma cópia de segurança anterior.</p>
+              <div class="hp-rel"><span>Veja também:</span><button type="button" class="hp-relb"
+                  data-open="importar">Importar (abrir) o arquivo</button><button type="button" class="hp-relb"
+                  data-open="backup">Cópias de segurança e cuidados com o arquivo</button></div>
+            </div>
+          </details>
+          <details class="hp" id="h-p-auto" data-cat="problemas" data-p="0"
+            data-k="escala automática não aparece vazia não gera sem sugestão não funciona automático explicação">
+            <summary><span class="hp-st"><span class="hp-t">A escala automática não aparece ou está vazia</span><span
+                  class="hp-s">Ela só funciona depois da primeira escala lançada.</span></span></summary>
+            <div class="hp-b">
+              <ul>
+                <li>A automática só funciona <b>depois do primeiro lançamento</b>. Antes disso aparece uma explicação.
+                </li>
+                <li>Confira se há militares <b>em grupo</b> e <b>não dispensados</b>.</li>
+                <li>Confira se o <b>Tipo de escala</b> tem grupos escolhidos.</li>
+                <li>Clique em <kbd>Gerar de novo</kbd> para recalcular.</li>
+              </ul>
+              <p>Para lançar a primeira, monte uma escala manual e clique em <kbd>LANÇAR</kbd>.</p>
+              <div class="hp-rel"><span>Veja também:</span><button type="button" class="hp-relb"
+                  data-open="automatica">Escala automática: deixar o sistema sugerir</button><button type="button"
+                  class="hp-relb" data-open="militar-nao-aparece">Um militar não aparece na lista para escalar</button>
+              </div>
+            </div>
+          </details>
+        </div>
+        <p class="hp-end">Não achou o que procurava? Veja também o arquivo <b>readme.md</b> do projeto.</p>
+      </section>
+
+      <footer class="foot">Desenvolvido por Pedro Ribeiro da Rosa</footer>
+    </main>
+  </div>
+
+  <div id="ov" class="ov" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="mt">
+      <div class="mh">
+        <h2 id="mt"></h2><button class="x" onclick="closeM()" aria-label="Fechar">×</button>
+      </div>
+      <div class="mb">
+        <div class="lb"><span id="lp">Militar</span></div>
+        <input type="text" id="q" placeholder="Buscar militar…" autocomplete="off">
+        <div id="people" class="people"></div>
+        <div id="p2w" hidden>
+          <div class="lb"><span>Já de serviço nesta escala · folga até o dia escolhido</span></div>
+          <div id="people2" class="plist2"></div>
+        </div>
+        <div class="lb"><span>Dia(s)</span>
+          <span class="quick"><button onclick="qd('all')">Todos</button><button onclick="qd('wd')">Dias
+              úteis</button><button onclick="qd('we')">Fim de semana</button><button
+              onclick="qd('none')">Limpar</button></span>
+        </div>
+        <div id="days" class="days"></div>
+        <label class="chk"><input type="checkbox" id="wc"> Incluir aviso <i class="warn warn-sm">!</i> <span
+            class="muted">(opcional)</span></label>
+        <input type="text" id="wt" placeholder="Texto do aviso (ex.: dispensa, aguardando troca)" hidden>
+        <div id="wtg" hidden>
+          <div class="lb"><span>Aplicar o aviso a: (marcados recebem)</span><span class="quick"><button type="button"
+                onclick="wq(0)">Todos</button><button type="button" onclick="wq(1)">Nenhum</button></span></div>
+          <div id="wtl" class="people"></div>
+        </div>
+      </div>
+      <div class="mf"><span id="cnt"></span><button class="b2 ghost" onclick="closeM()">Cancelar</button><button
+          class="b2" id="ok" onclick="confirmM()">Adicionar à escala</button></div>
+    </div>
+  </div>
+  <div id="ov2" class="ov" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="mt2">
+      <div class="mh">
+        <h2 id="mt2">Adicionar à dispensa</h2><button type="button" class="x" onclick="closeD()"
+          aria-label="Fechar">×</button>
+      </div>
+      <div class="mb">
+        <div class="lb"><span>Militar</span></div><select id="dm" class="sel2"></select>
+        <div class="lb"><span>Abrangência da dispensa *</span></div>
+        <select id="dt" class="sel2" aria-label="Abrangência da dispensa">
+          <option value="a">Total · todas as escalas (preta e vermelha)</option>
+          <option value="b">Somente dias de semana (escala preta) · continua na escala vermelha</option>
+          <option value="r">Somente fim de semana e feriados (escala vermelha) · continua na escala preta</option>
+        </select>
+        <div class="lb"><span>Destino (motivo da dispensa) *</span></div>
+        <input type="text" id="dd" placeholder="Ex.: curso em Brasília, baixa médica, licença…" autocomplete="off">
+        <div class="dts"><label>Início da dispensa *<input type="date" id="di"></label><label>Fim da dispensa *<input
+              type="date" id="df"></label></div>
+      </div>
+      <div class="mf"><span class="mf-note">O militar sai das listas da(s) escala(s)
+          dispensada(s).</span><button type="button" class="b2 ghost" onclick="closeD()">Cancelar</button><button
+          type="button" class="b2" id="dok" disabled>Confirmar dispensa</button></div>
+    </div>
+  </div>
+  <div id="ovf" class="ov" hidden>
+    <div class="modal modal-sm" role="dialog" aria-modal="true" aria-labelledby="fT">
+      <div class="mh">
+        <h2 id="fT">Ajustar folga</h2><button type="button" class="x" onclick="closeF()" aria-label="Fechar">×</button>
+      </div>
+      <div class="mb">
+        <div class="lb"><span id="fN"></span></div>
+        <div class="dts"><label>Preta · dias de semana<input type="number" id="fb" min="0"
+              max="999"></label><label>Vermelha · fim de semana e feriados<input type="number" id="fr" min="0"
+              max="999"></label></div>
+        <p class="hint">O valor digitado vira a folga atual do militar e continua contando normalmente.
+          O ajuste de uma escala é desfeito quando ele for lançado em serviço nela. Valores marcados com * nas listas
+          são ajustes manuais.</p>
+      </div>
+      <div class="mf"><button type="button" class="b2 ghost" id="fcl">Remover ajustes</button><span
+          class="grow"></span><button type="button" class="b2 ghost" onclick="closeF()">Cancelar</button><button
+          type="button" class="b2" id="fok">Salvar</button></div>
+    </div>
+  </div>
+  <div id="ove" class="ov" hidden>
+    <div class="modal te-modal" role="dialog" aria-modal="true" aria-labelledby="te-t">
+      <div class="mh">
+        <h2 id="te-t">Editor da tabela de impressão</h2><button type="button" class="x" id="te-x"
+          aria-label="Fechar">×</button>
+      </div>
+      <div class="te-tb" id="te-tb">
+        <div class="te-g"><b>Edição</b><button type="button" data-ea="undo" title="Desfazer (Ctrl+Z)">↶
+            Desfazer</button><button type="button" data-ea="redo" title="Refazer (Ctrl+Y)">↷ Refazer</button></div>
+        <div class="te-g"><b>Linha</b><button type="button" data-ea="ri-up" data-et="1">+ Acima</button><button
+            type="button" data-ea="ri-dn" data-et="1">+ Abaixo</button><button type="button" data-ea="rm-up" data-et="1"
+            title="Mover linha para cima">↑</button><button type="button" data-ea="rm-dn" data-et="1"
+            title="Mover linha para baixo">↓</button><button type="button" data-ea="rh" data-et="1"
+            title="Alterna linha de cabeçalho (fundo cinza e negrito)">Cabeçalho</button><button type="button"
+            data-ea="rg" data-et="1" title="Alterna o sombreado da linha (fim de semana)">Sombrear</button><button
+            type="button" class="del" data-ea="rdel" data-et="1">Excluir</button></div>
+        <div class="te-g"><b>Coluna</b><button type="button" data-ea="ci-l" data-et="1">+ Esquerda</button><button
+            type="button" data-ea="ci-r" data-et="1">+ Direita</button><button type="button" class="del" data-ea="cdel"
+            data-et="1">Excluir</button><label>Largura %
+            <input type="number" id="te-w" min="0" max="90" step="1" placeholder="auto" data-et="1"
+              title="0 ou vazio = automática"></label></div>
+        <div class="te-g"><b>Célula</b><button type="button" data-ea="cb" data-et="1"
+            title="Negrito"><b>N</b></button><button type="button" data-ea="al-l" data-et="1"
+            title="Alinhar à esquerda">⬅</button><button type="button" data-ea="al-c" data-et="1"
+            title="Centralizar">↔</button><button type="button" data-ea="al-r" data-et="1"
+            title="Alinhar à direita">➡</button><button type="button" data-ea="merge" data-et="1"
+            title="Mescla a célula com a da direita">Mesclar →</button><button type="button" data-ea="split" data-et="1"
+            title="Desfaz a mescla">Dividir</button></div>
+        <div class="te-g"><b>Inserir</b><button type="button" data-ea="add-title">+ Título</button><button type="button"
+            data-ea="add-text">+ Texto</button><button type="button" data-ea="add-table">+
+            Tabela</button><button type="button" data-ea="add-sig">+ Assinatura</button></div>
+        <div class="te-g"><b>Padrão</b><button type="button" id="te-sp"
+            title="Guarda fonte, orientação, larguras, alturas, negrito e alinhamento">Salvar como padrão…</button>
+        </div>
+        <div class="te-g"><b>Página</b><label>Fonte (pt)
+            <input type="number" id="te-fs" min="6" max="18" step="0.5"></label><select id="te-o"
+            aria-label="Orientação da folha">
+            <option value="p">A4 retrato</option>
+            <option value="l">A4 paisagem</option>
+          </select></div>
+      </div>
+      <div id="te-stale" class="te-stale" hidden><span>⚠ A escala, o título ou a assinatura mudaram depois das suas
+          edições. A impressão usa a tabela editada abaixo.</span><button type="button" class="b2 ghost"
+          id="te-regen">Regerar da escala atual</button></div>
+      <div class="mb te-body">
+        <div id="te-sheet" class="pv te-sheet"></div>
+      </div>
+      <div class="mf"><span id="te-n" class="mf-note"></span><button type="button" class="b2 ghost"
+          id="te-reset">Restaurar da escala</button><button type="button" class="b2 ghost"
+          id="te-close">Fechar</button><button type="button" class="b2" id="te-print">Imprimir</button></div>
+    </div>
+  </div>
+  <div id="ovg" class="ov" hidden>
+    <div class="modal modal-sm" role="dialog" aria-modal="true" aria-labelledby="pg-t">
+      <div class="mh">
+        <h2 id="pg-t"></h2><button type="button" class="x" onclick="closePg()" aria-label="Fechar">×</button>
+      </div>
+      <div class="mb">
+        <ul class="ml" id="pg-l"></ul>
+        <div class="lb"><span>Novo cargo</span></div>
+        <div class="mf2"><input type="text" id="pg-n" placeholder="Ex.: 3º SGT" maxlength="20"
+            autocomplete="off"><button type="button" class="b2" id="pg-a">Adicionar</button></div>
+        <p class="hint">Renomear ou excluir um cargo muda só esta lista. Militares já cadastrados
+          mantêm o nome como está.</p>
+      </div>
+      <div class="mf"><span class="grow"></span><button type="button" class="b2 ghost"
+          onclick="closePg()">Fechar</button></div>
+    </div>
+  </div>
+  <div id="ovgr" class="ov" hidden>
+    <div class="modal modal-sm" role="dialog" aria-modal="true">
+      <div class="mh">
+        <h2>Grupos</h2><button type="button" class="x" onclick="closeGr()" aria-label="Fechar">×</button>
+      </div>
+      <div class="mb">
+        <ul class="ml" id="gr-l"></ul>
+        <div class="lb"><span>Novo grupo</span></div>
+        <div class="mf2"><input type="text" id="gr-n" placeholder="Ex.: Técnico de dia" maxlength="30"
+            autocomplete="off"><button type="button" class="b2" id="gr-a">Criar</button></div>
+        <p class="hint">Ao excluir um grupo, os militares dele vão para "Sem grupo". Escolha quais
+          grupos entram na escala na aba Escala.</p>
+      </div>
+      <div class="mf"><span class="grow"></span><button type="button" class="b2 ghost"
+          onclick="closeGr()">Fechar</button></div>
+    </div>
+  </div>
+  <div id="ovp" class="ov" hidden>
+    <div class="modal modal-sm" role="dialog" aria-modal="true" aria-labelledby="pp-t">
+      <div class="mh">
+        <h2 id="pp-t">Padrão de impressão</h2><button type="button" class="x" id="pp-x" aria-label="Fechar">×</button>
+      </div>
+      <div class="mb">
+        <p class="hint">Escolha o padrão da folha. Trocar de padrão refaz a tabela a partir da escala (edições manuais
+          da folha são descartadas). Para criar um novo, abra Visualizar, ajuste a tabela e use “Salvar como padrão”.
+        </p>
+        <ul class="pats" id="pp-g"></ul>
+      </div>
+      <div class="mf"><span class="grow"></span><button type="button" class="b2 ghost"
+          id="pp-c">Cancelar</button><button type="button" class="b2" id="pp-ok">Continuar</button></div>
+    </div>
+  </div>
+  <div id="ovmg" class="ov" hidden>
+    <div class="modal modal-sm" role="dialog" aria-modal="true" aria-labelledby="mg-t">
+      <div class="mh">
+        <h2 id="mg-t">Grupos do militar</h2><button type="button" class="x" id="mg-x" aria-label="Fechar">×</button>
+      </div>
+      <div class="mb">
+        <p class="hint">Marque todos os grupos em que ele participa. A folga de cada grupo é contada separadamente.</p>
+        <div class="mg-l" id="mg-l"></div>
+      </div>
+      <div class="mf"><span class="grow"></span><button type="button" class="b2 ghost"
+          id="mg-c">Cancelar</button><button type="button" class="b2" id="mg-ok">Salvar</button></div>
+    </div>
+  </div>
+  <div id="ovn" class="ov" hidden>
+    <div class="modal modal-sm" role="dialog" aria-modal="true" aria-labelledby="pn-t">
+      <div class="mh">
+        <h2 id="pn-t">Salvar padrão de impressão</h2><button type="button" class="x" id="pn-x"
+          aria-label="Fechar">×</button>
+      </div>
+      <div class="mb"><label class="lb" for="pn-i"><span>Nome do padrão</span></label><input type="text" id="pn-i"
+          maxlength="40" autocomplete="off" placeholder="Ex.: Letra grande, paisagem"></div>
+      <div class="mf"><span class="grow"></span><button type="button" class="b2 ghost"
+          id="pn-c">Cancelar</button><button type="button" class="b2" id="pn-ok">Salvar padrão</button></div>
+    </div>
+  </div>
+  <div id="ovc" class="ov" hidden>
+    <div class="modal" role="alertdialog" aria-modal="true">
+      <div class="mh">
+        <h2 id="cT"></h2><button type="button" class="x" onclick="cClose()" aria-label="Fechar">×</button>
+      </div>
+      <div class="mb">
+        <p id="cM"></p>
+      </div>
+      <div class="mf"><span class="grow"></span><button type="button" class="b2 ghost"
+          onclick="cClose()">Cancelar</button><button type="button" class="b2" id="cOk"></button></div>
+    </div>
+  </div>
+  <div id="ovs" class="ov" hidden>
+    <div class="modal modal-sm" role="dialog" aria-modal="true" aria-labelledby="swT">
+      <div class="mh">
+        <h2 id="swT">Troca de serviço</h2><button type="button" class="x" onclick="closeSw()"
+          aria-label="Fechar">×</button>
+      </div>
+      <div class="mb">
+        <p id="sw-i"></p>
+        <div class="lb"><span>Quem assume o serviço (não zera a própria folga)</span></div>
+        <select id="sw-s" class="sel2" aria-label="Militar que assume o serviço"></select>
+        <p class="hint">O militar escolhido aparece no lugar na escala e na impressão (com *). Ao
+          LANÇAR, quem zera a folga do dia é o militar substituído; a folga de quem assumiu continua contando
+          normalmente,
+          como se ele não tivesse tirado o serviço. Se o dia já foi lançado, lance de novo para atualizar.</p>
+      </div>
+      <div class="mf"><span class="grow"></span><button type="button" class="b2 ghost"
+          onclick="closeSw()">Cancelar</button><button type="button" class="b2" id="sw-ok">Confirmar troca</button>
+      </div>
+    </div>
+  </div>
+  <div id="pr"></div>
+  <div id="toast" hidden></div>
+  <script src="app.js"></script>
+</body>
+
+</html>
