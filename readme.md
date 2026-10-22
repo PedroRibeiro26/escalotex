@@ -3,7 +3,6 @@
 Página para montar, controlar e imprimir diversos tipos de **escala de serviço** de uma unidade: **cabo de dia**, **plantões**, **técnico de dia**, **guia de TFM** e por ai vai, contagem de **folga**, **dispensas**, **trocas de serviço** e **histórico** de tudo o que foi lançado.
 
 ## ⚠️ O ESCALOTEX FOI FEITO PURAMENTE COM IA PARA FINS DE ESTUDO
-## LINK DE ACESSO AO DEPLOY escalotex.netlify.app
 
 ---
 
