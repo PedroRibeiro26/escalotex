@@ -1,0 +1,78 @@
+{
+  "v": 2,
+  "G": [],
+  "cfg": {
+    "c": null,
+    "p": null
+  },
+  "co": false,
+  "S": [
+    {
+      "d": "09/10/26",
+      "w": "Sexta-feira",
+      "f": false,
+      "c": null,
+      "p": []
+    },
+    {
+      "d": "10/10/26",
+      "w": "Sábado",
+      "f": false,
+      "c": null,
+      "p": []
+    },
+    {
+      "d": "11/10/26",
+      "w": "Domingo",
+      "f": false,
+      "c": null,
+      "p": []
+    },
+    {
+      "d": "12/10/26",
+      "w": "Segunda-feira",
+      "f": false,
+      "c": null,
+      "p": []
+    }
+  ],
+  "SA": [],
+  "AP": {
+    "n": 5,
+    "k": 3
+  },
+  "autoSig": "",
+  "autoStale": false,
+  "mb": null,
+  "rs": -1,
+  "lq": 0,
+  "M": [],
+  "L": [],
+  "Lp": null,
+  "UL": [],
+  "lanc": "",
+  "lancA": "",
+  "pg": {
+    "s": [],
+    "m": []
+  },
+  "ed": null,
+  "pt": [],
+  "pa": "c",
+  "tt": {
+    "a": "",
+    "b": ""
+  },
+  "sig": {
+    "n": "",
+    "p": "",
+    "f": ""
+  },
+  "pr": {
+    "e1": "0",
+    "e2": "5",
+    "p1": "6",
+    "p2": "7"
+  },
+  "prA": null
+}
